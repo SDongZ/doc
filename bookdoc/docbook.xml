@@ -4,15 +4,20 @@
   <articleinfo>
     <title>我的第一篇Docbook 5.0文档</title>
     <author>
-      <firstname>Easwy</firstname>
-      <surname>Yang</surname>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
     </author>
   </articleinfo> 
                   
   <section>   
     <title>文档介绍</title>
     <para>
-      这是我的第一篇Docbook 5.0文档，欢迎你来到<link xlink:href='http://easwy.com/blog/'>Easwy的博客</link>。
+      这是我的第一篇Docbook 5.0文档，欢迎你来到<link xlink:href='#'>WXiang的博客</link>。
     </para>
+  </section>
+  <section>
+     <titles>DocBook 简介</titles>
+	 <para>
+	 </para>
   </section>
 </article>
