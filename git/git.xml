@@ -7,8 +7,7 @@
       <firstname>Xiang</firstname>
       <surname>Wang</surname>
     </author>
-  </articleinfo> 
-                  
+  </articleinfo>
   <section>   
     <title>文档介绍</title>
     <para>
@@ -30,12 +29,14 @@
 	  <listitem>"C:\Program Files (x86)\Notepad++\notepad++.exe"  要写成 "C:/Program\ Files\ \(x86\)/Notepad++/notepad++.exe"</listitem>
 	  <listitem> "C:\Program Files\Notepad++\notepad++.exe" -multiInst -nosession  打开新窗口</listitem>
 	  <listitem> 设置"C:\Program Files\Notepad++\notepad++.exe" -multiInst -nosession后打开的临时文件不对</listitem>
+	  <listitem> 设置notepad默认保存为UTF8，换行符为lf: <emphasis role="strong">好像没有办法</emphasis></listitem>
     </orderedlist>
   </section>
   <section>   
     <title>Git基本操作</title>
     <orderedlist>
       <listitem>Git撤消ADD操作: git reset [要取消的文件名，缺省是取消全部ADD操作</listitem>
+	  <listitem>Git重新编辑上次的LOG记录(修改上次的提交信息): git commit --amend [-m "New commit message"]</listitem>
     </orderedlist>
   </section>  
 </article>

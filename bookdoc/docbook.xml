@@ -21,12 +21,15 @@
 	 </para>
   </section>
   <section>
-  <title>DocBook 列表类型</title>
-  <orderedlist>
-  <listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
-  <listitem>orderedlist -> listitem</listitem>
-  <listitem>simplelist -> member</listitem>
-  </orderedlist>
+	<title>DocBook 列表类型</title>
+	<orderedlist>
+		<listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
+		<listitem>orderedlist -> listitem</listitem>
+		<listitem>simplelist -> member</listitem>
+	</orderedlist>
   </section>
-
+  <section>   
+    <title>强调的写法</title>
+    <para><emphasis role="strong">emphasis role="strong" "bold" "underline"</emphasis></para>
+  </section>
 </article>
