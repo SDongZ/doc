@@ -8,7 +8,6 @@
       <surname>Wang</surname>
     </author>
   </articleinfo> 
-                  
   <section>   
     <title>文档介绍</title>
     <para>
@@ -16,8 +15,18 @@
     </para>
   </section>
   <section>
-     <titles>DocBook 简介</titles>
+     <title>DocBook 简介</title>
 	 <para>
+	 编辑命令行（输出html文档）: xsltproc -o git.html git.xsl git.xml
 	 </para>
   </section>
+  <section>
+  <title>DocBook 列表类型</title>
+  <orderedlist>
+  <listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
+  <listitem>orderedlist -> listitem</listitem>
+  <listitem>simplelist -> member</listitem>
+  </orderedlist>
+  </section>
+
 </article>

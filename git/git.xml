@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>GIT学习文档</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo> 
+                  
+  <section>   
+    <title>文档介绍</title>
+    <para>
+      学习GIT记录，欢迎你来到<link xlink:href='#'>WXiang的博客</link>。
+    </para>
+  </section>  
+  <section>   
+    <title>Github网站的使用</title>
+    <para>
+      注册，创建一个工程后，向远程服务器push时，使用的账号是：Github账号。
+    </para>
+  </section> 
+  <section>   
+    <title>Git 中文问题</title>
+    <orderedlist>
+      <listitem>Gitbash中显示中文：C:\Program Files\Git\etc\git-completion.bash  文件头添加 ：alias ls='ls --show-control-chars --color=auto'</listitem>
+	  <listitem>git log中显示中文：最新版本的GIT已经没有这个问题。只要LOG记录是UTF8格式的就没有问题。</listitem>
+	  <listitem>GIT LOG 编辑器设置: git config --global core.editor notepad  或者 完整路径：路径中的括号问题Program Files (x86)</listitem>
+	  <listitem>"C:\Program Files (x86)\Notepad++\notepad++.exe"  要写成 "C:/Program\ Files\ \(x86\)/Notepad++/notepad++.exe"</listitem>
+	  <listitem> "C:\Program Files\Notepad++\notepad++.exe" -multiInst -nosession  打开新窗口</listitem>
+	  <listitem> 设置"C:\Program Files\Notepad++\notepad++.exe" -multiInst -nosession后打开的临时文件不对</listitem>
+    </orderedlist>
+  </section>
+  <section>   
+    <title>Git基本操作</title>
+    <orderedlist>
+      <listitem>Git撤消ADD操作: git reset [要取消的文件名，缺省是取消全部ADD操作</listitem>
+    </orderedlist>
+  </section>  
+</article>
