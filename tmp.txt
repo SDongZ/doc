@@ -10,6 +10,7 @@ void CLocationDlg::RevData(std::string &data) {
 	}
 }
 
+
 std::list
 back() 返回最后一个元素 
 front() 返回第一个元素 
