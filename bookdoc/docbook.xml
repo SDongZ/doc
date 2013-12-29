@@ -7,19 +7,29 @@
       <firstname>Xiang</firstname>
       <surname>Wang</surname>
     </author>
-  </articleinfo> 
-  <chapter>   
-    <title>文档介绍</title>
-    <para>这是我的第一篇Docbook 5.0文档，欢迎你来到<link xlink:href='#'>WXiang的博客</link></para>
-	<para><link xlink:href="http://www.crifan.com/files/doc/docbook/docbook_dev_note/release/html/docbook_dev_note.html">DOCBOOK 手册</link></para>
-  </chapter>
-  <chapter>
+  </articleinfo>
+  <section>
      <title>DocBook 简介</title>
 	 <para>
 	 编辑命令行（输出html文档）: xsltproc -o git.html git.xsl git.xml
 	 </para>
-  </chapter>
-  <chapter>
+  </section>
+  <section>
+     <title>安装DocBOOK</title>
+	 <para>docbook-xsl-ns-1.78.1.zip 解压到 c:\docbook</para>
+  </section>
+  <section>
+     <title>安装xsltproc</title>
+	 <para>ftp://ftp.zlatkovic.com/libxml/</para>
+	 <orderedlist>
+		<listitem>iconv-1.9.2.win32.zip – 编码转换工具</listitem>
+		<listitem>zlib-1.2.3.win32.zip – 压缩工具</listitem>
+		<listitem>libxslt-1.1.24.win32.zip – XSL和EXSL转换工具，xsltproc程序就在此包中</listitem>
+		<listitem>libxml2-2.7.3.win32.zip – XML解析工具和处理工具，同时提供了验证工具xmllint和xmlcatalog</listitem>
+	 </orderedlist>
+	 <para>下载后，把这些包解压到同一个目录里，假设解压到C:\docbook\xsltproc目录，解压后，你可以看到在C:\docbook\xsltproc\下多了三个目录：bin，include和lib</para>
+  </section>
+  <section>
      <title>等待解决的问题</title>
 	 <para>章节的索引怎么出来？</para>
 	 <para>文件内的链接问题？</para>
@@ -27,22 +37,22 @@
 	 <para>高亮一部分？代码 programlisting 标签</para>
 	 <para>CDATA 包含特殊字符的方法</para>
 	 <para>边框背景色,边框等等？代码</para>
-  </chapter>
-  <chapter>
+  </section>
+  <section>
 	<title>DocBook 所有元素</title>
-	<section>
+	<sect1>
 		<title>DocBook 列表类型</title>
 		<orderedlist>
 			<listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
 			<listitem>orderedlist -> listitem</listitem>
 			<listitem>simplelist -> member</listitem>
 		</orderedlist>
-	</section>
-	<section><title>强调的写法</title><para><emphasis role="strong">emphasis role="strong" "bold" "underline"</emphasis></para></section>
-	<section>
+	</sect1>
+	<sect1><title>强调的写法</title><para><emphasis role="strong">emphasis role="strong" "bold" "underline"</emphasis></para></sect1>
+	<sect1>
 		<title>图片</title>
 		<para>imageobject  -> imagedata fileref="images/figure_id.png" </para>
 		<imagedata fileref="img/image.png" />
-	</section>
-  </chapter>
+	</sect1>
+  </section>
 </article>
