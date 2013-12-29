@@ -2,7 +2,7 @@
 <article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
   xmlns:xlink='http://www.w3.org/1999/xlink'>
   <articleinfo>
-    <title>我的第一篇Docbook 5.0文档</title>
+    <title>学习DocBOOK</title>
     <author>
       <firstname>Xiang</firstname>
       <surname>Wang</surname>
@@ -11,7 +11,7 @@
   <section>
      <title>DocBook 简介</title>
 	 <para>
-	 编辑命令行（输出html文档）: xsltproc -o git.html git.xsl git.xml
+	 编辑命令行（输出html文档）: xsltproc -o git.html ../g.xsl git.xml
 	 </para>
   </section>
   <section>
@@ -21,12 +21,12 @@
   <section>
      <title>安装xsltproc</title>
 	 <para>ftp://ftp.zlatkovic.com/libxml/</para>
-	 <orderedlist>
+	 <itemizedlist><emphasis>需要的程序列表:</emphasis>
 		<listitem>iconv-1.9.2.win32.zip – 编码转换工具</listitem>
 		<listitem>zlib-1.2.3.win32.zip – 压缩工具</listitem>
 		<listitem>libxslt-1.1.24.win32.zip – XSL和EXSL转换工具，xsltproc程序就在此包中</listitem>
 		<listitem>libxml2-2.7.3.win32.zip – XML解析工具和处理工具，同时提供了验证工具xmllint和xmlcatalog</listitem>
-	 </orderedlist>
+	 </itemizedlist>
 	 <para>下载后，把这些包解压到同一个目录里，假设解压到C:\docbook\xsltproc目录，解压后，你可以看到在C:\docbook\xsltproc\下多了三个目录：bin，include和lib</para>
   </section>
   <section>
@@ -37,6 +37,7 @@
 	 <para>高亮一部分？代码 programlisting 标签</para>
 	 <para>CDATA 包含特殊字符的方法</para>
 	 <para>边框背景色,边框等等？代码</para>
+	 <para>sect1等的标题，怎么生成到开头的索引里？</para>
   </section>
   <section>
 	<title>DocBook 所有元素</title>

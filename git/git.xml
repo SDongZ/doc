@@ -15,6 +15,13 @@
     </para>
   </section>  
   <section>   
+    <title>问题</title>
+    <orderedlist>
+	<listitem>修改库中文件名的方法？</listitem>
+	<listitem></listitem>
+	</orderedlist>
+  </section> 
+  <section>   
     <title>Github网站的使用</title>
     <para>
       注册，创建一个工程后，向远程服务器push时，使用的账号是：Github账号。
