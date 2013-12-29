@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>MFC常见问题</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo>
+  <section>
+	<title>CEdit的垂直滚动条，自动拉到最下面</title>
+	<para>CEdit AutoVScroll  ES_AUTOVSCROLL: Automatically scrolls text up one page when the user presses the ENTER key on the last line.</para>
+	<para>Edit.SetSel (0xffff, 0xffff);  //select position after last char in editbox</para>
+    <para>Edit.ReplaceSel (clString); // replace selection with new text</para>
+	<para><programlisting language="c"><![CDATA[
+void SetSel( 
+   DWORD dwSelection,  the starting position in the low-order word and the ending position in the high-order word
+   BOOL bNoScroll = FALSE  
+); 
+void SetSel( 
+   int nStartChar, 
+   Specifies the starting position. If nStartChar is 0 and nEndChar is –1, all the text in the edit control is selected. 
+   If nStartChar is –1, any current selection is removed
+   
+   int nEndChar, 
+   BOOL bNoScroll = FALSE 
+   If FALSE, the caret is scrolled into view. If TRUE, the caret is not scrolled into view   
+);
+
+void LineScroll( 
+   int nLines, 
+   int nChars = 0  
+);
+
+void CFoo::AppendTextToEditCtrl(CEdit& edit, LPCTSTR pszText)
+{
+   // get the initial text length
+   int nLength = edit.GetWindowTextLength();
+   // put the selection at the end of text
+   edit.SetSel(nLength, nLength);           移动光标位置，移到0，就可在编辑框的前头加入行了
+   // replace the selection
+   edit.ReplaceSel(pszText);   If there is no current selection, the replacement text is inserted at the current cursor location.
+}
+]]></programlisting></para>
+  </section>
+</article>

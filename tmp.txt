@@ -9,3 +9,58 @@ void CLocationDlg::RevData(std::string &data) {
 		m_com_string += word;
 	}
 }
+
+std::list
+back() 返回最后一个元素 
+front() 返回第一个元素 
+pop_back() 删除最后一个元素 
+pop_front() 删除第一个元素 
+push_back() 在list的末尾添加一个元素 
+push_front() 在list的头部添加一个元素 
+
+std::string
+append() 在字符串的末尾添加文本 (可添加字符（可指定重复添加字符个数），字符串)
+
+string str1, str2 = "War and Peace";
+str1.assign( str2, 4, 3 );  为字符串赋新值 
+cout << str1 << endl;
+
+std::string::at() 按给定索引值返回字符 
+
+关于字符串下面三个函数
+std::string::empty() 如果字符串为空，返回真 
+std::string::length() 返回字符串的长度 
+std::string::size() 返回字符串中字符的数量 
+
+iterator std::string::erase( iterator pos ); 返回指向下一个字符的迭代器
+iterator std::string::erase( iterator start, iterator end ); 返回指向下一个字符的迭代器
+basic_string &std::string::erase( size_type index = 0, size_type num = npos ); 
+如果不加参数，将会把字符串全部删除
+如果只指定index, 删除index及其后的所有字符
+
+std::string::data() 返回内容的字符数组形式 
+std::string::size_type copy( char *str, size_type num, size_type index );
+copy()函数拷贝自己的num个字符到str中（从索引index开始）。返回值是拷贝的字符数
+
+
+std::string::swap()函数把str和本字符串交换。例如：
+
+    string first( "This comes first" );
+    string second( "And this is second" );
+    first.swap( second );
+    cout << first << endl;
+    cout << second << endl;
+
+显示：
+
+    And this is second
+    This comes first
+
+
+std::string::reserve() 保留一定容量以容纳字符串（设置capacity值） 
+
+basic_string std::string::substr( size_type index, size_type num = npos );
+
+
+
+ 

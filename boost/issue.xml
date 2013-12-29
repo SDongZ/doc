@@ -42,4 +42,8 @@
 	<title>boost::log::keywords::file_name = log_file 指定的文件无法创建的问题</title>
 	<para>boost::log::keywords::file_name = log_file 指定的文件无法创建的问题</para>
   </section>
+  <section>
+	<title>boost互斥体的用法</title>
+	<para>boost::mutex m_mutex; boost::mutex::scoped_lock lock(m_mutex);</para>
+  </section>
 </article>

@@ -1,0 +1,30 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>MFC常见问题</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div lang="zh-CN" class="article"><div class="titlepage"><div><div><h2 class="title"><a name="id486418"></a>MFC常见问题</h2></div><div><div class="author"><h3 class="author"><span class="firstname">Xiang</span> <span class="surname">Wang</span></h3></div></div></div><hr></div><div class="toc"><p><b>目录</b></p><dl class="toc"><dt><span class="section"><a href="#id540972">CEdit的垂直滚动条，自动拉到最下面</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id540972"></a>CEdit的垂直滚动条，自动拉到最下面</h2></div></div></div><p>CEdit AutoVScroll  ES_AUTOVSCROLL: Automatically scrolls text up one page when the user presses the ENTER key on the last line.</p><p>Edit.SetSel (0xffff, 0xffff);  //select position after last char in editbox</p><p>Edit.ReplaceSel (clString); // replace selection with new text</p><pre class="programlisting">
+void SetSel( 
+   DWORD dwSelection,  the starting position in the low-order word and the ending position in the high-order word
+   BOOL bNoScroll = FALSE  
+); 
+void SetSel( 
+   int nStartChar, 
+   Specifies the starting position. If nStartChar is 0 and nEndChar is –1, all the text in the edit control is selected. 
+   If nStartChar is –1, any current selection is removed
+   
+   int nEndChar, 
+   BOOL bNoScroll = FALSE 
+   If FALSE, the caret is scrolled into view. If TRUE, the caret is not scrolled into view   
+);
+
+void LineScroll( 
+   int nLines, 
+   int nChars = 0  
+);
+
+void CFoo::AppendTextToEditCtrl(CEdit&amp; edit, LPCTSTR pszText)
+{
+   // get the initial text length
+   int nLength = edit.GetWindowTextLength();
+   // put the selection at the end of text
+   edit.SetSel(nLength, nLength);           移动光标位置，移到0，就可在编辑框的前头加入行了
+   // replace the selection
+   edit.ReplaceSel(pszText);   If there is no current selection, the replacement text is inserted at the current cursor location.
+}
+</pre></div></div></body></html>

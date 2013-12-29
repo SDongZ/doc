@@ -21,8 +21,8 @@
 	</orderedlist>
   </section>
   <section>
-     <title>CC2431定位COM数据格式</title>
-	 <orderedlist>其本概念
+     <title>CC2431定位串口数据格式</title>
+	 <orderedlist>基本概念
 		<listitem>BB Baseband </listitem>
 		<listitem>CCA Clear Channel Assessment </listitem>
 		<listitem>MAC Media Access Control </listitem>
@@ -33,5 +33,21 @@
 		<listitem>SPI Serial Port Interface </listitem>
 	 </orderedlist>
 	 <para>The physical transmission uses: no Parity; 8 data bits and 1 stop bits for each byte.</para>
+	 <para>The link layer(链路层) packet has the following format: SOP (Start of Packet) + CMD (Command ID) + LEN (Length) + Data + FCS (Frame check sequence)</para>
+	 <orderedlist>
+		<listitem>SOP (Start of Packet): 1字节，等于0x02作为每个链路层数据包的开头。</listitem>
+		<listitem>CMD (Command ID): 2字节（第一个字节为高位），下面有这个ID的定义: 高四位-组成命令类型；其余位-组成命令号码</listitem>
+		<listitem>LEN (Length): 1字节，其后数据段的长度。其值为零时，整个包的长度就是5，其后跟一个字节：0。</listitem>
+		<listitem>Data </listitem>
+		<listitem>FCS (Frame check sequence) This field is computed as an XOR of all the bytes in the message starting with CMD and through the last byte of data. The receiver XORs 
+all the received data bytes as indicated above and then XORs the received FCS field.</listitem>
+	 </orderedlist>
+	 <orderedlist>
+		<listitem>命令类型Bit 0 – 置1表示是响应消息，置0表示是</listitem>
+		<listitem>命令类型Bit 1 – Subscription Bit – if set, this bit indicates that this message was the result of a subscription（订阅） to a callback service.</listitem>
+		<listitem>命令类型Bit 2 – Debug/Trace Bit – if set, this bit indicates that this message is either a Debug or Trace message</listitem>
+		<listitem>命令类型Bit 3 - Reserved
+</listitem>
+	 </orderedlist>
   </section>
 </article>
