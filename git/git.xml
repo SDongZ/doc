@@ -37,6 +37,8 @@
     <orderedlist>
       <listitem>Git撤消ADD操作: git reset [要取消的文件名，缺省是取消全部ADD操作</listitem>
 	  <listitem>Git重新编辑上次的LOG记录(修改上次的提交信息): git commit --amend [-m "New commit message"]</listitem>
+	  <listitem>git clone url d:/xxx    从网址取代码</listitem>
+	  <listitem>git clone g:/xx d:/xxx  从文件夹取代码</listitem>
     </orderedlist>
   </section>  
 </article>
