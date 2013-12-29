@@ -31,13 +31,15 @@
   </section>
   <section>
      <title>等待解决的问题</title>
-	 <para>章节的索引怎么出来？</para>
-	 <para>文件内的链接问题？</para>
-	 <para>怎么添加代码？</para>
-	 <para>高亮一部分？代码 programlisting 标签</para>
-	 <para>CDATA 包含特殊字符的方法</para>
-	 <para>边框背景色,边框等等？代码</para>
-	 <para>sect1等的标题，怎么生成到开头的索引里？</para>
+	 <itemizedlist>
+	 <listitem>章节的索引怎么出来？</listitem>
+	 <listitem>文件内的链接问题？</listitem>
+	 <listitem>怎么添加代码？</listitem>
+	 <listitem>高亮一部分？代码 programlisting 标签</listitem>
+	 <listitem>CDATA 包含特殊字符的方法</listitem>
+	 <listitem>边框背景色,边框等等？代码</listitem>
+	 <listitem>sect1等的标题，怎么生成到开头的索引里？</listitem>
+	 </itemizedlist>
   </section>
   <section>
 	<title>DocBook 所有元素</title>
