@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>使用BOOST遇到的问题</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo>
+  <section>
+	<title>使用BOOST遇到的问题</title>
+	<para>使用BOOST遇到的问题</para>
+  </section>
+  <section>
+	<title>stdint.h(72): warning C4005: “INT8_MIN”: 宏重定义</title>
+	<para>解决方法：在stdafx.h文件头添加 </para>
+	<para><programlisting language="c">
+<![CDATA[
+#define _INTSAFE_H_INCLUDED_
+#include <stdint.h>
+]]>
+	</programlisting></para>
+  </section>
+  <section>
+	<title>BOOST编译</title>
+		<orderedlist>
+			<listitem>bootstrap.bat 生成BOOST构建引擎 b2.exe</listitem>
+			<listitem>b2 --show-libraries 显示所有需要编译的库</listitem>
+			<listitem>b2 toolset==msvc-10.0 --with-log 编译指定的库，并且指定toolset</listitem>
+		</orderedlist>
+  </section>
+  <section>
+	<title>header.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失</title>
+	<para>使用notepad++ 找到非法字符并去掉, 使用正则表达式查找 [^\x00-\x7F]。我遇到的非法字符是 '’' </para>
+  </section>
+  <section>
+	<title>LOG 宽字符版本</title>
+	<para>LOG 宽字符版本</para>
+  </section>
+  <section>
+	<title>boost::log::keywords::file_name = log_file 指定的文件无法创建的问题</title>
+	<para>boost::log::keywords::file_name = log_file 指定的文件无法创建的问题</para>
+  </section>
+</article>

@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>VC学习文档</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo>
+  <section>
+	<title>VC学习</title>
+	<para>VC使用过程中的记录</para>
+  </section>
+  <section>
+	<title>题目列表(这个列表应该能够自动生成的)</title>
+	<orderedlist>
+		<listitem>VC工程的宏</listitem>
+		<listitem>VC调试中的方法</listitem>
+	</orderedlist>
+  </section>
+  <section>
+	<title>VC工程的宏</title>
+	<orderedlist>
+		<listitem>$(ConfigurationName) $(Configuration) 当前项目配置的名称（例如“Debug”）</listitem>
+		<listitem>$(PlatformName) 当前项目平台的名称（例如“Win32”）</listitem>
+		<listitem>$(OutDir) 输出文件目录的路径，相对于项目目录。这解析为“输出目录”属性的值</listitem>
+		<listitem>$(ProjectDir) 项目的目录（定义形式：驱动器 + 路径）；包括尾部的反斜杠“\”</listitem>
+		<listitem>$(ProjectPath) 项目的绝对路径名（定义形式：驱动器 + 路径 + 基本名称 + 文件扩展名）</listitem>
+		<listitem>$(ProjectName) 项目的基本名称</listitem>
+		<listitem>$(SolutionDir)</listitem>
+		<listitem>$(SolutionPath)</listitem>
+		<listitem>$(SolutionName)</listitem>
+		<listitem>$(SolutionFileName)</listitem>
+	</orderedlist>
+  </section>
+</article>

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>Window API学习文档</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo>
+  <section>
+	<title>Window API</title>
+	<para>Window API记录</para>
+  </section>
+  <section>
+	<title>目录相关</title>
+	<sect1>
+		<title>GetModuleFileName</title>
+		<para>获取对应进程句柄的执行文件的路径, 获取当前进程的句柄 GetModuleHandle(NULL)。</para>
+		<para>注意函数的最后一个参数是字符数：The size of the lpFilename buffer, in TCHARs。</para>
+	</sect1>
+	<sect1>
+		<title>ShellWapi.h</title>
+		<orderedlist>
+			<listitem>PathMakePretty </listitem>
+		</orderedlist>
+	</sect1>
+	<sect1>
+	</sect1>
+  </section>
+</article>

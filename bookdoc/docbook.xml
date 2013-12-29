@@ -8,28 +8,41 @@
       <surname>Wang</surname>
     </author>
   </articleinfo> 
-  <section>   
+  <chapter>   
     <title>文档介绍</title>
-    <para>
-      这是我的第一篇Docbook 5.0文档，欢迎你来到<link xlink:href='#'>WXiang的博客</link>。
-    </para>
-  </section>
-  <section>
+    <para>这是我的第一篇Docbook 5.0文档，欢迎你来到<link xlink:href='#'>WXiang的博客</link></para>
+	<para><link xlink:href="http://www.crifan.com/files/doc/docbook/docbook_dev_note/release/html/docbook_dev_note.html">DOCBOOK 手册</link></para>
+  </chapter>
+  <chapter>
      <title>DocBook 简介</title>
 	 <para>
 	 编辑命令行（输出html文档）: xsltproc -o git.html git.xsl git.xml
 	 </para>
-  </section>
-  <section>
-	<title>DocBook 列表类型</title>
-	<orderedlist>
-		<listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
-		<listitem>orderedlist -> listitem</listitem>
-		<listitem>simplelist -> member</listitem>
-	</orderedlist>
-  </section>
-  <section>   
-    <title>强调的写法</title>
-    <para><emphasis role="strong">emphasis role="strong" "bold" "underline"</emphasis></para>
-  </section>
+  </chapter>
+  <chapter>
+     <title>等待解决的问题</title>
+	 <para>章节的索引怎么出来？</para>
+	 <para>文件内的链接问题？</para>
+	 <para>怎么添加代码？</para>
+	 <para>高亮一部分？代码 programlisting 标签</para>
+	 <para>CDATA 包含特殊字符的方法</para>
+	 <para>边框背景色,边框等等？代码</para>
+  </chapter>
+  <chapter>
+	<title>DocBook 所有元素</title>
+	<section>
+		<title>DocBook 列表类型</title>
+		<orderedlist>
+			<listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
+			<listitem>orderedlist -> listitem</listitem>
+			<listitem>simplelist -> member</listitem>
+		</orderedlist>
+	</section>
+	<section><title>强调的写法</title><para><emphasis role="strong">emphasis role="strong" "bold" "underline"</emphasis></para></section>
+	<section>
+		<title>图片</title>
+		<para>imageobject  -> imagedata fileref="images/figure_id.png" </para>
+		<imagedata fileref="img/image.png" />
+	</section>
+  </chapter>
 </article>

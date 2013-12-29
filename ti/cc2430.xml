@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>CC2431定位</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo> 
+  <section>   
+    <title>文档介绍</title>
+    <para>CC2431定位相关资料</para>
+	<orderedlist>
+	   <listitem>Z-Stack/Z-Tool Serial Port Interface.pdf</listitem>
+	   <listitem>Z-Stack User's Guide - CC2431DB (F8W-2006-0025).pdf</listitem>
+	   <listitem>Z-Stack Location Profile User's Guide (F8W-2006-0008).pdf </listitem>
+	   <listitem>Z-Stack Location Profile (F8W-2006-0002).pdf</listitem>
+	   <listitem>C:\Texas Instruments\ZStack-1.4.3-1.2.1\Documents\CC2430 directory after installing the Z-Stack installer</listitem>
+	   <listitem>ZStack-CC2430-1.4.3-1.2.1.exe</listitem>
+	</orderedlist>
+  </section>
+  <section>
+     <title>CC2431定位COM数据格式</title>
+	 <orderedlist>其本概念
+		<listitem>BB Baseband </listitem>
+		<listitem>CCA Clear Channel Assessment </listitem>
+		<listitem>MAC Media Access Control </listitem>
+		<listitem>NHLE Next Higher Layer Entity </listitem>
+		<listitem>NWK Network </listitem>
+		<listitem>PHY Physical Layer </listitem>
+		<listitem>PIB Personal Information Base </listitem>
+		<listitem>SPI Serial Port Interface </listitem>
+	 </orderedlist>
+	 <para>The physical transmission uses: no Parity; 8 data bits and 1 stop bits for each byte.</para>
+  </section>
+</article>
