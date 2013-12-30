@@ -50,8 +50,10 @@
 			<listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
 			<listitem>orderedlist -> listitem</listitem>
 			<listitem>simplelist -> member</listitem>
+			<listitem>换行的标记</listitem>
 		</orderedlist>
 	</sect1>
+	<sect1><title>programlisting</title></sect1>
 	<sect1><title>强调的写法</title><para><emphasis role="strong">emphasis role="strong" "bold" "underline"</emphasis></para></sect1>
 	<sect1>
 		<title>图片</title>

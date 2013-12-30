@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>批处理学习</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo>
+  <section><title><emphasis>批处理文件所在路径表达式</emphasis></title>
+	<orderedlist>
+		<listitem>%0代指批处理文件自身</listitem>
+		<listitem>%~d0 是指批处理所在的盘符</listitem>
+		<listitem>%~dp0 是盘符加路径</listitem>
+		<listitem>cd %~dp0 就是进入批处理所在目录了</listitem>
+		<listitem>%~d0 %~dp0  俩行代码，都写，才能保证，进入批处理文件所住目录</listitem>
+	</orderedlist>
+  </section>
+  <section><title>批处理代码，接收CLI中传递的参数</title>
+      <para>set service_exe=%1 指处理=号，两边不能加空格</para>
+  </section>
+  <section><title>批处理：“点击任意键退出” pause</title>
+		<para>pause   这一句会提示，“请按任意键继续. . .”</para>
+  </section>
+</article>

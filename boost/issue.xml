@@ -44,6 +44,22 @@
   </section>
   <section>
 	<title>boost互斥体的用法</title>
-	<para>boost::mutex m_mutex; boost::mutex::scoped_lock lock(m_mutex);</para>
+	<para>头文件boost/thread/mutex.hpp boost::mutex m_mutex; boost::mutex::scoped_lock lock(m_mutex);</para>
+  </section>
+  <section><title>boost thread obj 析构 不能使 线程退出</title><para><![CDATA[
+线程: 是io_service::run
+注意，这个智能指针析构时，也不会退出线程，用reset(),置空，也不能退出线程。
+最后调用io_service::stop，来结束的。
+  ]]></para></section>
+  <section>
+	<title>boost智能指针的用法</title>
+	<para><![CDATA[
+下面这段代码的错在那里？
+boost::scoped_ptr<boost::thread> m_comrev_thread;
+m_comrev_thread = new boost::thread(boost::bind(&CLocationDlg::ComRevThread, this));
+
+应该这样写
+this->thr.reset(new boost::thread(boost::ref(*this->proc)));
+	]]></para>
   </section>
 </article>
