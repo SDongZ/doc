@@ -46,8 +46,26 @@ all the received data bytes as indicated above and then XORs the received FCS fi
 		<listitem>命令类型Bit 0 – 置1表示是响应消息，置0表示是</listitem>
 		<listitem>命令类型Bit 1 – Subscription Bit – if set, this bit indicates that this message was the result of a subscription（订阅） to a callback service.</listitem>
 		<listitem>命令类型Bit 2 – Debug/Trace Bit – if set, this bit indicates that this message is either a Debug or Trace message</listitem>
-		<listitem>命令类型Bit 3 - Reserved
-</listitem>
+		<listitem>命令类型Bit 3 - Reserved</listitem>
 	 </orderedlist>
+	 <itemizedlist><emphasis>SYS_APP_MSG_RESPONSE: Cmd=0x1018; Len=var; Endpoint; Data</emphasis>
+		<listitem>Endpoint is a byte field – this represents the application endpoint the data is from.</listitem>
+		<listitem>Data is a variable length field – raw data packet from an application endpoint.</listitem>
+	 </itemizedlist>
+	 <itemizedlist><emphasis>一些概念</emphasis>
+		<listitem>短地址 : short-address; 2字节; 低->高位</listitem>
+		<listitem>串（簇）: cluster; ZigBee网络通信的数据结构; 串ID 2字节。 ID + LEN + DATA</listitem>
+		<listitem>端口，终端 : Endpoint; 2字节; 0-255; 0-应用层与其它层通信端口; 241-254-保留它用; 255-广播数据端口</listitem>
+	 </itemizedlist>
+	 <itemizedlist><emphasis>Blind Node Find Response (Cluster ID: 0x0014) : 其后跟1字节，表示后面数据的长度</emphasis>
+		<listitem>(0)     Status 0 – Success   1 – Not enough Reference Node responding </listitem>
+		<listitem>(1 - 2) Blind Node’s calculated X position Bits 15-2 – whole meters Bits 1-0 – 0.25 meters</listitem>
+		<listitem>(3 - 4) Blind Node’s calculated Y position Bits 15-2 – whole meters </listitem>
+		<listitem>(5)     Number of Reference Nodes used in calculation 0 – 8 </listitem>
+		<listitem>(6 - 7) Closest (based on RSSI) Reference Node’s short address 0x0000 – 0xFFFA, 0xFFFE is invalid</listitem>
+		<listitem>(8 - 9) Closest Reference Node’s X position Bits 15-2 – whole meters Bits 1-0 – 0.25 meters </listitem>
+		<listitem>(10 - 11) Closest Reference Node’s Y position Bits 15-2 – whole meters Bits 1-0 – 0.25 meters</listitem>
+		<listitem>(12)      Closest Reference Node’s RSSI</listitem>
+	 </itemizedlist>
   </section>
 </article>

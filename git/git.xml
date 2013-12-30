@@ -37,6 +37,8 @@
 	  <listitem> "C:\Program Files\Notepad++\notepad++.exe" -multiInst -nosession  打开新窗口</listitem>
 	  <listitem> 设置"C:\Program Files\Notepad++\notepad++.exe" -multiInst -nosession后打开的临时文件不对</listitem>
 	  <listitem> 设置notepad默认保存为UTF8，换行符为lf: <emphasis role="strong">好像没有办法</emphasis></listitem>
+	  <listitem>在Git Gui中查看UTF-8编码的文本文件时？git config --global gui.encoding utf-8</listitem>
+	  <listitem>怎么添加中文目录名称？By default, git will print non-ASCII file names in quoted octal notation, i.e. "\nnn\nnn...". This can be disabled with.  git config [--global] core.quotepath off</listitem>
     </orderedlist>
   </section>
   <section>   

@@ -36,7 +36,7 @@
   </section>
   <section>
 	<title>LOG 宽字符版本</title>
-	<para>LOG 宽字符版本</para>
+	<para>LOG 宽字符版本  <![CDATA[BOOST_LOG(SKLog::get()) << L"启动程序";]]> 可编译,但运行时会出错</para>
   </section>
   <section>
 	<title>boost::log::keywords::file_name = log_file 指定的文件无法创建的问题</title>
