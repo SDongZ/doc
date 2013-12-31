@@ -62,4 +62,9 @@ m_comrev_thread = new boost::thread(boost::bind(&CLocationDlg::ComRevThread, thi
 this->thr.reset(new boost::thread(boost::ref(*this->proc)));
 	]]></para>
   </section>
+  <section>
+	<title>boost::asio 读串口 USB转的串口的区别</title>
+	<para>open close  cancel 都会引起串口读事件。 USB转的会一直读，没有异步IO机制（可能与驱动有关）。
+	关闭与读取之间不用互斥来保护boost::asio::serial_port对象？</para>
+  </section>
 </article>

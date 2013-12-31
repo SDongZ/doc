@@ -1,8 +1,72 @@
+在做CC2431时，与USB转的串口通信时，关闭串口的时候死锁
+它与正常串的区别是：会不停的发出异步读命令（可能与驱动有关）。
 
+可能的原因：
+m_serial_port.close  等待驱动返回停止信号。
+驱动发出的读命令，又被m_serial_port.close的互斥休，锁住了。
 
+http://msdn.microsoft.com/en-us/library/ff802693.aspx
+串口通信开发文档。
+Overlapped I/O operation
 
+boost::asio::socket 异步读写时  socket关闭问题？需要同步吗？
 
+Using the attached sample program (a slightly modified version of the daytime3 tutorial). When I connect with a telnet session to the server and close the connection directly I get the following output from the server: Transfer status: Success. Transfer status: Broken pipe. Transfer status: Broken pipe. Transfer status: Broken pipe.
 
+After the first error I close the socket and would expect a boost::asio::error::operation_aborted error instead of the broken pipe.
+
+Reproduced under both Debian Lenny (gcc 4.3.4) and Windows XP (MSVC 2008).
+当调用close后，正在写的操作，就completed with an error as soon as the client closed the connection
+The behaviour is correct. The write operations are not pending when you call close, it's just that the handlers haven't been called yet. The write operations themselves completed with an error as soon as the client closed the connection.
+
+一个boost::asio::socket, 在不同的线程，写，不加互斥，是不安全的。
+The only way to protect you from hitting this case is to build your program to avoid situations like this.
+
+One way to do that is by writing an application layer send buffer 
+which a single thread is responsible for pushing onto the socket. 
+That way you could protect the send buffer itself only. 
+Keep in mind though that a simple std::vector won't work, 
+since adding bytes to the end may end up re-allocating it, 
+possibly while there is an outstanding async_write_some() referencing it. 
+Instead, it's probably a good idea to use a linked list of buffers, a
+nd make use of the scatter/gather feature of asio.
+
+write and async_write are not thread safe in the manner you are using them. 
+The canonical way to approach this is to queue your messages, then write them out one at a time.
+
+Tip::tcp::socket  hread Safety
+Distinct objects: Safe.
+Shared objects: Unsafe.
+
+boost::socket对象在工作线程中同步读写的情况，在另一线程里关闭？没有常规的办法。
+Thread-safely closing a boost::asio::ip::tcp::socket being used synchronously
+异步读写的情况下，可以先cancel
+If your acceptor is in async_accept, you can call ip::tcp::acceptor::cancel() to cancel any async operations on it. 
+试验结果，虽然cancel了，还是会接收到数据（m_serial_port.cancel  m_serial_port.close 那个会再引导异步I/O操作？）
+
+Cancel is useful if you want to stop pending operations without closing down the socket.
+Note that the Boost documentation recommends using close for greater portability (from doc page):
+... For portable cancellation, consider using one of the following alternatives:
+Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+Note however the remarks for cancel() also state When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. 
+This function does not have the problems described above. 
+–  Sam Miller Jun 22 '11 at 15:33 
+thank you and Sam Miller for help,i understand a little now,thank you
+
+cancel won't close the socket, so use cancel if you intend to continue using the socket object. In particular, if you have code in asynchronous handler methods that references the socket's member functions, you may not want to close the socket until you are guaranteed that your currently executing asynchronous handlers have completed.
+
+cancel doesn't guarantee anything about currently executing asynchronous handlers, it only guarantees (per the boost documentation) that "This function causes all outstanding asynchronous connect, send and receive operations to finish immediately" in the case of the socket::cancel() call, or "This function forces the completion of any pending asynchronous operations on the host resolver" in the case of the resolver::cancel() call. This "completion" means that boost will call your asynchronous handler method, it has no jurisdiction to inject any cancellation logic into your asynchronous handler (not to mention it doesn't know about the handler's implementation to begin with).
+
+I would suggest adding your own logic into your asynchronous handler method to handle the case where the socket/resolver/etc. is canceled. If you are calling the cancel method, then you likely have the ability to communicate this cancellation to the asynchronous handler method.
+
+basic_serial_port::close (1 of 2 overloads)
+
+Close the serial port.
+
+void close();  根据下面的解释，Close前没有必要调用cancel
+This function is used to close the serial port. Any asynchronous read or write operations will be cancelled immediately, and will complete with the boost::asio::error::operation_aborted error.
 
 更改编辑框的字体
 CWindow::SetFont
