@@ -1,9 +1,4 @@
-在做CC2431时，与USB转的串口通信时，关闭串口的时候死锁
-它与正常串的区别是：会不停的发出异步读命令（可能与驱动有关）。
 
-可能的原因：
-m_serial_port.close  等待驱动返回停止信号。
-驱动发出的读命令，又被m_serial_port.close的互斥休，锁住了。
 
 http://msdn.microsoft.com/en-us/library/ff802693.aspx
 串口通信开发文档。
