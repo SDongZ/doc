@@ -53,18 +53,18 @@
   ]]></para></section>
   <section>
 	<title>boost智能指针的用法</title>
-	<para><![CDATA[
+	<para><programlisting><![CDATA[
 下面这段代码的错在那里？
 boost::scoped_ptr<boost::thread> m_comrev_thread;
 m_comrev_thread = new boost::thread(boost::bind(&CLocationDlg::ComRevThread, this));
 
 应该这样写
 this->thr.reset(new boost::thread(boost::ref(*this->proc)));
-	]]></para>
+	]]></programlisting></para>
   </section>
   <section>
-	<title>boost::asio 读串口 USB转的串口的区别</title>
+	<title>boost::asio 读串口 USB转的串口的区别(CC2431定位时)</title>
 	<para>open close  cancel 都会引起串口读事件。 USB转的会一直读，没有异步IO机制（可能与驱动有关）。
-	关闭与读取之间不用互斥来保护boost::asio::serial_port对象？</para>
+	关闭与读取之间不用互斥来保护boost::asio::serial_port对象？</para><para>在做CC2431时，与USB转的串口通信时，关闭串口的时候死锁它与正常串的区别是：会不停的发出异步读命令（可能与驱动有关）。可能的原因：m_serial_port.close  等待驱动返回停止信号。驱动发出的读命令，又被m_serial_port.close的互斥休，锁住了。</para>
   </section>
 </article>
