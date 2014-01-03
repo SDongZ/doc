@@ -1,4 +1,100 @@
+std::fstream  open 
+语法: 
+  void open( const char *filename );
+  void open( const char *filename, openmode mode );
 
+函数open()用于文件流。它打开filename 并将其与当前的流相关联。可以选择的模式有： 
+
+模式 含义 
+ios::app 添加输出 
+ios::ate 当已打开时寻找到EOF 
+ios::binary 以二进制模式打开文件 
+ios::in 为读取打开文件 
+ios::out 为写入打开文件 
+ios::trunc 覆盖存在的文件 
+
+
+ptime -> utc 一个整数
+ptime -> string
+
+http://www.howtogeek.com/howto/28653/debunking-myths-is-hiding-your-wireless-ssid-really-more-secure/
+隐藏SSID没有意义？
+netsh wlan show networks mode=bssid
+
+inSSIDer began as a replacement for NetStumbler, a popular Windows Wi-Fi scanner, which had not been actively developed for several years and reputedly did not work with modern 64-bit operating systems or versions of Windows higher than Windows XP. The project was inspired by Charles Putney on The Code Project
+
+最好的JSON解析器
+http://stackoverflow.com/questions/245973/whats-the-best-c-json-parser
+JsonCpp (http://jsoncpp.sourceforge.net/)
+json_spirit::write( root, json_spirit::pretty_print );
+
+I'm using JSON Spirit on a project at the moment, I'm impressed with it so far.
+Note that it does rely on Boost (if only for headers).
+Handy features:
+Has Unicode support.
+Uses std::vector to hold Arrays which helps interoperability.
+Provides a pretty print function (write_formatted).
+Has read and write functions for strings and streams.
+Note that Objects are also implemented using vector (not map), which means slower access, but it does mean that the order of elements is maintained.
+
+Boost property_tree does not fully support all type information. 
+From the documentation: JSON values are mapped to nodes containing the value. 
+However, all type information is lost; numbers, as well as the literals "null", "true" and "false" 
+are simply mapped to their string form
+
+Packet injection(注入)
+By utilizing raw sockets, NDIS function calls, or direct access to a network adapter kernel mode driver, arbitrary packets can be constructed and injected into a computer network. These arbitrary packets can be constructed from any type of packet protocol (ICMP, TCP, UDP, and others) since there is full control over the packet header while the packet is being assembled
+
+The basic service set (BSS) provides the basic building-block of an 802.11 wireless LAN.
+Each BSS or ESS is identified by a service set identifier (SSID) - a 1 to 32 byte string
+
+An extended service set (ESS) is a set of two or more interconnected wireless BSSs that share the same SSID (network name), 
+security credentials and integrated (providing translation between 802.3 and 802.11 frames) wired local area networks that appear 
+as a single BSS to the logical link control layer at any station associated with one of those BSSs 
+which facilitates mobile IP and fast secure roaming applications; 
+the BSSs may work on the same channel, or work on different channels to boost aggregate throughput.
+
+boost::system::error_code 的类型判断
+void SerialPort::on_receive_(const boost::system::error_code& ec, size_t bytes_transferred)
+{
+	try {
+		//boost::mutex::scoped_lock lock( m_mutex );
+		
+		if( ec ) {                                          判断这个ERROR是否是，国为串已经关闭
+			// 如果出错了，直接读下次的
+			m_port.async_read_some( boost::asio::buffer( m_read_buf_raw, SERIAL_PORT_READ_BUF_SIZE), 
+				boost::bind( &SerialPort::on_receive_, this, 
+					boost::asio::placeholders::error, 
+					boost::asio::placeholders::bytes_transferred ) );
+			return;
+		}
+
+
+WinaMain 获取传递的参数
+MFC也可以像控制台那样获取命令行参数：
+利用GetCommandLineW()函数获得命令行参数，
+利用CommandLineToArgvW()函数解析命令行参数
+LPWSTR *szArglist = NULL;   
+int nArgs = 0;   
+szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);   
+if( NULL != szArglist)   
+{   
+//szArglist就是保存参数的数组   
+//nArgs是数组中参数的个数   
+//数组的第一个元素表示进程的path，也就是szArglist[0]，其他的元素依次是输入参数。   
+}   
+//取得参数后，释放CommandLineToArgvW申请的空间   
+LocalFree(szArglist); 
+
+i/o 读写的codecvt local facet
+boost/program_options/detail/utf8_codecvt_facet.hpp
+		static std::locale utf8Locale( std::locale( "" ), new boost::program_options::detail::utf8_codecvt_facet() );
+		boost::property_tree::wptree xml;
+		boost::property_tree::read_xml( wstring2string( xml_file ), xml, boost::property_tree::xml_parser::trim_whitespace, utf8Locale );
+		
+static std::locale utf8Locale( std::locale( "" ), new boost::program_options::detail::utf8_codecvt_facet() );
+	boost::property_tree::read_xml( wstring2string( xml_path ), ptree, boost::property_tree::xml_parser::trim_whitespace, utf8Locale );
+	boost::property_tree::write_xml( wstring2string( xml_path ), ptree, utf8Locale, settings );
 
 http://msdn.microsoft.com/en-us/library/ff802693.aspx
 串口通信开发文档。
@@ -13,6 +109,19 @@ After the first error I close the socket and would expect a boost::asio::error::
 Reproduced under both Debian Lenny (gcc 4.3.4) and Windows XP (MSVC 2008).
 当调用close后，正在写的操作，就completed with an error as soon as the client closed the connection
 The behaviour is correct. The write operations are not pending when you call close, it's just that the handlers haven't been called yet. The write operations themselves completed with an error as soon as the client closed the connection.
+
+CloseHandle(impl.handle_) 串口，即使只有一个线程，也会死在句。退不出来。USB2PORT
+I agree with both previous posts.
+
+This is not a normal situation.
+Unplugging the USB device usually helps.
+This problem is related to the glitches in the FTDI driver, which is responsible for implementing a virtual COM port. On the other hand those "glitches" are related to various malfunctions of the USB devices. (Of course this doesn't justify the FTDI driver).
+
+BTW there're several other known problems with some FTDI drivers:
+
+Sometimes call to CloseHandle just hangs the calling thread.
+Sometimes also the application is still "visible" in the task manager, even after it's closed. Task manager can't terminate the application, and the debugger can't be attached to it. Its EXE file is locked (can't be erased).
+Usually unplugging the USB device immediately helps in those situations. The FTDI driver, which seems to be "waiting for something" awakes.
 
 一个boost::asio::socket, 在不同的线程，写，不加互斥，是不安全的。
 The only way to protect you from hitting this case is to build your program to avoid situations like this.
