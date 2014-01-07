@@ -1,3 +1,99 @@
+boost::date_time 的时间 -> 字符串的转换
+                 字符串 -> 时间的转换
+
+		CPositionData tmp(x, y, boost::posix_time::ptime::is_not_a_date_time); 这句话是错的，为什么？ 
+		CPositionData tmp(x, y, boost::posix_time::not_a_date_time); 这个是正确的
+		
+时间点构造
+tmp.time = boost::posix_time::microsec_clock::local_time();
+ptime d3(not_a_date_time);
+
+时长构造
+tmp.duration = tmp.time - tmp.time;  构造时间段  tmp.duration = boost::posix_time::time_duration(0, 0, 0, 0);
+
+using namespace boost::posix_time;
+time_duration td(1,2,3,4); //01:02:03.000000004 when resolution is nano seconds
+time_duration td(1,2,3,4); //01:02:03.000004 when resolution is micro seconds
+
+using namespace boost::posix_time;      
+time_duration td = hours(1) + seconds(10); //01:00:01
+td = hours(1) + nanoseconds(5); //01:00:00.000000005
+
+Syntax	Description
+Example
+time_duration(hours,
+              minutes,
+              seconds,
+              fractional_seconds)
+Construct a duration from the counts. The fractional_second parameter is a number of units and is therefore affected by the resolution the application is compiled with (see Build-Compiler Information). If the fractional_seconds argument exceeds the limit of the compiled precision, the excess value will be "carried over" into the seconds field. See above for techniques to creating a resolution independent count.
+time_duration td(1,2,3,9);
+//1 hr 2 min 3 sec 9 nanoseconds
+time_duration td2(1,2,3,123456789);
+time_duration td3(1,2,3,1000);
+// with microsecond resolution (6 digits)
+// td2 => "01:04:06.456789"
+// td3 => "01:02:03.001000"
+// with nanosecond resolution (9 digits)
+// td2 => "01:02:03.123456789"
+// td3 => "01:02:03.000001000"
+time_duration(special_value sv)
+Special values constructor. Important note: When a time_duration is a special value, either by construction or other means, the following accessor functions will give unpredictable results:
+hours(), minutes(), seconds(), ticks(), 
+fractional_seconds(), total_nanoseconds(),
+total_microseconds(), total_milliseconds(),
+total_seconds()
+The remaining accessor functions will work as expected.
+
+std::string to_simple_string(time_duration)
+To HH:MM:SS.fffffffff were fff is fractional seconds that are only included if non-zero.
+10:00:01.123456789
+std::string to_iso_string(time_duration)
+Convert to form HHMMSS,fffffffff.
+100001,123456789
+
+time_duration td(1,2,3, 1000);
+td.fractional_seconds(); // --> 1000
+
+防止程序重新打开的类
+
+可以确认：如果需要关闭后，重新打开同一个串口，最好的方法是，用新串口对象及新io_service对象.
+
+	if(m_port) m_port.reset(); //在对应的服务重置前，先把旧的串口对象删除了（因为删除析构的时候，需要用到io_service）
+	m_io_service.reset(new boost::asio::io_service());
+	m_port.reset(new boost::asio::serial_port(*m_io_service));
+
+		//FIX：下面这个顺序是否有问题？  不正确，这样串口仍补占用，未关闭. 先调用m_port->close()再关闭服务就可以了。
+		if(m_io_service) m_io_service->stop();
+		if(m_io_service_thread) m_io_service_thread->join();
+		if(m_port) m_port->close();
+
+
+m_io_service.reset(new boost::asio::io_service);
+new boost::asio::io_service 后面需要添加括号吗？
+
+最近需要讀取及轉換USB devices的模式，會用到SetupDi****相關的API，這些API都是放在setupapi.h裡，找了很久，在網路上也有人提到，但都是片面的，也都分散在不同的地方，現在我就將其整合放在我自己的Blog裡，這樣下次要用也不會忘記。這一組API是Microsoft PlatformSDK提供的，路徑也在VS裡
+
+// Open a handle to the serial port.
+  ::HANDLE handle = ::CreateFileA(name.c_str(),
+      GENERIC_READ | GENERIC_WRITE, 0, 0,
+      OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+  if (handle == INVALID_HANDLE_VALUE)
+  {
+    DWORD last_error = ::GetLastError();
+    ec = boost::system::error_code(last_error,
+        boost::asio::error::get_system_category());
+    return ec;
+  }
+  
+  	if(m_port) {
+		m_port->stop();
+		//m_port.reset();
+	}
+	m_service.stop();    先停止了SERVICE,再调用串口对象的关闭函数,关闭是无效的。
+	if(m_comrev_thread) m_comrev_thread->join();
+	
+SerialPort 对象重新打开，最好的方法，是创建新的对象。同时其对应的SERVICE也需要，创建新的对象。
+
 std::fstream  open 
 语法: 
   void open( const char *filename );
@@ -113,6 +209,11 @@ The behaviour is correct. The write operations are not pending when you call clo
 CloseHandle(impl.handle_) 串口，即使只有一个线程，也会死在句。退不出来。USB2PORT
 I agree with both previous posts.
 
+This is a bug in the driver for FTDI chipset under Windows XP.
+The native method CloseHandle() never returns, when the port handle is closed.
+
+https://connect.microsoft.com/VisualStudio/feedback/details/202137/serialport-close-hangs-the-application
+
 This is not a normal situation.
 Unplugging the USB device usually helps.
 This problem is related to the glitches in the FTDI driver, which is responsible for implementing a virtual COM port. On the other hand those "glitches" are related to various malfunctions of the USB devices. (Of course this doesn't justify the FTDI driver).
@@ -209,6 +310,210 @@ CComboBox:: 获取当前编辑框的文本
 	CString cur_port;
 	m_serial_port_cbox.GetWindowText(cur_port);
 
+	办理就诊卡、挂号、预约取号及收费指南
+作者:张福春 来自：本网 时间：2012-4-26
+文章点击率:4469      栏目点击率：20388
+一、办理实名就医卡
+
+ 1、 在我院挂号就诊前，需先办理我院实名就医卡。
+
+ 2、 办理时需持病人本人的有效身份证件：身份证、护照、军官证等有效证件等，北京市医保病人必须持社保卡办理。
+
+ 3、 建卡时间及地点：6:45-17:00
+
+                     6:45-8:00只可在一层大厅15、16号窗口办理
+
+ 12:00-13:30只可在13号窗口办理
+
+ 其它时间各楼层均可办理
+
+ 周末及节假日只可在一层大厅办理。
+
+4、 办卡时请您提供真实有效的信息，尤其是联系方式。
+
+二、挂号、预约取号及收费  挂号时请携带我院实名就诊卡，北京市医保患者请出示社保卡
+
+挂号
+
+     时间：7:00-17:00
+
+      7:00开始挂当日全天号，11:00停止挂上午号，16:30停止挂下午号
+
+      儿科实行24小时门急诊，请先带患儿到一层儿科分诊台初检，持条挂号。
+
+       门诊大厅16号窗口是儿科专用挂号窗口，若其它挂号窗口开放也可挂号。
+
+       节假日及17点后请到地下一层急诊挂号处挂儿科号。
+
+       特需门诊：7:00开始在门诊楼八层挂号处挂号。
+
+地点：门诊楼各层均设有挂号窗口，可挂除生殖中心外科室的号。
+
+          7:00-8:00，12:00-13:00只开放一层大厅挂号窗口（请注意窗口提示）。 
+
+      五官科楼挂号室位于一层大厅，可挂眼科、口腔科、耳鼻喉科及内科系统号
+
+      生殖中心挂号室位于生殖中心，只可挂生殖中心号。
+
+      周六日及节假日挂号只开放一层大厅挂号窗口（请注意窗口提示）
+
+预约取号：
+
+时间：7:00-16:30
+
+地点： 门诊楼 ： 7:00-8:00一层12号窗口，8:00后各楼层挂号窗口均可取号
+
+       五官科楼 ： 一层挂号窗口 
+
+      取号时请携带您预约时提供的身份证（医保病人带医保卡）、医院就医卡、短信验证码
+
+收费：
+
+时间：7:30-18:00
+
+地点： 8:00-12:00，13:30-17:00  各楼层均可收费
+
+       7:30-8:00门诊楼三层6号收费窗口开放，12:00-13:30，17:00-18:00门诊楼一-四层部分收费窗口开放，五官科楼一层部分窗口开放（请注意窗口提示）
+
+       周六日及节假日只开放门诊楼一至四层部分收费窗口（请注意窗口提示）
+
+其他
+
+      医保明细打印、财务结算相关问题咨询在门诊大厅一号窗口
+
+各挂号、收费窗口均可办理就医卡与社保卡的关联业务
+
+
+为了落实北京市卫生局统一要求，我院将于2011年11月8日（周二）将预约挂号平台更换到全市统一的114预约挂号平台，具体调整如下：
+
+一、预约挂号方式
+
+电话预约挂号：114（北京地区）/010-114（非北京地区）（24小时）
+
+网络预约挂号： www.bjguahao.gov.cn（24小时）
+
+二、预约须知
+
+1、预约实名制：预约时，请提供就诊患者真实姓名、身份证号（身份证、军官证、护照）、您本人手机号等信息；
+
+2、预约范围：①电话、网络及本院医师工作站：电话、网络预约挂号支持24小时服务（注：周六、日及节假日的门诊号不在预约范围内）；②每天上午9:30开始放号，下午3:00停止次日预约挂号；
+
+3、就诊取号：预约成功后，请患者于就诊当日携带有效证件及我院就医卡到医院指定地点取号（核对与预约登记实名信息一致的本人有效证件和预约识别码），就医卡中所填身份证号、姓名、性别必须与预约时提供的患者身份信息一致，否则医院不提供预约的号源。(无就医卡的患者取号前须先到我院门诊发卡中心办理我院就医卡，医保患者须在办卡的同时提供社保卡进行关联)。
+
+4、取号时间：电话、网络预约及现场预约取号时间为星期一～星期五，详细信息根据手机短信提示，过时号源作废。①北医三院院本部：7:00-16:30；②西三旗第二门诊部：8:30 -16:30；③中央党校院区：上午8:00-10:30，下午13:15-15:30；
+
+5、取号窗口地点：
+
+ ①门诊楼一层预约挂号取号处（除眼科、口腔科、耳鼻喉科外的号源）
+
+ ②五官科楼一层挂号处（眼科、口腔科、耳鼻喉科号源）
+
+ ③门诊楼八层特需门诊挂号处（特需门诊号源）
+
+ ④西三旗北医三院第二门诊部挂号处
+
+ ⑤中央党校院区
+
+ ⑥生殖医学中心
+
+    6、就诊顺序：预约挂号患者的就诊顺序在您预约成功时就已确定，请按照成功短信提示的建议时间来院就诊；
+
+    7、预约取消：挂出的预约号如办理退号，至少在就诊前一工作日15:00前通过网站或者114电话凭预约识别码进行预约取消；
+
+    8、预约限制：按照北京市卫生局统一平台预约的要求，同一患者实名（有效证件号）在同一就诊日、同一医院、同一科室只能预约1次；在同一就诊日的预约总量不可超过2次；在七日内的预约总量不可超过3次；
+
+9、爽约处理：①如预约成功后患者未能按时就诊且不办理取消预约号视为爽约；②无故爽约累计达到3次将进入系统爽约名单，此后3个月内将无法享受预约挂号服务。
+
+咨询电话： 82266899（周一至周五上午8：00—下午5：00）。
+
+
+北京大学第三医院
+
+2011年11月3日
+
+
+美國麻醉醫學會在1999年提出一套麻醉術前禁食原則，依食物的種類區分所需的空腹時間：
+
+正餐或富含油脂的食物：空腹時間至少八個小時。
+
+簡單的餐點：胃排空時間較正餐快，所以空腹時間至少六小時。
+
+乳品：乳製品與胃酸作用後，會產生結塊的固體，效果等同於簡單的餐
+      點，空腹時間至少六小時。
+
+母乳：母乳停留在胃內的時間較牛奶短，空腹時間四小時，可以減少嬰
+      幼兒因飢餓而哭鬧。
+
+清流質：不含雜質或添加物、不含固體例如果粒的飲料，例如：白開
+        水、清茶，這些清流質的飲料，在胃內停留的時間較短，空腹
+        時間大於二小時即可。
+		
+		
+		
+許多病患要接受手術之前，一定有個印象深刻的事，那就是被告知絕對不可以吃東西，有些時候護士小姐就直說：「晚上十二點以後不可以吃東西？包括喝水ㄛ!」。對於不常有餓肚子經驗的人來說，這可真是不好受的事。所以大多數的人心裏都會有個大問號：為什麼手術麻醉前一定要禁食？禁食時間要多久才夠？禁食是不是什麼東西都不能吃，連藥物都得停用嗎？
+
+手術麻醉前一定要禁食嗎?
+
+病人安全是所有手術與麻醉的最高準則， 如何維護病人安全是所有醫護人員始終的責任。如果病人吃了東西來接受麻醉， 麻醉當中有可能因為胃中食物嘔出回流入口腔，甚至進入肺部， 引起“吸入性肺炎”，其死亡率根據統計可以高達百分之三十。為了防止如此嚴重併發症的發生，麻醉之前的禁食對於手術病患的安全來說，實在是非常重要的。半身麻醉的病人也許會以為，我只有下半身麻醉，也需要禁食嗎？其實所有手術麻醉都是要有萬全的準備，手術進行中也有種種不預期的因素，使得原來的半身麻醉必須改為全身麻醉。所以，雖然是半身麻醉的病人，為了安全的關係，也是要先遵守禁食的規定。
+
+患者需要禁食多久的時間呢？
+
+美國麻醉醫學會在1999年提出一套麻醉術前禁食原則，依食物的種類區分所需的空腹時間：
+
+正餐或富含油脂的食物：空腹時間至少八個小時。
+
+簡單的餐點：胃排空時間較正餐快，所以空腹時間至少六小時。
+
+乳品：乳製品與胃酸作用後，會產生結塊的固體，效果等同於簡單的餐
+      點，空腹時間至少六小時。
+
+母乳：母乳停留在胃內的時間較牛奶短，空腹時間四小時，可以減少嬰
+      幼兒因飢餓而哭鬧。
+
+清流質：不含雜質或添加物、不含固體例如果粒的飲料，例如：白開
+        水、清茶，這些清流質的飲料，在胃內停留的時間較短，空腹
+        時間大於二小時即可。
+
+傳統的規定是從手術日的凌晨十二點起，停止進食一切的固體或流體食物。但是禁食太久，一些老人、小孩很可能因飢餓難耐及口乾舌燥而顯得焦躁不安，甚至發生低血糖的情形。而且有時候手術開始時間很難確定，太長時間的禁食實在難以忍受，所以有些醫院會改成以上比較人性且合乎安全的方法。
+
+新生兒、三歲以下小兒在距離麻醉兩個小時之前，則可喝一些清澈的液體如白開水或不含果粒或果渣的果汁或糖水，這樣可減少嬰兒的哭鬧。
+
+但是為了安全起見，以上原則並不適用孕婦、胃食道逆流、吞嚥失調、腸蠕動異常、或預計施行腸道手術的患者，這些患者還是以傳統午夜禁食較為保險。
+
+禁食是不是連藥物都得停用?
+
+一般說來，在禁食期間包括口服藥物大都停止服用。但是心血管的藥物如抗高血壓藥，還是應該配少量白開水吞服以防止手術期間血壓大幅度的變化。
+
+緊急例外狀況
+
+有些緊急手術無法等病人空腹的時間，這個時候的禁食就不在以上的規定。病人得冒一點風險，但麻醉醫師仍然會盡全力為病人預防胃內容物逆流及“吸入性肺炎”發生。
+
+術前禁食是麻醉前十分重要且攸關生命安全的大事，必須由您配合確實執行及誠實告訴麻醉醫師，才能避免一些可以避免的危險。在您或您的家人手術前，麻醉科同仁都會先作術前訪視，舉凡有關麻醉的細節及禁食的規定，您都可以問個清楚，而本院麻醉科同仁也樂意本視病猶親的態度，為您詳細說明白。
+
+※醫療保健內容僅為參考之用，無法取代實際的醫療行為，如有任何疑問請洽詢相關科別之醫師，或有疾病應立即就醫。
 
 
 
+北医三院就医攻略，2010年3月版，希望你不要用到
+来源： 王夏复的日志
+1.首先要有就医卡，没就医卡不能挂号，不能就医，不能开药，不能拍片，只能四处逛和顾客(病人们)侃大山。目前就医卡可在北医三院急诊楼门口西侧简易小亭内及北医三院眼科大楼一层大厅中办理。办理就医卡要带身份证或其他有效证件，并需要五元钱，办好的就医卡上贴了个条，条上有条形码和你的名字。
+
+2.就医卡开通电话预约功能(电话预约卡)
+
+所谓的电话预约卡其实就是指就医卡开通了电话预约功能，在办卡的地方就可以开通，开通此功能不花钱。为什么要开通这个功能呢？因为能电话预约成功是极其幸福的，而凌晨去排号是极其痛苦的。
+
+3.向就医卡内存钱
+
+就医卡不存钱是无法进行电话预约的，存钱的地方在北医三院眼科大楼一层大厅。对喽，如果你在急诊楼门口办卡，还得到眼科大楼去存钱。一般存50即可，除非你要挂特需号(见下面的解释)。存钱之后向工作人员要一本电话预约指南，上面说得很详细，并有每位专家出诊的时间、数字代码、专家专长等(这个也可以上网查一查)，没有这个指南基本无法进行电话预约。
+
+4.特需号、专家号、普通号
+
+普通号不用说了，5元钱就可以挂。专家号分7元、9元、14元三种，14元是主任医师、教授。特需号是什么意思呢？就是这个时候大夫本来无需出诊，但为了方便患者就医，另开辟一个时间段，挺好的吧，不过特需号一般为100、200、300元，对了，是人民币。
+
+5.具体挂号
+
+一般一个大夫出诊的时间是以半天为单位的，半天时间大约看20个号左右，这20个号有6个左右是供电话预约的，有11个左右是供门诊挂号处卖的，有3个左右供医生在就诊期间亲自为病人预约的(比如一个星期之后复检)。电话预约就不说了，预约指南上说得很详细，挂未来三天的，当天15：00之后不能挂第二天的。如果没预约上，还一定要看病，那就得去排队了，主要说说排队的情况，当天晚上22点之后，可以去三院门口找保安登记，准备排第二天的号，但并不是登记就可以开心地走了，等到第二天早上7点开始售号的时候再来就行，而是要一直在那儿等(汗啊...)，因为那儿的保安会每一个小时左右点一次名，如果你不在，那得，重新开始排吧。第二天凌晨三点左右时，大约会有50个人，大家可以估算去的时间。强烈推荐两人同去！三院门诊对面有永和大王、KFC等，两人可以换着去吃个东西，上个wc之类。第二天6点之前，都是在外面站着等(可以拿个小马扎)，6点时保安会把队伍放入大厅中，这时队伍会分为数个小队(因为有好多个挂号窗口，一楼7个，二楼几个不清楚)，一直等到7点，正式开始排号。如果你排在第一个，别美，极有可能极有可能会有膀大腰圆的号贩子非常自觉地站在你的前面，你放心，你不惹他，他会很客气的，另外，保安绝对是站在你的对立面的。这样，就会导致你最想要号很可能就没有了...我就经历过4点排号没排到的杯具...各位看官一定要早去。
+
+6.挂不上怎么办？
+
+拖着疲惫的身躯，你出了门诊部，没挂上...怎么办...下次这个大夫就诊可能就是一周之后了...三种途径，看你是什么样的人了，第一，找号贩子，出300元钱，一定能拿到想拿的号。第二，挂一个该科室的普通号，然后上去找诊室外面的分号员，和她好好地说，你可以想方设法，最常用的是：“大夫...我就找专家开个药
