@@ -1,3 +1,90 @@
+Preventing Logoff or Suspend During a Burn
+If proper precautions are not made within an application, it is possible for a user to log off during a burn operation. This leads to the interruption of the burn process, which can result in lost data and possibly render the disc unusable.
+To avoid this problem, the application should process the WM_QUERYENDSESSION message which is delivered prior to log off. If the application receives this message while performing a burn operation, return FALSE to cancel the logoff procedure. If the application allows the user to decide whether to continue logging off, a warning should be provided indicating that user will lose data.
+Power transitions during the burn process can also create potential problems in the success of a burn activity. Preventing these complications during the burn process requires an application to be aware of when power transitions are about to take place. This is accomplished by by enabling the application to process the WM_POWERBROADCAST message. Applications developed for Windows XP or Windows Server 2003 can return BROADCAST_QUERY_DENY in response to PBT_APMQUERYSUSPEND, preventing Suspend during the burn process.
+Due to changes in the Power Management Model for Windows Vista and Windows Server 2008, the PBT_APMQUERYSUSPEND event is no longer delivered to applications. Instead the PBT_APMSUSPEND event is delivered, providing two seconds for an application to prepare for the transition.
+As a result of these changes, it is recommended that applications call the SetThreadExecutionState function to prevent a system idle time-out which ordinarily results in the transition to Suspend. It is important to remember that calling this function with the appropriate flags set will only prevent system idle, not an in-progress Suspend.
+
+
+http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
+Some OS-specific interfaces:
+
+Mac OS X: _NSGetExecutablePath() (man 3 dyld)
+Linux: readlink /proc/self/exe
+Solaris: getexecname()
+FreeBSD: sysctl CTL_KERN KERN_PROC KERN_PROC_PATHNAME -1
+FreeBSD if it has procfs: readlink /proc/curproc/file (FreeBSD doesn't have procfs by default)
+NetBSD: readlink /proc/curproc/exe
+DragonFly BSD: readlink /proc/curproc/file
+Windows: GetModuleFileName() with hModule = NULL
+
+To summarize:
+
+On Unixes with /proc really straight and realiable way is to:
+
+readlink("/proc/self/exe", buf, bufsize) (Linux)
+
+readlink("/proc/curproc/file", buf, bufsize) (FreeBSD)
+
+readlink("/proc/self/path/a.out", buf, bufsize) (Solaris)
+
+On Unixes without /proc (i.e. if above fails):
+
+If argv[0] starts with "/" (absolute path) this is the path.
+
+Otherwise if argv[0] contains "/" (relative path) append it to cwd (assuming it hasn't been changed yet).
+
+Otherwise search directories in $PATH for executable argv[0].
+
+Afterwards it may be reasonable to check whether the executable isn't actually a symlink. If it is resolve it relative to the symlink directory.
+
+This step is not necessary in /proc method (at least for Linux). There the proc symlink points directly to executable.
+
+Note that it is up to the calling process to set argv[0] correctly. It is right most of the times however there are occasions when the calling process cannot be trusted (ex. setuid executable).
+
+On Windows: use GetModuleFileName(NULL, buf, bufsize)
+
+boost 提出EXE当前路径
+boost 从文件路径里提出 文件名，及路径
+
+filesystem::path 类的成员
+// decomposition 分解
+        path  root_name() const;
+        path  root_directory() const;
+        path  root_path() const;
+        path  relative_path() const;
+        path  parent_path() const;
+        path  filename() const;
+        path  stem() const;
+        path  extension() const;
+		
+ // query
+        bool empty() const;
+        bool has_root_name() const;
+        bool has_root_directory() const;
+        bool has_root_path() const;
+        bool has_relative_path() const;
+        bool has_parent_path() const;
+        bool has_filename() const;
+        bool has_stem() const;
+        bool has_extension() const;
+        bool is_absolute() const;
+        bool is_relative() const;
+
+		
+// modifiers
+        void  clear();
+        path& make_absolute(const path& base);
+        path& make_preferred();  // ISO/IEC 9945: no effect. Windows: convert slashes to backslashes
+        path& remove_filename();
+        path& replace_extension(const path& new_extension = path());
+        void  swap(path& rhs);
+		
+#include <boost/filesystem.hpp>
+std::string filename_noext;
+filename_noext = boost::filesystem::path("D:\\files\\file.lua").stem().string().
+const char* result_as_const_char = filename_noext.c_str();
+
 wchar_t exe_path[MAX_PATH] = {0};
 	::GetModuleFileName(GetModuleHandle(NULL), exe_path, MAX_PATH);
 	::PathRemoveFileSpecW(exe_path);
