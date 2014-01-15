@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>WIFI WPA2-PSK</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo>
+  <section><title>一些资料</title>
+  <para><link xlink:href="http://stackoverflow.com/questions/16801270/parsing-wifi-packets-libpcap">parsing-wifi-packets-libpcap</link></para>
+  <para><link xlink:href="http://airscan.googlecode.com/svn-history/r2/trunk/radiotap-parser.c">radiotap-parser.c</link></para>
+  <para><link xlink:href="http://www.technologyuk.net/telecommunications/networks/wireless_networks.shtml">wireless_networks</link></para>
+  <para><link xlink:href="http://wenku.baidu.com/view/d659deea998fcc22bcd10d7e.html">aircrack-ng windows下使用方法</link></para>
+  <para><link xlink:href="http://null-byte.wonderhowto.com/how-to/hack-wi-fi-cracking-wpa2-psk-passwords-using-aircrack-ng-0148366/">hack-wi-fi-cracking-wpa2-psk-passwords-using-aircrack-ng</link></para>
+  <para><link xlink:href="http://null-byte.wonderhowto.com/how-to/hack-wi-fi-getting-started-with-terms-and-technologies-0147659">hack-wi-fi-getting-started-with-terms-and-technologies</link></para>
+  </section>
+  <section><title>aircrack-ng使用</title>
+  <para>airmon-ng start wlan0     (air monitor 监听模式)设置无线网卡模式 </para>
+  <para>airodump-ng mon0          (ctrl-c 退出)（air out dump）查看无线网络信息 </para>
+  <para>airodump-ng --bssid 08:86:30:74:22:76 -c 6 --write WPAcrack mon0 </para>
+  </section>
+  <section><title>back track 5使用</title>
+  <para>使用虚拟机方式 root/toor  startx</para>
+  <para>ifconfig -a 列出所有网卡，其中wlan0是能使用的</para>
+  <para>ifconfig wlan0 up         激活无线网卡 （这个没什么作用）</para>
+  </section>
+  <section><title>four-way handshake</title>
+  </section>
+</article>

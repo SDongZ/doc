@@ -46,6 +46,10 @@
 	<title>DocBook 所有元素</title>
 	<sect1>
 		<title>DocBook 列表类型</title>
+	<sect1><title>链接的标签 link xlink:href</title></sect1>
+	<sect1><title>表格的标签 table->tgroup cols=3 -> thread / tbody -> row -> entry</title></sect1>
+	<sect1>
+		<title>DocBook 列表类型</title>
 		<orderedlist>
 			<listitem>itemizedlist 和 带emphasis的itemizedlist  -> listitem</listitem>
 			<listitem>orderedlist -> listitem</listitem>

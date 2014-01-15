@@ -1,3 +1,0 @@
-http://stackoverflow.com/questions/16801270/parsing-wifi-packets-libpcap
-http://airscan.googlecode.com/svn-history/r2/trunk/radiotap-parser.c
-http://www.technologyuk.net/telecommunications/networks/wireless_networks.shtml
