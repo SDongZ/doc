@@ -1,0 +1,20 @@
+// 此源文件在Windows平台上必须保存为Unicode格式（即UTF-16小尾）
+// 因为包含的汉字“??”，不能在简体中文版Windows默认的代码页936（即GBK）中表示。
+// 该汉字在UTF-16小尾序中用4个字节表示，
+// Windows操作系统能正确显示这样的在UTF-16需用4字节表示的字符
+// 但是Windows API不能正确处理这样的在UTF-16需用4字节表示的字符，把它判定为2个UCS-2字符
+ 
+#include <windows.h>
+int main()
+{
+	const wchar_t lwc[]=L"??";
+ 
+	MessageBoxW(NULL, lwc, lwc, MB_OK);
+ 
+	int i = wcslen(lwc);
+	printf("%d\n", i);
+	int j = lstrlenW(lwc);
+	printf("%d\n", j);
+ 
+	return 0;
+}

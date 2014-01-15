@@ -1,3 +1,56 @@
+http://www.fullhan.com/cp_35.asp
+FH8735 高性能H.264编码芯片
+
+        FH8735是一款高性能的多通道视音频编码芯片，支持H.264 Main Profile和Baseline Profile。FH8735具有1路1920*1080，2路1280*720或者8路标清的实时编码能力、内置丰富的视频预处理功能和多样的I/O接口，可满足视频监控产品的各种需求，能有效提高产品的集成度并降低系统成本，为视频监控产业的高清化提供强大的编码动力。 
+          FH8735的目标应用包括嵌入式DVR、视频采集卡、DVS和百万素网络摄像机
+		  
+		  富瀚微电子有限公司成立于2004年4月，专注于视频监控芯片及解决方案，满足高速增长的数字视频监控市场对视频编解码和图像信号处理的芯片需求。
+   富瀚提供高性能视频编解码SoC和图像信号处理器芯片，以及基于这些芯片的视频监控产品方案。 
+    富瀚致力于与国内外设备制造商、解决方案提供商建立紧密合作关系，共同把握市场契机，为客户提供高性价的产品和服务，持续创造价值
+
+http://www.csdn.net/article/2014-01-03/2818015-tiny-hardware-development-boards-of-2013
+2013年终盘点：10款最精巧的硬件开发板
+
+// 此源文件在Windows平台上必须保存为Unicode格式（即UTF-16小尾）
+// 因为包含的汉字“??”，不能在简体中文版Windows默认的代码页936（即GBK）中表示。
+// 该汉字在UTF-16小尾序中用4个字节表示，
+// Windows操作系统能正确显示这样的在UTF-16需用4字节表示的字符
+// 但是Windows API不能正确处理这样的在UTF-16需用4字节表示的字符，把它判定为2个UCS-2字符
+ 
+#include <windows.h>
+int main()
+{
+	const wchar_t lwc[]=L"??";
+ 
+	MessageBoxW(NULL, lwc, lwc, MB_OK);
+ 
+	int i = wcslen(lwc);
+	printf("%d\n", i);
+	int j = lstrlenW(lwc);
+	printf("%d\n", j);
+ 
+	return 0;
+}
+
+UTF8 <-> UNICODE
+Class template std::wstring_convert performs conversions between byte string std::string and wide string std::basic_string<Elem>, 
+using an individual code conversion facet Codecvt. 
+std::wstring_convert assumes ownership of the conversion facet, and cannot use a facet managed by a locale. 
+The standard facets suitable for use with std::wstring_convert are std::codecvt_utf8 for UTF-8/UCS2 and UTF-8/UCS4 conversions and std::codecvt_utf8_utf16 for UTF-8/UTF-16 conversions
+
+void test()
+{
+wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
+string s8 = u8"This is a UTF8 string";
+wstring s16 = converter.from_bytes(s8);
+string s88 = converter.to_bytes(s16);
+if (s8!=s88)
+cerr <"Insane!\n";
+}
+
+string <-> number
+to_string
+
 Preventing Logoff or Suspend During a Burn
 If proper precautions are not made within an application, it is possible for a user to log off during a burn operation. This leads to the interruption of the burn process, which can result in lost data and possibly render the disc unusable.
 To avoid this problem, the application should process the WM_QUERYENDSESSION message which is delivered prior to log off. If the application receives this message while performing a burn operation, return FALSE to cancel the logoff procedure. If the application allows the user to decide whether to continue logging off, a warning should be provided indicating that user will lose data.
