@@ -1,3 +1,105 @@
+GTK-WARRING:  cannot  open  display!
+#include <gtk/gtk.h>  <--用到了图形库，当然不能在字符模式下运行了，在GNOME下可以正常运行   x server没有启动.
+setenv DISPLAY 192.168.0.1:0  
+指定一个GUI的接受端即可
+
+尝试在纯字符界面下运行Gtk的界面程序，提示信息：cannot open display。
+ioctl是设备驱动程序中对设备的I/O通道进行管理的函数。所谓对I/O通道进行管理，就是对设备的一些特性进行控制，例如串口的传输波特率、马达的转速等等。它的调用个数如下：int ioctl(int fd, int cmd, …)；其中fd就是用户程序打开设备时使用open函数返回的文件标示符，cmd就是用户程序对设备的控制命令，至于后面的省略号，那是一些补充参数，一般最多一个，有或没有是和cmd的意义相关的。ioctl函数是文件结构中的一个属性分量，就是说如果你的驱动程序提供了对ioctl的支持，用户就能在用户程序中使用ioctl函数控制设备的I/O通道。
+
+
+GTK(GIMP Toolkit)是一个Linux平台下基于Xwindow图形窗口的图形用户编程接口工具,可以借助它来开发Linux平台下基于Xwindow的图形用户界面。
+这是不是意味着Gtk小程序不能在纯字符界面下运行？？我也不确定，但是minigui写的就可以，所以不死心，想问问谁能给个确切的答案
+
+你都说了，人家gtk本身就是一套“图形用户编程接口工具”，程序里调用gtk的函数当然就是为了显示图形，你不启图形当然不成。
+
+不是这样的，可以不启用Gnome这样的GUI环境，但只要所运行的程序的底层库已加载，Xserve有支持（或是直接用FB驱动），就可以运行图形程序，比如嵌入式系统就是这样的
+
+gtk_window_fullscreen ()
+void                gtk_window_fullscreen               (GtkWindow *window);
+Asks to place window in the fullscreen state. Note that you shouldn't assume the window is definitely full screen afterward, because other entities (e.g. the user or window manager) could unfullscreen it again, and not all window managers honor requests to fullscreen windows. But normally the window will end up fullscreen. Just don't write code that crashes if not.
+
+You can track the fullscreen state via the "window-state-event" signal on GtkWidget.
+
+window :a GtkWindow
+
+spicy 鼠标退出虚拟机的方法 shift+f12
+spicy fullscreen escape
+To get out use Shift+F12, not logical I know, but it works :)
+
+SPICE建立Channel的详细步骤及消息传递流程
+s: reds_init_net, 注册回调reds_accept 创建listen socket，增加监听watch_add(reds_accept),后续加入select监听
+
+c: RedChannel::run-》RedChannelBase::connect() -》RedPeer::connect_unsecure发送连接请求，等待服务端accept
+
+s: reds_accept
+    -》spice_server_add_client，reds_handle_new_link
+        -》async_read_handler，异步接收数据，需要客户端发送数据，填充link->link_header结束
+c: RedChannelBase::link() -》link_mess.channel_type = _type，send 发送link请求，recive等待
+s:            -》reds_handle_read_header_done，
+                -》async_read_handler，填充link->link_mess
+                    -》reds_handle_read_link_done
+                        —》async_read_handler，填充link->auth_mechanism
+                            ->reds_handle_auth_mechanism
+                                ->reds_get_spice_ticket
+                                   —》async_read_handler，填充link->tiTicketing.encrypted_ticket.encrypted_data
+                                       —》 reds_handle_ticket
+                                           ->reds_handle_link
+                                             ->if (link->link_mess->channel_type == SPICE_CHANNEL_MAIN) { reds_handle_main_link(link); }
+
+   async_read_handler-》reds_stream_read堵塞，等待客户端发送消息
+ 
+reds_handle_main_link流程
+    -》reds_send_link_result(link, SPICE_LINK_ERR_OK);
+
+c->s: SPICE_CHANNEL_MAIN s: reds_handle_main_link，此过程的详细步骤如上
+
+s->c: SPICE_MSG_MAIN_INIT, c: handle_init
+
+c->s: SPICE_MSGC_MAIN_ATTACH_CHANNELS s: reds_send_channels
+
+s->c: SPICE_MSG_MAIN_CHANNELS_LIST c: handle_channels
+
+
+
+gtk 的控件是建立在goject的基础上的, 换句话说, gtk的所有控件都是从gobject派生而来. 如果要学习 gtk 的对象模型, 可以参考 gobject 的相关实现. 
+
+gtk 的控件家族中, 大部分都是所谓的 gtk widget。
+gtk widget 是gtk抽象出来的一个上层概念, 这样的一个widget, 在中文的表述中就代表一个控件。
+这样的widget只是逻辑上的, 也就是说, 在逻辑上它是一个控件, 实际上可能并没有单独的窗口资源和它相应。
+
+所以在 gtk 的控件家族中, 从这个角度可以将 widget 分成两类:
+
+1. widget 有真正的窗口资源和它对应, 比如一个 toplevel 的 GtkWindow, 在gtk的底层会有一个GdkWindow和它相对应。
+一个GdkWindow, 在 X11 中就对应于一个 X11 的window。
+在 gtk 中, 只能在 GdkWindow 上进行绘图。
+这样的控件, 我们可以为它设置背景,窗口的背景一旦设置, 就由XServer负责在必要的时候重绘。
+而对于前景, 在适当的时候(当窗口由不可见到可见), XServer会发送Expose消息给这样的控件。
+控件根据需要在前景上进行重绘, 在gtk的实现中, 控件都会实现自己的expose消息处理函数。
+
+这个消息为 RUN_LAST方式运行, 
+所以当用户自己用 g_signal_connect 注册了一个 expose 消息处理, 
+并且在消息处理函数中 return TRUE, 就会将这个默认的消息变成无效, 
+所以如果对 gtk 自己提供的绘制功能不满意的话,
+可以利用这种手段自己实现某些绘制功能.
+
+2. widget 没有单独的一个 GdkWindow 和它相对应, 
+比如 gtk button 就是这样的一个控件,
+自己没有单独的 GdkWindow, 
+当这样的控件需要绘制的时候, 就会在父控件的GdkWindow上绘制. 
+
+比如gtk button, 假设一个 button 在一个 toplevel 的窗口中, 
+当窗口从不可见到可见的时候, XServer 就会给 toplevel window 发送 expose event, 
+由于toplevel 是一个container, toplevel window 在响应自己的 expose 之后, 
+会向所有的没有 GdkWindow 的子控件(button)发送 expose event, 
+当 button 收到消息后, 就会在它的父 widget(toplevel window) 的相应位置绘制自己.
+
+如果要实现不规则的窗口, 只能使用第一类控件.
+
+window7打开用户目录 C:\Users
+                    C:\Users\Administrator\AppData\Roaming
+
+backslash (\ or slash (/)
+
 chkdsk基于所用的文件系统，创建和显示磁盘的状态报告。Chkdsk 还会列出并纠正磁盘上的错误。如果不带任何参数，chkdsk 将显示当前驱动器中的磁盘状态。
 
 语法
@@ -32,6 +134,9 @@ volume:
 如果希望 chkdsk 修复磁盘错误，则此前不能打开该驱动器上的文件。如果有文件打开，会显示下述错误消息：
 
 Chkdsk cannot run because the volume is in use by another process.Would you like to schedule this volume to be checked the next time the system restarts?(Y/N)
+
+使用 Ubuntu 软件中心搜索synaptic，找到“新立得软件包管理器”，一般第一个搜索结果就是了;
+
 
 如果选择下次重新启动计算机时检查该驱动器，则重新启动计算机后 chkdsk 会自动检查该驱动器并修复错误。如果该驱动器分区为启动分区，则 chkdsk 在检查完该驱动器后会自动重新启动计算机。
 
