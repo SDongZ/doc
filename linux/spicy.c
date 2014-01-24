@@ -223,7 +223,7 @@ static void recent_item_activated_dialog_cb(GtkRecentChooser *chooser, gpointer 
 }
 #endif
 
-static int connect_dialog(SpiceSession *session)
+static int connect_dialog(SpiceSessionSpiceSession *session)
 {
     GtkWidget *dialog, *area, *label;
     GtkTable *table;
