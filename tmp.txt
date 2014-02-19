@@ -1,5 +1,47 @@
+http://linux.about.com/od/linux101/l/blnewbie5_1.htm
+Linux Shortcuts and Commands
+Part 5 of the Linux Newbie Administrator Guide
+
+
+
+
+ubuntu½çÃæ²Ù×÷£¬ÏÂÃæµÄÎÄµµÅäÖÃ  ¼° ÃüÁîĞĞ
+
+http://blog.csdn.net/hustwarhd/article/details/3069066
+startxÆô¶¯¹ı³Ì·ÖÎö
+tartxµÄÓÃ·¨ºÍxinitµÄ»ù±¾Ò»Ñù£ºstartx [ [ client ] options ... ] [ -- [ server ] options ... ]¡£
+ÎªÊ²Ã´ÄØ£¿ÕâÊÇÒòÎªstartxÆäÊµ¾ÍÊÇÒ»¸ö½Å±¾£¬ËüÆô¶¯X server¾ÍÊÇÍ¨¹ıµ÷ÓÃxinitÃüÁîÊµÏÖµÄ£¬startxµÄ²ÎÊı½«È«²¿´«¸øxinit¡£
+Òò´Ë£¬ÕâĞ©²ÎÊıµÄÒâÒåºÍxinitµÄ²ÎÊıÊÇÒ»ÑùµÄ
+
+System Settings can be run from the launcher (pinned by default), the Dash, or the power cog. But what command would I enter in a terminal window if I want to run it from there?
+gnome-control-center 
+Hope this helps you
+
+Èç¹û¸ôÒ»¶ÎÊ±¼ä²»²Ù×÷£¬µçÄÔ¾Í»áËøÆÁ¡£ÔõÃ´°ÑËøÆÁ¸øÈ¥µô
+ÔõÃ´²»ÈÃubuntuËøÆÁ
+UbuntuĞ¡¼¼ÇÉ¡ª¡ª½ûÓÃUbuntuµÄÆÁÄ»Ëø¶¨
+http://os.51cto.com/art/201310/413549.htm
+µÇÂ¼Ubuntu£¬µã»÷¿ØÖÆÑ¡Ïî£¨Î»ÓÚ²Ëµ¥À¸µÄ×îÓÒ±ßµÄÍ¼±ê£©Í¼±ê²¢Ñ¡Ôñ¡°ÏµÍ³ÉèÖÃ¡±
+µã»÷ÏµÍ³ÉèÖÃÃæ°åÀïµÄ¡°ÁÁ¶ÈºÍËøÆÁ¡±Í¼±ê
+×îºó£¬¹Ø±Õ¡°Ëø¶¨ÆÁÄ»Ñ¡Ïî¡±
+
+²Ù×÷ÏµÍ³Ubuntu 10.10
+ÔÚ²Ëµ¥¡°ÏµÍ³¡±-¡·¡°ÏµÍ³¹ÜÀí¡±-¡·¡°ÓÃ»§ºÍ×é¡±ÉèÖÃÀïÓĞ¸öÃÜÂë¡°µÇÂ¼Ê±²»Ñ¯ÎÊ¡±ÒÑ¾­ĞŞ¸ÄÎªµÇÂ¼Ê±²»Ñ¯ÎÊÃÜÂë´ò¹³£»
+
+ÏµÍ³ÖØĞÂÆô¶¯²»ĞèÒªÊäÈëÃÜÂëÁË¡£
+Ë³±ãÎÊÒ»ÏÂ¹ÒÆğºÍË¯ÃßºóÔÙÆô¶¯ÏµÍ³×ÜÊÇĞèÒªÊäÈëÃÜÂë£¬ÈçºÎÈ¡Ïû£¿
+
+ubuntu12.04ÈçºÎÉèÖÃÏµÍ³²»ĞİÃßºÍ²»¹ÒÆğ
+ÎÒµÄÊÇ×ÀÃæ°æµÄ£¬ÔÚÏµÍ³¸üĞÂ»òÕß°²×°Èí¼şµÄÊ±ºò£¬ÍùÍùĞèÒª±È½Ï³¤µÄÊ±¼ä£¬µ«ÊÇ¹ıÁËÒ»¶¨Ê±¼ä£¬ÏµÍ³¾Í»á×Ô¶¯Ëø¶¨ÆÁÄ»£¬²¢ÇÒ¹Ø±ÕÍøÂçÁ¬½Ó£¬Ö®Ç°Î´Íê³ÉµÄÈÎÎñ¾ÍÎŞ·¨¼ÌĞøÁË¡£
+¹ÙÍøÉÏËµ£¬12.04Ä¬ÈÏ¹Ø±ÕÁËĞİÃß¹¦ÄÜ£¬µ«ÊÇÎÒ´Óµç³ØÑ¡ÏîÖĞĞŞ¸ÄÉèÖÃÈçÏÂ£¬»¹ÊÇ²»ĞĞ£¬Çó¸ßÊÖ½â´ğ
+
+
 ¹Ø±ÕxorgÍ¼ĞÎ½çÃæ
 ctrl+ale+F3½øÈë×Ö·û½çÃæ
+ctrl+alt+f1Æô¶¯shellµÇÂ¼ Ò²¿É½øÈë×Ö·û½çÃæ
+alt+Ctrl+f7 ÔÙ»Øµ½Í¼ĞÎ½çÃæ
+
+tty'n',ÊÇÎÄ±¾Ä£Ê½ÏÂµÄ¿ØÖÆÌ¨,n´ú±íµÚ¼¸¸ö¿ØÖÆÌ¨,¿ÉÒÔÓÃCTRL+ALT+F1...F7À´ÇĞ»»
 
 ÖØÆôÃüÁî£º
 1¡¢reboot
@@ -48,8 +90,159 @@ sudo apt-get install nautilus-open-terminal
 Ctrl+Alt+T£¬¿ì½İ¼ü¸ã¶¨£¨¶àĞ»ËªÏşĞÛÓ¥µÄÆÀÂÛ£©
 
 
+xinitÆô¶¯X Window System¹ı³Ì³õÌ½ (³õÊ¼»¯ X Window System)
+Æô¶¯XÖ÷ÒªÓĞÁ½ÖÖ·½·¨£ºÒ»ÊÇDisplay Manager£¬ÈçXDM¡¢GDM¡¢KDM£¬´ËÖÖ·½·¨Í¨¹ıÍ¼ĞÎ½çÃæµÇÂ¼£»ÁíÒ»ÖÖÊÇÍ¨¹ıxinit£¬´ËÖÖ·½·¨ÊÊÓÃÓÚ×Ö·û½çÃæµÇÂ¼¡£
+
 LightDMµÄÄ¿±êÊÇ´´ÔìÒ»¸öÇáÁ¿¡¢¿ìËÙ¡¢¾ßÀ©³äĞÔÒÔ¼°¶à×ÀÃæ»·¾³µÄXÏÔÊ¾¹ÜÀíÆ÷[6]¡£ËüÊ¹ÓÃÁËºÜ¶à²»Í¬µÄÇ°¶ËÀ´äÖÈ¾³öµÇÂ¼»­Ãæ[7]£¬ËùÒÔÓÖ±»³ÆÎªGreeters
 LightDMÔÚUbuntu 12.04×÷ÎªÄ¬ÈÏµÄUnityµÇÂ¼Ç°¶Ë
+
+https://wiki.archlinux.org/index.php/Display_Manager_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
+ÏÔÊ¾¹ÜÀíÆ÷»òµÇÂ¼¹ÜÀíÆ÷ÊÇÒ»¸öÔÚÆô¶¯×îºóÏÔÊ¾µÄÍ¼ĞÎ½çÃæ¡£ºÍ´°¿Ú¹ÜÀíÆ÷Ò»Ñù£¬ÏÔÊ¾¹ÜÀíÆ÷ÓĞºÜ¶àÖÖ¡£Í¨³£Ã¿¸öÏÔÊ¾¹ÜÀíÆ÷¶¼ÄÜ½øĞĞÒ»Ğ©¶¨ÖÆ
+XDM: X ÏÔÊ¾¹ÜÀíÆ÷ (xorg-xdm)
+GDM: GNOME ÏÔÊ¾¹ÜÀíÆ÷ (gdm)
+KDM: KDE ÏÔÊ¾¹ÜÀíÆ÷ (kdebase-workspace)
+SLiM: ¼òµ¥µÇÂ¼¹ÜÀíÆ÷ (slim)
+LXDM: LXDE ÏÔÊ¾¹ÜÀíÆ÷ (¶ÀÁ¢ÓÚ×ÀÃæ»·¾³) (lxdm)
+Qingy: getty Ê¹ÓÃ DirectFB µÄÌæ´úÕß (qingy)
+wdm: WINGs ÏÔÊ¾¹ÜÀíÆ÷ (wdm)
+CDM: ¿ØÖÆÌ¨ÏÔÊ¾¹ÜÀíÆ÷ (available in the AUR: cdm-git)
+LightDM: Ubuntu ¿ª·¢µÄ GDM Ìæ´úÆ·£¬Ê¹ÓÃ WebKit (Î»ÓÚAUR: lightdm, lightdm-bzr)
+
+http://www.embedu.org/Column/Column65.htm
+ºÜ¶àLINUX³õÑ§ÕßÔÚÑ§Ï°linuxÍ¼ĞÎ·½ÃæµÄÖªÊ¶Ê±»áÓöµ½Ò»Ğ©¸ÅÄî£¬Èç£ºX¡¢X11¡¢Xfree86¡¢WM¡¢KDE¡¢GNOME¡¢QT¡¢QT/E¡¢Qtopia¡¢DirectFB¡¢Framebuffer¡¢ÏÔ¿¨¼ÓËÙÇı¶¯µÈµÈ¡£Àí½âËüÃÇÖ®¼äÊÇÊ²Ã´¹ØÏµ£¬¶ÔÎÒÃÇÑ§Ï°À´ËµÊÇ·Ç³£ÖØÒªµÄ¡£Ğ´ÕâÆªÎÄÕÂµÄÄ¿µÄ£¬¾ÍÊÇÏëÈÃ´ó¼ÒÃ÷ÎúÕâĞ©¸ÅÄî¼°ËüÃÇÖ®¼äµÄ¹ØÏµ¡££¨²¿·ÖÄÚÈİÒıÓÃÍøÂçÉÏµÄÒ»Ğ©ÃèÊö±È½ÏÇåÎúµÄÄÚÈİ£©
+X11±íÊ¾XĞ­ÒéµÄµÚ16°æ.X11R6ÊÇXĞ­ÒéµÚ11°æµÚÁù´Î·¢ĞĞ
+
+XFree86 ÊÇX Windows serverµÄX11R6Ö´ĞĞ³ÌĞò.
+ÓĞÁËĞ­Òé¾ÍĞèÒª¾ßÌåµÄÈí¼şÀ´ÊµÏÖÕâ¸öĞ­Òé.
+Xfree86ÊÇ°´ÕÕXĞ­ÒéµÄ¹æ¶¨À´Íê³ÉXÓ¦ÓÃ³ÌĞòÌá½»µÄÔÚÆÁÄ»ÉÏÏÔÊ¾µÄÈÎÎñ.
+ÊµÏÖXĞ­ÒéµÄÈí¼şÒ²²¢²»Ö»ÓĞXFree86, XFree86Ö»ÊÇÊµÏÖXĞ­ÒéµÄÒ»¸öÃâ·ÑX·şÎñÆ÷Èí¼ş.
+ÓĞĞ©ÉõÖÁÄÜ¹»ÔÚWINDOWSÉÏÓĞX·şÎñÆ÷ÔËĞĞ,ÕâÑùÄúÄÜ¹»ÔÚlinuxÏµÍ³ÉÏÔËĞĞÒ»¸öXÓ¦ÓÃ³ÌĞòÈ»ºóÔÚÁíÒ»Ì¨windowsÏµÍ³ÉÏÏÔÊ¾.
+Ö»ÊÇÔÚLINUXÉÏ×î³£ÓÃµÄÊÇXFree86.²»¹ıÏÖÔÚµÄlinux·¢ĞĞ°æ´ó¶àÓÃXorgÁË
+
+´°¿Ú¹ÜÀíÆ÷µÄ×÷ÓÃ¾ÍÊÇ×î´ó»¯¡¢×îĞ¡»¯¡¢ÒÆ¶¯¡¢¹Ø±Õ´°¿ÚµÈ.¶øÕâĞ©²»ÊÇX·şÎñÆ÷À´¸ºÔğÍê³ÉµÄ
+
+KDE ºÍGNOMEÊÇLINUXÀï×î³£ÓÃµÄÍ¼Ïñ½çÃæ²Ù×÷»·¾³,ËûÃÇ²»µ«½öÊÇ¸ö´°¿Ú¹ÜÀíÆ÷ÄÇÃ´¼òµ¥, KDEÊÇK Desktop Environment µÄËõĞ´,Ëû²»µ«ÊÇ¸ö´°¿Ú¹ÜÀíÆ÷,¸üÓĞºÜ¶àÅäÌ×µÄÓ¦ÓÃÈí¼şºÍ·½±ãÊ¹ÓÃµÄ×ÀÃæ»·¾³,±ÈÈçÈÎÎñÀ¸,¿ªÊ¼²Ëµ¥,×ÀÃæÍ¼±êµÈµÈ.GNOMEÊÇGNU Network Object Model Environment µÄËõĞ´,ºÍKDEÏàÍ¬,Ò²ÊÇ¸ö¹¦ÄÜÇ¿´óµÄ×ÛºÏ»·¾³
+
+QT/E ÊÇÓÃÓÚÇ¶ÈëÊ½LinuxÏµÍ³µÄQT°æ±¾.QT/EÖĞÈ¥µôÁËX libµÄÒÀÀµ¶øÖ±½Ó¹¤×÷ÓÚFrame BufferÉÏ,Òò¶øÓ¦ÓÃ³ÌĞò´¦Àí¹ı³ÌĞ§ÂÊ±È½Ï¸ß.ËüµÄÔËĞĞÖ»ÒªÓĞFramebufferÉè±¸¾Í¿ÉÒÔÁË,²»ĞèÒªX·şÎñÆ÷µÄÖ§³Ö.µ«Æä±¾ÉíÔËĞĞÒ²ÊÇÓĞ·şÎñÆ÷ºÍ¿Í»§¶ËµÄ¸ÅÄî
+
+DirectFBÏîÄ¿ÊÇÓÉµÂ¹úConvergence¹«Ë¾ÍÆ¶¯µÄOpen source¼Æ»®µÄÒ»²¿·Ö,ËüÊÇ×¨ÃÅÎªÂú×ãÇ¶ÈëÊ½Éè±¸ÒªÇó¶ø¿ª·¢µÄĞ¡ÇÉ¡¢Ç¿´ó¡¢Áé»îºÍÒ×ÓÚÊ¹ÓÃµÄÍ¼ĞÎÏµÍ³,²¢ÇÒÊÔÍ¼³ÉÎªÒ»¸ö½¨¹¹ÓÚLinux Framebuffer DeviceÖ®ÉÏµÄĞÂÍ¼ĞÎ±ê×¼.ËüÔÚFrameBufferµÄ»ù´¡ÉÏÌá¹©ÁËÍ¼ĞÎ¼ÓËÙ¡¢ÊäÈëÉè±¸´¦ÀíÌáÈ¡¡¢Í¸Ã÷´°¿ÚºÍ¶àÖØÏÔÊ¾²ãµÄ¹¦ÄÜ,ÄÜ¹»¶ÔÇ¶ÈëÊ½ÏµÍ³GUIÓĞ½ÏºÃµÄÖ§³Ö.ÓëÄÇĞ©Í¨ÓÃµÄÇ¶ÈëÊ½GUIÏµÍ³Ïà±È,Ëü¾ßÓĞ·Ç³£¼ò½à¡¢¸ßĞ§µÄÌåÏµ½á¹¹ºÍÓ²¼şÍ¼ĞÎ¼ÓËÙ¹¦ÄÜ
+
+http://www.cnblogs.com/montya/archive/2011/09/09/2172001.html  rc.local¿ª»úÆ÷²»Ö´ĞĞ.png
+½â¾ölinuxÏÂ/etc/rc.local¿ª»úÆ÷²»Ö´ĞĞµÄÔ­Òò
+Ç°²»¾ÃÒòÏîÄ¿ĞèÒªĞ´ÁË¿ª»úÆô¶¯ÆäËû³ÌĞòµÄshell½Å±¾,Òò¹¤×÷Ã¦£¬µ÷ÊÔÍê¸øÁË¼¼ÊõÖ§³ÖÈËÔ±£¬Ò²Ã»È¥×¢Òâ¹ı¡£
+
+µ½ºóÀ´£¬ÓĞ¼¸Ì¨·şÎñÆ÷Í»È»±»ÖØÆôÁË£¬ÕâÊ±ºòÁìµ¼ÎÊ£¬ÔõÃ´¿ª»úÆô¶¯µÄ½Å±¾Ã»Æğ×÷ÓÃ£¬»¹±»ÅúÁËÒ»¶Ù£¬°¥£¬×öÊÂ»¢Í·ÉßÎ²,»î¸Ã£¡
+
+È»ºóÈ¥²é£¬Ò»Ö±Ã»²éµ½Ô­Òò£¬
+
+ÊÖ¶¯Ö´ĞĞ¶¼ÊÇÕıÈ·µÄ£¬ÔÚÅÅ³ıÁËÈ¨ÏŞÔ­ÒòºÍ½Å±¾ÎÊÌâºó£¬ºÜÓôÃÆ£¬ÔõÃ´·Åµ½¿ª»úÆô¶¯ÏîÄ¿ÖĞ¾ÍÎŞ·¨Ö´ĞĞÁËÄØ¡£
+
+ÓÚÊÇÈ¥²élinux¿ª»úÆô¶¯¹ı³ÌĞÅÏ¢¡£googleÏÂ£¬¿´ÁËÏÂ¹ØÓÚÒ»Ğ©¿ª»úÆô¶¯ÆôµÄ×ÊÁÏ£¬·¢ÏÖÁË¿ª»úÆô¶¯³ÌĞòµÄ¼¶±ğÎª3.
+
+¹û¶ÏË³ÌÙÄª¹Ï£¬ÕÒµ½ÁËÕâ¸öÄ¿Â¼ /etc/rc.d/rc3.d£¬½øÈ¥Ò»¿´»ĞÈ»´óÎò¡£
+
+
+
+ÎÒµÄrc.localÎÄ¼şÊÇÔÚ /etc/rc.localÖĞ£¨ÍøÉÏ¶¼ÊÇËµĞ´ÔÚÕâÀï£¬ÎÒÊÇ°´ÕÕÍøÉÏÀ´ÅªµÄ£©£¬¶øÎÒ²é¿´ÁËÏµÍ³Ö¸Ïòrc.localÎÄ¼şµÄÂ·¾¶ÊÇ /etc/rc.d/rc.local
+
+ºóÀ´°Ñ¿ª»úÆô¶¯µÄ½Å±¾ÅäÖÃµ½/etc/rc.d/rc.localÖĞ£¨»òÕß°ÑS99localÖ¸Ïò /etc/rc.localÒ²ĞĞ£©£¬ÖØÆô¼ì²é£¬³É¹¦£¡
+
+×Ü½á:Ö÷Òª»¹ÊÇ¶ÔlinuxÏµÍ³²»ÊìÏ¤£¬ÕâÊÇ¸öÂş³¤µÄ¹ı³Ì£¬ÓĞÊ±¼äµÃ¶à¿´¿´Õâ·½ÃæµÄÊé¼®¡£
+
+
+¸Ärc.localÎÄ¼ş¿ª»ú×Ô¶¯ÔËĞĞ½Å±¾
+1.¿ª»ú×ÔÔËĞĞ
+¼òµ¥µÄ´¦Àí¿ª»ú×ÔÔËĞĞµÄ·½·¨ÊÇĞŞ¸Ärc.localÎÄ¼ş¡£´ËÎÄ¼şÎ»ÓÚ/etcÄ¿Â¼ÏÂÃæ.
+ÔÚÄ¬ÈÏÇé¿öÏÂ£¬rc.localÊÇÒ»¸ö¿ÕµÄ½Å¡£ÄúÖ»ÒªĞŞ¸ÄËü¾Í¿ÉÒÔÁË¡£Òª×¢ÒâµÄÊÇ£¬ÔÚ´ËÎÄ¼şÖĞÔËĞĞµÄÃüÁîÆäÒÀÀµµÄ½ø³ÌÊÇ·ñÔËĞĞ¡£±¾ÈËÔÙÊµÑéµÄÊ±ºòÓÉÓÚÏëÔÚ
+¿ª»úÊ±Æô¶¯dia.ÊÔÁËºÃ¶à´Î¶¼Ê§°Ü¡£ÎÒÏë¿ÉÄÜÊÇ½çÃæ½ø³Ì»¹Ã»ÓĞÆô¶¯¡£ÎÒµÄÊµÑé½Å±¾Îª
+       echo   ¡°hello. rc.local¡± >>home/shanfeng/rc.local ÊµÑé³É¹¦
+ÔÚ/etcÄ¿Â¼ÏÂÃæ»¹ÓĞrc*.dµÄÄ¿Â¼¡£ÕâĞ©Ä¿Â¼ÀïÃæ·ÅÔÚºÜ¶à/etc/init.d/ÏÂÃæ½Å±¾µÄÈíÁ´½Ó,²Ù×÷ÏµÍ³¸ù¾İ²»Í¬µÄÔËĞĞµÈ¼¶£¬Ñ¡ÔñÔËĞĞÆäÖĞÏÂµÄ½Å±¾¡£ÄúÒ²¿ÉÒÔĞŞ¸ÄËüÃÇ´ïµ½¿ª»ú×ÔÔËĞĞµÄÄ¿µÄ¡£
+2¡£¶¨Ê±ÈÎÎñ
+½éÉÜÒ»ÖÖ¼òµ¥µÄ´¦Àí·½Ê½
+ÓÃcron´¦Àí¶¨Ê±ÈÎÎñ,Ê×ÏÈÒª±£Ö¤cron²Ù×÷ÒÑ¾­ÔËĞĞ¡£Èç¹û°²×°ÁËcron µÄ»°¡£Õı³£Çé¿öÏÂcronÒÑ¾­¿ª»ú×ÔÔËĞĞÁË£¬Èç¹ûÃ»ÓĞÔËĞĞµÄ»°¡£
+/etc/init.d/cron start
+ÓÃcrontabÀ´°²ÅÅ¶¨Ê±ÈÎÎñ
+crontab [-u user] {-l| -r |   -e}
+-l:ÏÔÊ¾ÈÎÎñ
+-e:±à¼­ÈÎÎñ
+-r:Çå¿ÕÈÎÎñ
+ÈÎÎñ¸ñÊ½Îª:
+·Ö Ê± ĞÇÆÚ ÔÂ·İ Äê ²Ù×÷ÃüÁî
+eg:
+1. * 14 * * * echo ¡± look me¡±>>/home/shanfeng/test ±íÊ¾Ã¿Ìì14µãÔËĞĞÒ»´Î
+2. 0-59/2 * * * * echo ¡°look me¡± >>/tmp/test ±íÊ¾Ã¿Á½·ÖÖÓÔËĞĞÒ»´Î
+3. * 2,15 * * * echo ¡°look me ¡± >>/tmp/test ±íÊ¾2Óë15µãÔËĞĞÒ»´Î
+* : ±íÊ¾ÈÎÒâ -:±íÊ¾Çø¼ä.   / :±íÊ¾ÆµÂÊ   , £º±íÊ¾Ã¶¾Ù
+
+http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html
+Linux µÄÆô¶¯Á÷³Ì
+¿ª»úÆô¶¯³ÌĞò¼ÓÔØÍê±ÏÒÔºó£¬¾ÍÒªÈÃÓÃ»§µÇÂ¼ÁË¡£
+
+Ò»°ãÀ´Ëµ£¬ÓÃ»§µÄµÇÂ¼·½Ê½ÓĞÈıÖÖ£º
+¡¡¡¡£¨1£©ÃüÁîĞĞµÇÂ¼
+¡¡¡¡£¨2£©sshµÇÂ¼
+¡¡¡¡£¨3£©Í¼ĞÎ½çÃæµÇÂ¼
+ÕâÈıÖÖÇé¿ö£¬¶¼ÓĞ×Ô¼ºµÄ·½Ê½¶ÔÓÃ»§½øĞĞÈÏÖ¤¡£
+£¨1£©ÃüÁîĞĞµÇÂ¼£ºinit½ø³Ìµ÷ÓÃgetty³ÌĞò£¨ÒâÎªget teletype£©£¬ÈÃÓÃ»§ÊäÈëÓÃ»§ÃûºÍÃÜÂë¡£
+ÊäÈëÍê³Éºó£¬ÔÙµ÷ÓÃlogin³ÌĞò£¬ºË¶ÔÃÜÂë£¨Debian»¹»áÔÙ¶àÔËĞĞÒ»¸öÉí·İºË¶Ô³ÌĞò/etc/pam.d/login£©¡£
+Èç¹ûÃÜÂëÕıÈ·£¬¾Í´ÓÎÄ¼ş /etc/passwd ¶ÁÈ¡¸ÃÓÃ»§Ö¸¶¨µÄshell£¬È»ºóÆô¶¯Õâ¸öshell¡£
+£¨2£©sshµÇÂ¼£ºÕâÊ±ÏµÍ³µ÷ÓÃsshd³ÌĞò£¨Debian»¹»áÔÙÔËĞĞ/etc/pam.d/ssh £©£¬È¡´úgettyºÍlogin£¬È»ºóÆô¶¯shell¡£
+£¨3£©Í¼ĞÎ½çÃæµÇÂ¼£ºinit½ø³Ìµ÷ÓÃÏÔÊ¾¹ÜÀíÆ÷£¬
+GnomeÍ¼ĞÎ½çÃæ¶ÔÓ¦µÄÏÔÊ¾¹ÜÀíÆ÷Îªgdm£¨GNOME Display Manager£©£¬
+È»ºóÓÃ»§ÊäÈëÓÃ»§ÃûºÍÃÜÂë¡£
+Èç¹ûÃÜÂëÕıÈ·£¬¾Í¶ÁÈ¡/etc/gdm3/Xsession£¬Æô¶¯ÓÃ»§µÄ»á»°
+
+linux ÔÚ×Ö·û½çÃæÖĞÈçºÎ²é¿´³¬³öÆÁÄ»ÏÔÊ¾·¶Î§µÄÄÚÈİ
+ÄãÊÇ²»ÊÇÖ¸ÄÄĞ©±»¹öµ½ÆÁÄ»ÉÏÃæµÄ²¿·Ö£¿¿ÉÒÔÓÃshift+pageUp/pageDown½øĞĞ¹ö¶¯
+
+Linux×Ö·û½çÃæÏÂ¶Ô½çÃæ½øĞĞ·­Ò³µÄ¼¸¸ö²Ù×÷
+1.Èç¹ûÎÄ¼şÄÚÈİºÜ³¤£¬²»ÓÃ catÃüÁî²é¿´£¬¶øÊ¹ÓÃless¡¢moreÕâÑùµ¥Ò³ÏÔÊ¾µÄ¹¤¾ß¡£
+2.Ê¹ÓÃ±à¼­Æ÷ view£¨viµÄÖ»¶Á°æ±¾£©¡¢nano µÈ¶¼¿ÉÒÔ¡£
+3.Ê¹ÓÃÊä³öÖØ¶¨Ïò·ûºÅ ">"£¬°ÑÏÔÊ¾µÄÄÚÈİÖØ¶¨Ïòµ½ÎÄ¼şÖĞÈ¥£¬ÔÙÀ´²é¿´¡£
+Èç£º¼ÙÈçµ±Ç°ÎÄ¼ş¼ĞÖĞÓĞºÜ¶àÎÄ¼ş£¬Òª²é¿´ÎÄ¼şµÄĞÅÏ¢£¬¿ÉÒÔÓÃ>°ÑlsµÄÊä³öÓÉstdoutÖØ¶¨Ïòµ½Ö¸¶¨ÎÄ¼şfilelistÖĞ£ºls -l > filelist
+4.²»µÃ²»·­ÆÁµÄÊ±ºò¿ÉÒÔÊ¹ÓÃ Shift+PageUp/PageDown£¬µ«ÄÜ·­µÄ²»¶à
+
+cat aa.txt | more
+yourcmd | less  ÀıÈç  ll /etc/init.d | more
+yourcmd | more
+less textfile
+vi testfile
+
+sudo kill 3486
+
+http://tldp.org/LDP/gs/gs.html
+Linux Installation and Getting Started
+
+Bootable floppies for PCs usually contain MS-DOS or miniature versions of Linux. The most commonly available floppy disk can hold only 1.4 MB of data in its standard format, making it impractical for loading large operating systems. The use of boot floppies is in decline, due to the availability of other higher-capacity options, such as CD-ROMs or USB flash drives.
+
+The first step is to boot the Linux installation media. In most cases, this is a ¡°Bootable floppies¡± which contains a small Linux system.
+http://www.linfo.org/make_linux_boot_floppy.html
+http://www.pendrivelinux.com/boot-multiple-iso-from-usb-via-grub2-using-linux/
+
+Distributions described as lightweight[edit]
+
+Alpine Linux - A security-oriented, lightweight Linux distribution based on uClibc and BusyBox.[4] Mini download is 60 MB; base system (excluding kernel) is under 5 MB.
+antiX - Lightweight version of its parent distribution MEPIS Linux, based on Debian testing. Core Install: 128 MB, Base approx 300 MB. Package Manager: Synaptic[5]
+BasicLinux - A very lightweight distribution capable of running on an Intel 386 and 3 MB of RAM[6][7]
+Bodhi Linux - A lightweight and minimalistic distribution, based on Ubuntu 12.04[8]
+CrunchBang Linux - A relatively large (771MB) Debian based distribution designed primarily for speed and ease of use.[9][10]
+Damn Small Linux - Download 50 MB. Additional software available as "DSL Extensions" and using the Debian APT tool, which has to be installed. "Light enough to power a 486DX with 16MB of Ram"[11][12]
+Feather Linux - Lightweight Linux Distribution derived from Knoppix. Now dormant.[13][14]
+Lubuntu - Lightweight in comparison to Ubuntu, it uses the LXDE desktop.[1]
+Nanolinux - 14 MB distribution based on Core Linux. [15]
+Peppermint Linux OS - Based on Lubuntu.[16]
+Porteus - It weighs in at under 300 MB, making it a lightweight contender.[17] Comes with the LXDE and KDE desktops
+Puppy Linux - Lightweight relative to most other Linux distributions.[18] Download: 133MB. Package Manager: Synaptic (Lucid Puppy Ubuntu Compatible version)
+Semplice Linux lightweight, fast and simple, based on Debian Sid.[19]
+SliTaz - 35 MB distribution. Package Manager is Tazpkg with its repository of packages[11]
+Tiny Core Linux - 12 MB distribution. Software repository: TCZ packages[20]
+Trisquel Mini - Lightweight version of Trisquel with LXDE[21]
+
+http://en.wikipedia.org/wiki/Windows_To_Go
+Windows To GoÊÇWindows 8µÄÒ»ÖÖÆóÒµ¹¦ÄÜ£¬±»ÄÚÖÃÓÚWindows 8ÆóÒµ°æ£¨Windows 8 Enterprise£©ÖĞ¡£
+[1]¶ÔÓÚÂú×ãWindows 8Ó²¼şÒªÇóµÄµçÄÔ£¬Windows To Go¿ÉÊ¹Windows 8´ÓUSBÇı¶¯Æ÷ÖĞÆô¶¯²¢ÔËĞĞ£¬²»±Ø¿¼ÂÇµçÄÔÉÏÔËĞĞµÄ²Ù×÷ÏµÍ³£¨MacºÍWindows RT²»±»Ö§³Ö£©¡£
+[1-2]Windows To Go µÄÉè¼Æ²¢²»Ö¼ÔÚ´úÌæÌ¨Ê½¼ÆËã»ú¡¢±ãĞ¯Ê½¼ÆËã»ú£¬»òÈ¡´úÆäËûÒÆ¶¯²úÆ·¡£ 
+Ç¡Ç¡Ïà·´£¬ËüÎªÓĞĞ§Ê¹ÓÃ±¸ÓÃµÄ¹¤×÷³¡Ëù·½°¸×ÊÔ´Ìá¹©ÓĞÁ¦Ö§³Ö
 
 /etc 
 
@@ -57,6 +250,8 @@ etc²»ÊÇÊ²Ã´ËõĞ´£¬ÊÇand so onµÄÒâË¼ À´Ô´ÓÚ ·¨ÓïµÄ et cetera ·­Òë³ÉÖĞÎÄ¾ÍÊÇ µÈµÈ µ
 
 Õâ¸öÄ¿Â¼Ò»°ãÓÃÀ´´æ·Å³ÌĞòËùĞèµÄÕû¸öÎÄ¼şÏµÍ³µÄÅäÖÃÎÄ¼ş.
 
+ÊØ»¤½ø³Ì£¬Ò²¾ÍÊÇÍ¨³£ËµµÄDaemon½ø³Ì£¬ÊÇLinuxÖĞµÄºóÌ¨·şÎñ½ø³Ì
+ÔÚlinux»òÕßunix²Ù×÷ÏµÍ³ÖĞÔÚÏµÍ³µÄÒıµ¼µÄÊ±ºò»á¿ªÆôºÜ¶à·şÎñ£¬ÕâĞ©·şÎñ¾Í½Ğ×öÊØ»¤½ø³Ì¡£ÎªÁËÔö¼ÓÁé»îĞÔ£¬root¿ÉÒÔÑ¡ÔñÏµÍ³¿ªÆôµÄÄ£Ê½£¬ÕâĞ©Ä£Ê½½Ğ×öÔËĞĞ¼¶±ğ£¬Ã¿Ò»ÖÖÔËĞĞ¼¶±ğÒÔÒ»¶¨µÄ·½Ê½ÅäÖÃÏµÍ³¡£ ÊØ»¤½ø³ÌÊÇÍÑÀëÓÚÖÕ¶Ë²¢ÇÒÔÚºóÌ¨ÔËĞĞµÄ½ø³Ì¡£ÊØ»¤½ø³ÌÍÑÀëÓÚÖÕ¶ËÊÇÎªÁË±ÜÃâ½ø³ÌÔÚÖ´ĞĞ¹ı³ÌÖĞµÄĞÅÏ¢ÔÚÈÎºÎÖÕ¶ËÉÏÏÔÊ¾²¢ÇÒ½ø³ÌÒ²²»»á±»ÈÎºÎÖÕ¶ËËù²úÉúµÄÖÕ¶ËĞÅÏ¢Ëù´ò¶Ï
 
 status state Çø±ğ
 status Óë state µÄÇø±ğ
