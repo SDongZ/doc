@@ -1,7 +1,25 @@
+UBUNTU设置开机启动图形应用程序-替换默认图形桌面
+
+1. 禁止默认图形桌面的启动。
+   编辑文件 /etc/init/lightdm.conf，在第12行附近，原句“ and runlevel [!06]” 改为“ and runlevel [!026]”。
+   （注意：为使上这句有效，需要确保，/etc/init/rc-sysinit.conf，在第14行附近：env DEFAULT_RUNLEVEL=2。）
+
+2. 利用etc/rc.local随机启动，startx脚本。
+   编辑文件/etc/rc.local,在"exit 0"前添加一行：/usr/bin/mystartx
+   （注：startx脚本的功能是启动，x-server及x-client。）
+
+3. 修改startx脚本，文件末尾有一行
+   “xinit "$client" $clientargs -- "$server" $display $serverargs”，
+   在这一行的前面加入一行 client="自定义的程序路径"
+
+关机重启，就可以了。
+
 http://linux.about.com/od/linux101/l/blnewbie5_1.htm
 Linux Shortcuts and Commands
 Part 5 of the Linux Newbie Administrator Guide
 
+
+vim 命令
 
 
 
@@ -205,6 +223,10 @@ Linux字符界面下对界面进行翻页的几个操作
 cat aa.txt | more
 yourcmd | less  例如  ll /etc/init.d | more
 yourcmd | more
+
+
+
+
 less textfile
 vi testfile
 
