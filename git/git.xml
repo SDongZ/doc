@@ -54,6 +54,11 @@
 	  <listitem>显示所有的远程库 git remote -v</listitem>
 	  <listitem>从指定的远程库提取 git pull local-k master</listitem>
 	  <listitem>显示GIT库里的，文件列表git ls-files  [-m 显示修改了的文件列表]</listitem>
+	  <listitem>重命令文件夹</listitem>
     </orderedlist>
   </section>  
+  <section>
+	<title>GIT学习中的问题</title>
+	<listitem>git ls-files 与 git ls-tree -r HEAD 的意义？<listitem>
+  </section>
 </article>
