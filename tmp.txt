@@ -1,3 +1,18 @@
+CComPtr的用法和普通COM指针几乎一样，另外使用中有以下几点需要注意。
+1. CComPtr已经保证了AddRef和Release的正确调用，所以不需要，也不能够再调用AddRef和Release。
+2. 如果要释放一个智能指针，直接给它赋NULL值即可。
+3. CComPtr本身析构的时候会释放COM指针。
+4. 当对CComPtr使用&运算符（取指针地址）的时候，要确保CComPtr为NUL。（因为通过CComPtr的地址对CComPtr赋值时，不会自动调用AddRef，若不为NULL，则前面的指针不能释放，CComPtr会使用assert报警）
+以刚才的程序为例：
+void SomeApp( IHello * pHello )
+{
+CComPtr<IHello> pCopy = pHello;
+OtherApp();
+pCopy->Hello();
+}
+由于pCopy是一个局部的对象，所以即使OtherApp()抛出异常，pCopy也会被析构，指针能够被释放。
+如果不想在程序临近发布前，还因为COM指针的引用计数造成崩溃的话，就牢记这一点吧：程序中除了参数之外，不要直接使用COM指针类型，一定要全部以CComPtr<IXXX>代替
+
 UBUNTU设置开机启动图形应用程序-替换默认图形桌面
 
 1. 禁止默认图形桌面的启动。
