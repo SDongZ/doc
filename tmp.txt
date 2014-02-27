@@ -1,3 +1,206 @@
+看下面的代码，错在那里？字节，字节，一个字节是两位十六进制
+extern float cal_pos(unsigned char low, unsigned char hi);
+afx_msg LRESULT CShowPositionWnd::OnNewPosition(WPARAM wParam, LPARAM lParam)
+{
+	float x = cal_pos((wParam >> 24) & 0xf, (wParam >> 16) & 0xf);
+	float y = cal_pos((wParam >> 8) & 0xf, wParam & 0xf);
+	m_point_list.push_back(D2D1::Point2F(x, y));
+	InvalidateRect(nullptr);
+	return 0;
+}
+
+
+template <class T> void SafeRelease(T **ppT)
+{
+    if (*ppT)
+    {
+        (*ppT)->Release();
+        *ppT = NULL;
+    }
+}
+
+
+void CShowPositionWnd::DrawGrid() {
+	if(m_render_target) {
+		UINT x0 = 0, x1 = m_window_width, y = 0;
+		m_solid_brush->SetColor(D2D1::ColorF(D2D1::ColorF::DarkRed));  改变画刷的着色
+		while(y < m_window_height) {
+			m_render_target->DrawLine(D2D1::Point2F(x0, y), D2D1::Point2F(x1, y), m_solid_brush);
+			y += m_pixel_of_element;
+		}
+
+		UINT y0 = 0, y1 = m_window_height, x = 0;
+		while(x < m_window_width) {
+			m_render_target->DrawLine(D2D1::Point2F(x, y0), D2D1::Point2F(x, y1), m_solid_brush);
+			x += m_pixel_of_element;
+		}
+	}
+}
+
+void CShowPositionWnd::DrawPoints() {
+	if(m_point_list.size()) {
+		auto point = m_point_list.begin();
+		while(point != m_point_list.end()) {
+		    m_solid_brush->SetColor(D2D1::ColorF(D2D1::ColorF::DarkGreen));
+			m_render_target->FillEllipse(D2D1::Ellipse(*point, 10, 10), m_solid_brush); 画圆
+			point++;
+		}
+
+		//draw last point
+	}
+}
+
+
+
+对话框的OnDraw函数并不是一直发送。 最后找到原因，用下面的代码解决这个问题。
+
+PAINTSTRUCT ps;
+BeginPaint(m_hwnd, &ps);
+EndPaint(m_hwnd, &ps);
+或者
+ValidateRect(nullptr);
+
+The BeginPaint function automatically validates the entire client area. Neither the ValidateRect nor ValidateRgn function should be called if a portion of the update region must be validated before the next WM_PAINT message is generated.
+The system continues to generate WM_PAINT messages until the current update region is validated.
+
+但是自己写了个CWnd派生窗口类，创建的窗口，其OnDraw会一直发送。为什么
+frequency WM_PAINT产生的频率，与窗口的样式有关吗？
+d2d 官方例子中，创建的窗口，WM_DRAW，也不是一直调用的。Circle
+http://msdn.microsoft.com/en-us/library/windows/desktop/ff381401(v=vs.85).aspx
+update region 更新区域
+Sometimes your program will initiate painting to update the appearance of the window. At other times, the operating system will notify you that you must repaint a portion of the window. When this occurs, the operating system sends the window a WM_PAINT message. The portion of the window that must be painted is called the update region
+
+After you are done painting, call the EndPaint function. 
+This function clears the update region, which signals to Windows that the window has completed painting itself
+
+//
+// Generic test for success on any status value (non-negative numbers
+// indicate success).
+//
+
+#define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
+
+//
+// and the inverse
+//
+
+#define FAILED(hr) (((HRESULT)(hr)) < 0)
+
+
+void CPositionDlg::OnPaint()
+{
+	if (IsIconic())
+    {
+        // code for handling when window is minimized. Check original CPP file attached.
+    }
+	该函数确定给定窗口是否是最小化（图标化）的窗口。
+函数原型：BOOL IsIconic（HWND hWnd）；
+
+
+设置窗口，可拖动区域
+LRESULT CShowPositionWnd::OnNcHitTest(CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	//return CWnd::OnNcHitTest(point);
+	return HTCAPTION;
+}
+
+/*
+ * WM_NCHITTEST and MOUSEHOOKSTRUCT Mouse Position Codes
+ */
+#define HTERROR             (-2)
+#define HTTRANSPARENT       (-1)
+#define HTNOWHERE           0
+#define HTCLIENT            1
+#define HTCAPTION           2
+#define HTSYSMENU           3
+#define HTGROWBOX           4
+#define HTSIZE              HTGROWBOX
+#define HTMENU              5
+#define HTHSCROLL           6
+#define HTVSCROLL           7
+#define HTMINBUTTON         8
+#define HTMAXBUTTON         9
+#define HTLEFT              10
+#define HTRIGHT             11
+#define HTTOP               12
+#define HTTOPLEFT           13
+#define HTTOPRIGHT          14
+#define HTBOTTOM            15
+#define HTBOTTOMLEFT        16
+#define HTBOTTOMRIGHT       17
+#define HTBORDER            18
+#define HTREDUCE            HTMINBUTTON
+#define HTZOOM              HTMAXBUTTON
+#define HTSIZEFIRST         HTLEFT
+#define HTSIZELAST          HTBOTTOMRIGHT
+#if(WINVER >= 0x0400)
+#define HTOBJECT            19
+#define HTCLOSE             20
+#define HTHELP              21
+#endif /* WINVER >= 0x0400 */
+
+
+去标题栏，边框的方法
+Creating a Border-Less, Title Bar-Less
+直接Create出来，无论设置那种属性都不行。
+
+这样就可以创建，无边框窗口, 注意扩展属性为零
+CreateEx(0, ::AfxRegisterWndClass(0), L"show position", WS_POPUP, CRect(0, 0, m_window_width, m_window_height), nullptr, 0); 
+
+注意MFC创建窗口类的方法，它要把窗口类的消息处理函数，截获了。
+BOOL rtt = m_show_pos_window.CreateEx(WS_EX_DLGMODALFRAME, ::AfxRegisterWndClass(0), L"Title", WS_OVERLAPPED, CRect(0, 0, 300, 300), this, NULL);
+
+
+//
+//  函数: MyRegisterClass()
+//
+//  目的: 注册窗口类。
+//
+//  注释:
+//
+//    仅当希望
+//    此代码与添加到 Windows 95 中的“RegisterClassEx”
+//    函数之前的 Win32 系统兼容时，才需要此函数及其用法。调用此函数十分重要，
+//    这样应用程序就可以获得关联的
+//    “格式正确的”小图标。
+//
+ATOM MyRegisterClass(HINSTANCE hInstance)
+{
+	WNDCLASSEX wcex;
+
+	wcex.cbSize = sizeof(WNDCLASSEX);
+
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= WndProc;   //MFC 的窗口类怎么注册？
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= hInstance;
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TEST));
+	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_TEST);
+	wcex.lpszClassName	= szWindowClass;
+	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+
+	return RegisterClassEx(&wcex);
+}
+
+
+设接收这个消息的窗口过程 WindowProc为
+LRESULT CALLBACK WindowProc(
+HWND hwnd,
+UINT uMsg,
+WPARAM wParam,
+LPARAM lParam
+);
+当显示器的分辨率改变后，此窗口过程会接到WM_DISPLAYCHANGE消息
+wParam参数为显示设备新的颜色深度，即每个像素所占的颜色位数
+lParam参数的低字节部分为显示设备新的水平分辨率，高字节部分为显示设备的新的垂直分辨率。
+WM_DISPLAYCHANGE 定义所在的头文件为 Winuser.h (include Windows.h)
+
+
 CComPtr的用法和普通COM指针几乎一样，另外使用中有以下几点需要注意。
 1. CComPtr已经保证了AddRef和Release的正确调用，所以不需要，也不能够再调用AddRef和Release。
 2. 如果要释放一个智能指针，直接给它赋NULL值即可。
@@ -35,6 +238,38 @@ Part 5 of the Linux Newbie Administrator Guide
 
 
 vim 命令
+
+d2d
+HRESULT CShowPositionWnd::InitD2D() {
+	HRESULT hr = S_OK;
+	if(!m_d2d_factory) {
+		HRESULT hr;
+		hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_d2d_factory);
+		if(SUCCEEDED(hr)) {
+			hr = m_d2d_factory->CreateHwndRenderTarget(
+				D2D1::RenderTargetProperties(),
+				D2D1::HwndRenderTargetProperties(m_hWnd, D2D1::SizeU(m_window_width, m_window_height)),
+				&m_render_target);
+			if(SUCCEEDED(hr)) {
+				hr = m_render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &m_solid_brush);
+			}
+		}
+	}
+	return hr;
+}
+void CShowPositionWnd::OnPaint()
+{
+	if(IsIconic()) {
+	} else {
+		if(SUCCEEDED(InitD2D())) {
+			m_render_target->BeginDraw();
+			m_render_target->Clear(D2D1::ColorF(D2D1::ColorF::Yellow));
+			m_render_target->DrawLine(D2D1::Point2(0, 5), D2D1::Point2(m_window_width, 5), m_solid_brush);
+			m_render_target->EndDraw();
+		} else {
+		}
+	}
+}
 
 
 
