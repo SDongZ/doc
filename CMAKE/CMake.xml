@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
+  xmlns:xlink='http://www.w3.org/1999/xlink'>
+  <articleinfo>
+    <title>CMake 构建工具</title>
+    <author>
+      <firstname>Xiang</firstname>
+      <surname>Wang</surname>
+    </author>
+  </articleinfo>
+  <section><title>问题</title>
+  <orderedlist>
+      <listitem>怎么样分别构建DEBUG与RELEASE版本？</listitem>
+      <listitem>指定makefile文件的生成路径？</listitem>
+      <listitem>学习DUILIB工程中，使用的CMakeLists.txt文件？</listitem>
+  </orderedlist>
+  </section>
+  <section><title>CMake语法</title>
+      <para>变量（分显示变量，隐式变量）（${变量名称}）</para><para>指令用法：XX (para1 para2 para3)变量之间用空格或者分号分隔。</para><para>例如：指定一个显示变量： SET(SRC_LIST xxx.cpp yy.cpp)</para>
+  </section>
+  <section><title>CMake安装</title>
+      <para>从cmake-2.8.12.2-win32-x86.zip里解压出来，就可以用了</para>
+  </section>
+  <section><title>CMake生成nmake使用的makefile方法</title>
+      <para>命令：CMake -G "NMake Makefiles" ../xxx/CMakeLists.txt 其中CMakeLists.txt可以忽略不写。</para><para>需要先调用设置VC的环境变量的批处理，Common7\Tools\vsvars32.bat，或者，VC\vcvarsall.bat。</para><para>可能通过建立快捷方式来打开命令行，并自动调用这个批处理：%comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86</para>
+  </section>
+</article>  

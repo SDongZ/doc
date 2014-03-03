@@ -41,9 +41,15 @@
 	  <listitem>怎么添加中文目录名称？By default, git will print non-ASCII file names in quoted octal notation, i.e. "\nnn\nnn...". This can be disabled with.  git config [--global] core.quotepath off</listitem>
     </orderedlist>
   </section>
+  <section>
+	<title>GIT学习中的问题</title>
+	<listitem>git ls-files 与 git ls-tree -r HEAD 的意义？<listitem>
+	<listitem>git 修改文件夹的名称，由小写变成大写？</listitem>
+  </section>
   <section>   
     <title>Git基本操作</title>
     <orderedlist>
+      <listitem>文件重命名?</listitem>
       <listitem>Git撤消ADD操作: git reset [要取消的文件名，缺省是取消全部ADD操作</listitem>
 	  <listitem>Git重新编辑上次的LOG记录(修改上次的提交信息): git commit --amend [-m "New commit message"]</listitem>
 	  <listitem>git clone url d:/xxx    从网址取代码</listitem>
@@ -57,8 +63,4 @@
 	  <listitem>重命令文件夹</listitem>
     </orderedlist>
   </section>  
-  <section>
-	<title>GIT学习中的问题</title>
-	<listitem>git ls-files 与 git ls-tree -r HEAD 的意义？<listitem>
-  </section>
 </article>
