@@ -49,7 +49,7 @@
   <section>   
     <title>Git基本操作</title>
     <orderedlist>
-      <listitem>文件重命名?</listitem>
+      <listitem>文件重命名? git mv oldfolder newfolder （中文路径需要加引号）（修改名称相同，字母大小不同时，使用中间名称过渡）</listitem>
       <listitem>Git撤消ADD操作: git reset [要取消的文件名，缺省是取消全部ADD操作</listitem>
 	  <listitem>Git重新编辑上次的LOG记录(修改上次的提交信息): git commit --amend [-m "New commit message"]</listitem>
 	  <listitem>git clone url d:/xxx    从网址取代码</listitem>

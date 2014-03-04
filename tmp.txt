@@ -1,3 +1,21 @@
+静态框 ，调用了，MoveWindow(10, 50, m_width, m_height); 但没有触发，
+CImageView::OnSizing(UINT fwSide, LPRECT pRect)事件。
+写错了，应该是void CImageView::OnSize(UINT nType, int cx, int cy)事件。可以触发这个事件。
+
+
+	MoveWindow(10, 50, m_width, m_height);
+	m_d2d_target->Resize(D2D1::SizeU(m_width, m_height));  
+	如果控件大小变化了，但是没有调用这个Resize函数，会出现什么情况？画的矩形框会被缩放。
+
+Centers a window relative to its parent.
+void CenterWindow( 
+   CWnd* pAlternateOwner = NULL  
+);
+Parameters
+pAlternateOwner
+Pointer to an alternate window relative to which it will be centered (other than the parent window).
+Usually called from CDialog::OnInitDialog to center dialog boxes relative to the main window of the application. By default, the function centers child windows relative to their parent window, and pop-up windows relative to their owner. If the pop-up window is not owned, it is centered relative to the screen. To center a window relative to a specific window which is not the owner or parent, the pAlternateOwner parameter may be set to a valid window. To force centering relative to the screen, pass the value returned by CWnd::GetDesktopWindow as pAlternateOwner.
+
 判断WINDOW操作系统版本的函数
 
 
@@ -124,6 +142,43 @@ The message is sent to prepare an invalidated portion of a window for painting.
 An application should return nonzero if it erases the background; otherwise, it should return zero.
 The DefWindowProc function erases the background by using the class background brush specified by the hbrBackground member of the WNDCLASS structure. If hbrBackground is NULL, the application should process the WM_ERASEBKGND message and erase the background.
 An application should return nonzero in response to WM_ERASEBKGND if it processes the message and erases the background; this indicates that no further erasing is required. If the application returns zero, the window will remain marked for erasing. (Typically, this indicates that the fErase member of the PAINTSTRUCT structure will be TRUE.)
+
+
+
+CPreviewDlg::OnInitDialog() 与 控件WM_PAINT消息之间
+                            与 控件WM_CREATE消息之间
+This method is called in response to the WM_INITDIALOG message.
+Windows sends the WM_INITDIALOG message to the dialog box during the Create, CreateIndirect, or DoModal calls, 
+                                                                     which occur immediately before the dialog box is displayed.
+Override this method if you want to perform special processing when the dialog box is initialized.
+In the overridden version, first call the base class OnInitDialog but ignore its return value.
+You will typically return TRUE from your overridden method.
+Windows calls the OnInitDialog function by using the standard global dialog-box procedure common to all Microsoft Foundation Class Library dialog boxes. 
+It does not call this function through your message map, and therefore you do not need a message map entry for this method.
+
+
+WM_INITDIALOG message
+Sent to the dialog box procedure immediately before a dialog box is displayed. Dialog box procedures typically use this message to initialize controls and carry out any other initialization tasks that affect the appearance of the dialog box.
+C++
+
+#define WM_INITDIALOG                   0x0110
+
+Parameters
+
+wParam
+A handle to the control to receive the default keyboard focus. The system assigns the default keyboard focus only if the dialog box procedure returns TRUE.
+lParam
+Additional initialization data. This data is passed to the system as the lParam parameter in a call to the CreateDialogIndirectParam, CreateDialogParam, DialogBoxIndirectParam, or DialogBoxParam function used to create the dialog box. For property sheets, this parameter is a pointer to the PROPSHEETPAGE structure used to create the page. This parameter is zero if any other dialog box creation function is used.
+
+Return value
+
+The dialog box procedure should return TRUE to direct the system to set the keyboard focus to the control specified by wParam. Otherwise, it should return FALSE to prevent the system from setting the default keyboard focus.
+The dialog box procedure should return the value directly. The DWL_MSGRESULT value set by the SetWindowLong function is ignored.
+Remarks
+
+The control to receive the default keyboard focus is always the first control in the dialog box that is visible, not disabled, and that has the WS_TABSTOP style. When the dialog box procedure returns TRUE, the system checks the control to ensure that the procedure has not disabled it. If it has been disabled, the system sets the keyboard focus to the next control that is visible, not disabled, and has the WS_TABSTOP.
+An application can return FALSE only if it has set the keyboard focus to one of the controls of the dialog box
+
 
 http://en.wikipedia.org/wiki/Serial_digital_interface
 http://baike.baidu.com/subview/840209/5111289.htm?fr=aladdin
