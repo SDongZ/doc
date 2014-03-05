@@ -1,3 +1,22 @@
+在显示视频的窗口之上，绘制控件的方法？
+窗口父子之间：WS_CLIPCHILDREN
+窗口兄弟之间：WS_CLIPSIBLINGS
+WS_CLIPCHILDREN
+0x02000000L
+Excludes the area occupied by child windows when drawing occurs within the parent window. This style is used when creating the parent window.
+WS_CLIPSIBLINGS
+0x04000000L
+Clips child windows relative to each other; that is, when a particular child window receives a WM_PAINT message, the WS_CLIPSIBLINGS style clips all other overlapping child windows out of the region of the child window to be updated. If WS_CLIPSIBLINGS is not specified and child windows overlap, it is possible, when drawing within the client area of a child window, to draw within the client area of a neighboring child window.
+
+
+相同的代码（SVN同步的），一台机器上能编译过，一台机器编辑不过，都是VC2010。
+IWICImagingFactory *img_factory = nullptr;
+	IWICBitmapDecoder *bmp_decoder = nullptr;
+	IWICBitmapFrameDecode *frame_decode = nullptr;
+	IWICFormatConverter *format_converter = nullptr;
+最后发布是，正常的机器，打了SP1包。出错的机器未打VC2010-SP1包。
+
+
 [思维] 所有题目列表 (大类，小类)（问题，【安装】，总结，资源，书签, 源码）
 
 [维护] 文件夹删除不了，出下面错误
