@@ -12,6 +12,11 @@
 	<title>Window API</title>
 	<para>Window API记录</para>
   </section>
+  <section><title>问题汇总</title>
+  <orderedlist>
+  <listitem>判断WINDOW操作系统版本的函数</listitem>
+  </orderedlist>
+  </section>
   <section>
 	<title>目录相关</title>
 	<sect1>

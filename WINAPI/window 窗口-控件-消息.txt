@@ -1,0 +1,96 @@
+在显示视频的窗口之上，绘制控件的方法？
+窗口父子之间：WS_CLIPCHILDREN
+窗口兄弟之间：WS_CLIPSIBLINGS
+WS_CLIPCHILDREN
+0x02000000L
+Excludes the area occupied by child windows when drawing occurs within the parent window. This style is used when creating the parent window.
+WS_CLIPSIBLINGS
+0x04000000L
+Clips child windows relative to each other; that is, when a particular child window receives a WM_PAINT message, the WS_CLIPSIBLINGS style clips all other overlapping child windows out of the region of the child window to be updated. If WS_CLIPSIBLINGS is not specified and child windows overlap, it is possible, when drawing within the client area of a child window, to draw within the client area of a neighboring child window.
+
+静态框 ，调用了，MoveWindow(10, 50, m_width, m_height); 但没有触发，
+CImageView::OnSizing(UINT fwSide, LPRECT pRect)事件。
+写错了，应该是void CImageView::OnSize(UINT nType, int cx, int cy)事件。可以触发这个事件。
+
+
+	MoveWindow(10, 50, m_width, m_height);
+	m_d2d_target->Resize(D2D1::SizeU(m_width, m_height));  
+	如果控件大小变化了，但是没有调用这个Resize函数，会出现什么情况？画的矩形框会被缩放。
+
+Centers a window relative to its parent.
+void CenterWindow( 
+   CWnd* pAlternateOwner = NULL  
+);
+Parameters
+pAlternateOwner
+Pointer to an alternate window relative to which it will be centered (other than the parent window).
+Usually called from CDialog::OnInitDialog to center dialog boxes relative to the main window of the application. By default, the function centers child windows relative to their parent window, and pop-up windows relative to their owner. If the pop-up window is not owned, it is centered relative to the screen. To center a window relative to a specific window which is not the owner or parent, the pAlternateOwner parameter may be set to a valid window. To force centering relative to the screen, pass the value returned by CWnd::GetDesktopWindow as pAlternateOwner.
+
+
+
+
+CStaic 控件，与，鼠标事件。
+SS_NOTIFY
+Sends the parent window STN_CLICKED, STN_DBLCLK, STN_DISABLE, and STN_ENABLE notification codes when the user clicks or double-clicks the control.
+静态控件需要设置SS_NOTIFY风格，才能响应鼠标事件
+
+
+
+CStatic 控件，GetClientRect，返回值不对，为什么？ 对话框创建完成之前，，在控件的获得，WM_PAINT消息时，可以正确的取得其大小
+		GetClientRect(&rt); rt {top=0 bottom=221 left=0 right=536}
+		GetWindowRect(&rt); rt {top=278 bottom=499 left=452 right=988}
+Windows does not know the size of the controls before the dialog window has been created.
+
+
+WM_MOUSEMOVE message
+Posted to a window when the cursor moves. If the mouse is not captured, the message is posted to the window that contains the cursor. Otherwise, the message is posted to the window that has captured the mouse.
+wParam
+Indicates whether various virtual keys are down. This parameter can be one or more of the following values.
+Value	Meaning
+MK_CONTROL
+0x0008
+The CTRL key is down.
+MK_LBUTTON
+0x0001
+The left mouse button is down.
+MK_MBUTTON
+0x0010
+The middle mouse button is down.
+MK_RBUTTON
+0x0002
+The right mouse button is down.
+MK_SHIFT
+0x0004
+The SHIFT key is down.
+MK_XBUTTON1
+0x0020
+The first X button is down.
+MK_XBUTTON2
+0x0040
+The second X button is down.
+
+lParam
+The low-order word specifies the x-coordinate of the cursor. The coordinate is relative to the upper-left corner of the client area.
+The high-order word specifies the y-coordinate of the cursor. The coordinate is relative to the upper-left corner of the client area.
+
+
+
+Mouse Capture (捕获鼠标的意义是，所有鼠标事件都发送给，捕获鼠标的窗口)
+
+The system typically posts a mouse message to the window that contains the cursor hot spot when a mouse event occurs. 
+An application can change this behavior by using the SetCapture function to route mouse messages to a specific window. 
+The window receives all mouse messages until the application calls the ReleaseCapture function or specifies another capture window, 
+or until the user clicks a window created by another thread.
+
+When the mouse capture changes, the system sends a WM_CAPTURECHANGED message to the window that is losing the mouse capture. 
+The lParam parameter of the message specifies a handle to the window that is gaining the mouse capture.
+
+Only the foreground window can capture mouse input. 
+When a background window attempts to capture mouse input, it receives messages only for mouse events that occur when the cursor hot spot is within the visible portion of the window.
+
+Capturing mouse input is useful if a window must receive all mouse input, even when the cursor moves outside the window. 
+For example, an application typically tracks the cursor position after a mouse button down event, following the cursor until a mouse button up event occurs. 
+If an application has not captured mouse input and the user releases the mouse button outside the window, the window does not receive the button-up message.
+
+A thread can use the GetCapture function to determine whether one of its windows has captured the mouse. 
+If one of the thread's windows has captured the mouse, GetCapture retrieves a handle to the window.
