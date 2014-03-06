@@ -1,0 +1,443 @@
+
+UBUNTU设置开机启动图形应用程序-替换默认图形桌面
+
+1. 禁止默认图形桌面的启动。
+   编辑文件 /etc/init/lightdm.conf，在第12行附近，原句“ and runlevel [!06]” 改为“ and runlevel [!026]”。
+   （注意：为使上这句有效，需要确保，/etc/init/rc-sysinit.conf，在第14行附近：env DEFAULT_RUNLEVEL=2。）
+
+2. 利用etc/rc.local随机启动，startx脚本。
+   编辑文件/etc/rc.local,在"exit 0"前添加一行：/usr/bin/mystartx
+   （注：startx脚本的功能是启动，x-server及x-client。）
+
+3. 修改startx脚本，文件末尾有一行
+   “xinit "$client" $clientargs -- "$server" $display $serverargs”，
+   在这一行的前面加入一行 client="自定义的程序路径"
+
+关机重启，就可以了。
+
+http://linux.about.com/od/linux101/l/blnewbie5_1.htm
+Linux Shortcuts and Commands
+Part 5 of the Linux Newbie Administrator Guide
+
+
+
+硬件开发，
+http://www.csdn.net/article/2014-01-03/2818015-tiny-hardware-development-boards-of-2013
+2013年终盘点：10款最精巧的硬件开发板
+
+树莓派http://baike.baidu.com/subview/7154334/11078842.htm
+树莓派（英语：Raspberry Pi），是一款基于Linux系统的只有一张信用卡大小的单板机计算机。它由英国的树莓派基金会所开发，目的是以低价硬件及自由软件刺激在学校的基本的电脑科学教育【Raspberry-Pi.png】
+
+PLC面板，指示灯，信号灯
+嵌入式系统面板的指示灯
+
+
+LINUX 安装与启动
+http://tldp.org/LDP/gs/gs.html
+Linux Installation and Getting Started
+
+Bootable floppies for PCs usually contain MS-DOS or miniature versions of Linux. The most commonly available floppy disk can hold only 1.4 MB of data in its standard format, making it impractical for loading large operating systems. The use of boot floppies is in decline, due to the availability of other higher-capacity options, such as CD-ROMs or USB flash drives.
+
+The first step is to boot the Linux installation media. In most cases, this is a “Bootable floppies” which contains a small Linux system.
+http://www.linfo.org/make_linux_boot_floppy.html
+http://www.pendrivelinux.com/boot-multiple-iso-from-usb-via-grub2-using-linux/
+
+http://www.ruanyifeng.com/blog/2013/08/linux_boot_process.html
+Linux 的启动流程
+开机启动程序加载完毕以后，就要让用户登录了。
+
+一般来说，用户的登录方式有三种：
+　　（1）命令行登录
+　　（2）ssh登录
+　　（3）图形界面登录
+这三种情况，都有自己的方式对用户进行认证。
+（1）命令行登录：init进程调用getty程序（意为get teletype），让用户输入用户名和密码。
+输入完成后，再调用login程序，核对密码（Debian还会再多运行一个身份核对程序/etc/pam.d/login）。
+如果密码正确，就从文件 /etc/passwd 读取该用户指定的shell，然后启动这个shell。
+（2）ssh登录：这时系统调用sshd程序（Debian还会再运行/etc/pam.d/ssh ），取代getty和login，然后启动shell。
+（3）图形界面登录：init进程调用显示管理器，
+Gnome图形界面对应的显示管理器为gdm（GNOME Display Manager），
+然后用户输入用户名和密码。
+如果密码正确，就读取/etc/gdm3/Xsession，启动用户的会话
+
+
+
+
+
+
+http://www.cnblogs.com/montya/archive/2011/09/09/2172001.html  rc.local开机器不执行.png
+解决linux下/etc/rc.local开机器不执行的原因
+前不久因项目需要写了开机启动其他程序的shell脚本,因工作忙，调试完给了技术支持人员，也没去注意过。
+
+到后来，有几台服务器突然被重启了，这时候领导问，怎么开机启动的脚本没起作用，还被批了一顿，哎，做事虎头蛇尾,活该！
+
+然后去查，一直没查到原因，
+
+手动执行都是正确的，在排除了权限原因和脚本问题后，很郁闷，怎么放到开机启动项目中就无法执行了呢。
+
+于是去查linux开机启动过程信息。google下，看了下关于一些开机启动启的资料，发现了开机启动程序的级别为3.
+
+果断顺藤莫瓜，找到了这个目录 /etc/rc.d/rc3.d，进去一看恍然大悟。
+
+
+
+我的rc.local文件是在 /etc/rc.local中（网上都是说写在这里，我是按照网上来弄的），而我查看了系统指向rc.local文件的路径是 /etc/rc.d/rc.local
+
+后来把开机启动的脚本配置到/etc/rc.d/rc.local中（或者把S99local指向 /etc/rc.local也行），重启检查，成功！
+
+总结:主要还是对linux系统不熟悉，这是个漫长的过程，有时间得多看看这方面的书籍。
+
+
+改rc.local文件开机自动运行脚本
+1.开机自运行
+简单的处理开机自运行的方法是修改rc.local文件。此文件位于/etc目录下面.
+在默认情况下，rc.local是一个空的脚。您只要修改它就可以了。要注意的是，在此文件中运行的命令其依赖的进程是否运行。本人再实验的时候由于想在
+开机时启动dia.试了好多次都失败。我想可能是界面进程还没有启动。我的实验脚本为
+       echo   “hello. rc.local” >>home/shanfeng/rc.local 实验成功
+在/etc目录下面还有rc*.d的目录。这些目录里面放在很多/etc/init.d/下面脚本的软链接,操作系统根据不同的运行等级，选择运行其中下的脚本。您也可以修改它们达到开机自运行的目的。
+2。定时任务
+介绍一种简单的处理方式
+用cron处理定时任务,首先要保证cron操作已经运行。如果安装了cron 的话。正常情况下cron已经开机自运行了，如果没有运行的话。
+/etc/init.d/cron start
+用crontab来安排定时任务
+crontab [-u user] {-l| -r |   -e}
+-l:显示任务
+-e:编辑任务
+-r:清空任务
+任务格式为:
+分 时 星期 月份 年 操作命令
+eg:
+1. * 14 * * * echo ” look me”>>/home/shanfeng/test 表示每天14点运行一次
+2. 0-59/2 * * * * echo “look me” >>/tmp/test 表示每两分钟运行一次
+3. * 2,15 * * * echo “look me ” >>/tmp/test 表示2与15点运行一次
+* : 表示任意 -:表示区间.   / :表示频率   , ：表示枚举
+
+
+
+
+linux 在字符界面中如何查看超出屏幕显示范围的内容
+你是不是指哪些被滚到屏幕上面的部分？可以用shift+pageUp/pageDown进行滚动
+
+Linux字符界面下对界面进行翻页的几个操作
+1.如果文件内容很长，不用 cat命令查看，而使用less、more这样单页显示的工具。
+2.使用编辑器 view（vi的只读版本）、nano 等都可以。
+3.使用输出重定向符号 ">"，把显示的内容重定向到文件中去，再来查看。
+如：假如当前文件夹中有很多文件，要查看文件的信息，可以用>把ls的输出由stdout重定向到指定文件filelist中：ls -l > filelist
+4.不得不翻屏的时候可以使用 Shift+PageUp/PageDown，但能翻的不多
+
+cat aa.txt | more
+yourcmd | less  例如  ll /etc/init.d | more
+yourcmd | more
+
+less textfile
+vi testfile
+
+
+
+
+
+
+
+Distributions described as lightweight[edit]
+
+Alpine Linux - A security-oriented, lightweight Linux distribution based on uClibc and BusyBox.[4] Mini download is 60 MB; base system (excluding kernel) is under 5 MB.
+antiX - Lightweight version of its parent distribution MEPIS Linux, based on Debian testing. Core Install: 128 MB, Base approx 300 MB. Package Manager: Synaptic[5]
+BasicLinux - A very lightweight distribution capable of running on an Intel 386 and 3 MB of RAM[6][7]
+Bodhi Linux - A lightweight and minimalistic distribution, based on Ubuntu 12.04[8]
+CrunchBang Linux - A relatively large (771MB) Debian based distribution designed primarily for speed and ease of use.[9][10]
+Damn Small Linux - Download 50 MB. Additional software available as "DSL Extensions" and using the Debian APT tool, which has to be installed. "Light enough to power a 486DX with 16MB of Ram"[11][12]
+Feather Linux - Lightweight Linux Distribution derived from Knoppix. Now dormant.[13][14]
+Lubuntu - Lightweight in comparison to Ubuntu, it uses the LXDE desktop.[1]
+Nanolinux - 14 MB distribution based on Core Linux. [15]
+Peppermint Linux OS - Based on Lubuntu.[16]
+Porteus - It weighs in at under 300 MB, making it a lightweight contender.[17] Comes with the LXDE and KDE desktops
+Puppy Linux - Lightweight relative to most other Linux distributions.[18] Download: 133MB. Package Manager: Synaptic (Lucid Puppy Ubuntu Compatible version)
+Semplice Linux lightweight, fast and simple, based on Debian Sid.[19]
+SliTaz - 35 MB distribution. Package Manager is Tazpkg with its repository of packages[11]
+Tiny Core Linux - 12 MB distribution. Software repository: TCZ packages[20]
+Trisquel Mini - Lightweight version of Trisquel with LXDE[21]
+
+
+
+
+/etc 
+
+etc不是什么缩写，是and so on的意思 来源于 法语的 et cetera 翻译成中文就是 等等 的意思. 至于为什么在/etc下面存放配置文件， 按照原始的UNIX的说法(linux文件结构参考UNIX的教学实现MINIX) 这下面放的都是一堆零零碎碎的东西, 就叫etc, 这其实是个历史遗留.
+
+这个目录一般用来存放程序所需的整个文件系统的配置文件.
+
+
+
+
+守护进程，也就是通常说的Daemon进程，是Linux中的后台服务进程
+在linux或者unix操作系统中在系统的引导的时候会开启很多服务，这些服务就叫做守护进程。为了增加灵活性，root可以选择系统开启的模式，这些模式叫做运行级别，每一种运行级别以一定的方式配置系统。 守护进程是脱离于终端并且在后台运行的进程。守护进程脱离于终端是为了避免进程在执行过程中的信息在任何终端上显示并且进程也不会被任何终端所产生的终端信息所打断
+
+
+
+
+spice-gtk 在Linux编译
+autotools, relatively recent (some workaround like 'mkdir m4' mentioned below)
+pixman >= 1.7.1 (any recent)
+celt = 0.5.1.3 (this is important, newer versions use a different protocol)
+alsa
+log4cpp
+openssl
+libXrandr
+cegui
+libgcrypt-devel
+pyparsing - only if you build from git (tarball releases don't require it)
+dev86 (required for?)
+iasl (and this?)
+for smartcard:
+nss
+
+
+spicy 鼠标退出虚拟机的方法 shift+f12
+spicy fullscreen escape
+To get out use Shift+F12, not logical I know, but it works :)
+
+SPICE建立Channel的详细步骤及消息传递流程
+s: reds_init_net, 注册回调reds_accept 创建listen socket，增加监听watch_add(reds_accept),后续加入select监听
+
+c: RedChannel::run-》RedChannelBase::connect() -》RedPeer::connect_unsecure发送连接请求，等待服务端accept
+
+s: reds_accept
+    -》spice_server_add_client，reds_handle_new_link
+        -》async_read_handler，异步接收数据，需要客户端发送数据，填充link->link_header结束
+c: RedChannelBase::link() -》link_mess.channel_type = _type，send 发送link请求，recive等待
+s:            -》reds_handle_read_header_done，
+                -》async_read_handler，填充link->link_mess
+                    -》reds_handle_read_link_done
+                        —》async_read_handler，填充link->auth_mechanism
+                            ->reds_handle_auth_mechanism
+                                ->reds_get_spice_ticket
+                                   —》async_read_handler，填充link->tiTicketing.encrypted_ticket.encrypted_data
+                                       —》 reds_handle_ticket
+                                           ->reds_handle_link
+                                             ->if (link->link_mess->channel_type == SPICE_CHANNEL_MAIN) { reds_handle_main_link(link); }
+
+   async_read_handler-》reds_stream_read堵塞，等待客户端发送消息
+ 
+reds_handle_main_link流程
+    -》reds_send_link_result(link, SPICE_LINK_ERR_OK);
+
+c->s: SPICE_CHANNEL_MAIN s: reds_handle_main_link，此过程的详细步骤如上
+
+s->c: SPICE_MSG_MAIN_INIT, c: handle_init
+
+c->s: SPICE_MSGC_MAIN_ATTACH_CHANNELS s: reds_send_channels
+
+s->c: SPICE_MSG_MAIN_CHANNELS_LIST c: handle_channels
+
+
+
+
+
+
+
+
+
+gtk 的控件是建立在goject的基础上的, 换句话说, gtk的所有控件都是从gobject派生而来. 如果要学习 gtk 的对象模型, 可以参考 gobject 的相关实现. 
+
+gtk 的控件家族中, 大部分都是所谓的 gtk widget。
+gtk widget 是gtk抽象出来的一个上层概念, 这样的一个widget, 在中文的表述中就代表一个控件。
+这样的widget只是逻辑上的, 也就是说, 在逻辑上它是一个控件, 实际上可能并没有单独的窗口资源和它相应。
+
+所以在 gtk 的控件家族中, 从这个角度可以将 widget 分成两类:
+
+1. widget 有真正的窗口资源和它对应, 比如一个 toplevel 的 GtkWindow, 在gtk的底层会有一个GdkWindow和它相对应。
+一个GdkWindow, 在 X11 中就对应于一个 X11 的window。
+在 gtk 中, 只能在 GdkWindow 上进行绘图。
+这样的控件, 我们可以为它设置背景,窗口的背景一旦设置, 就由XServer负责在必要的时候重绘。
+而对于前景, 在适当的时候(当窗口由不可见到可见), XServer会发送Expose消息给这样的控件。
+控件根据需要在前景上进行重绘, 在gtk的实现中, 控件都会实现自己的expose消息处理函数。
+
+这个消息为 RUN_LAST方式运行, 
+所以当用户自己用 g_signal_connect 注册了一个 expose 消息处理, 
+并且在消息处理函数中 return TRUE, 就会将这个默认的消息变成无效, 
+所以如果对 gtk 自己提供的绘制功能不满意的话,
+可以利用这种手段自己实现某些绘制功能.
+
+2. widget 没有单独的一个 GdkWindow 和它相对应, 
+比如 gtk button 就是这样的一个控件,
+自己没有单独的 GdkWindow, 
+当这样的控件需要绘制的时候, 就会在父控件的GdkWindow上绘制. 
+
+比如gtk button, 假设一个 button 在一个 toplevel 的窗口中, 
+当窗口从不可见到可见的时候, XServer 就会给 toplevel window 发送 expose event, 
+由于toplevel 是一个container, toplevel window 在响应自己的 expose 之后, 
+会向所有的没有 GdkWindow 的子控件(button)发送 expose event, 
+当 button 收到消息后, 就会在它的父 widget(toplevel window) 的相应位置绘制自己.
+
+如果要实现不规则的窗口, 只能使用第一类控件.
+
+
+GtkWidget转换为GObject类型，格式一般为G_OBJECT(button)
+GTK_WINDOW
+GTK_DIALOG
+
+GTK-WARRING:  cannot  open  display!
+#include <gtk/gtk.h>  <--用到了图形库，当然不能在字符模式下运行了，在GNOME下可以正常运行   x server没有启动.
+setenv DISPLAY 192.168.0.1:0  
+指定一个GUI的接受端即可
+
+尝试在纯字符界面下运行Gtk的界面程序，提示信息：cannot open display。
+ioctl是设备驱动程序中对设备的I/O通道进行管理的函数。所谓对I/O通道进行管理，就是对设备的一些特性进行控制，例如串口的传输波特率、马达的转速等等。它的调用个数如下：int ioctl(int fd, int cmd, …)；其中fd就是用户程序打开设备时使用open函数返回的文件标示符，cmd就是用户程序对设备的控制命令，至于后面的省略号，那是一些补充参数，一般最多一个，有或没有是和cmd的意义相关的。ioctl函数是文件结构中的一个属性分量，就是说如果你的驱动程序提供了对ioctl的支持，用户就能在用户程序中使用ioctl函数控制设备的I/O通道。
+
+
+GTK(GIMP Toolkit)是一个Linux平台下基于Xwindow图形窗口的图形用户编程接口工具,可以借助它来开发Linux平台下基于Xwindow的图形用户界面。
+这是不是意味着Gtk小程序不能在纯字符界面下运行？？我也不确定，但是minigui写的就可以，所以不死心，想问问谁能给个确切的答案
+
+你都说了，人家gtk本身就是一套“图形用户编程接口工具”，程序里调用gtk的函数当然就是为了显示图形，你不启图形当然不成。
+
+不是这样的，可以不启用Gnome这样的GUI环境，但只要所运行的程序的底层库已加载，Xserve有支持（或是直接用FB驱动），就可以运行图形程序，比如嵌入式系统就是这样的
+
+gtk_window_fullscreen ()
+void                gtk_window_fullscreen               (GtkWindow *window);
+Asks to place window in the fullscreen state. Note that you shouldn't assume the window is definitely full screen afterward, because other entities (e.g. the user or window manager) could unfullscreen it again, and not all window managers honor requests to fullscreen windows. But normally the window will end up fullscreen. Just don't write code that crashes if not.
+
+You can track the fullscreen state via the "window-state-event" signal on GtkWidget.
+
+window :a GtkWindow
+
+
+http://www.embedu.org/Column/Column65.htm
+很多LINUX初学者在学习linux图形方面的知识时会遇到一些概念，如：X、X11、Xfree86、WM、KDE、GNOME、QT、QT/E、Qtopia、DirectFB、Framebuffer、显卡加速驱动等等。理解它们之间是什么关系，对我们学习来说是非常重要的。写这篇文章的目的，就是想让大家明晰这些概念及它们之间的关系。（部分内容引用网络上的一些描述比较清晰的内容）
+X11表示X协议的第16版.X11R6是X协议第11版第六次发行
+
+XFree86 是X Windows server的X11R6执行程序.
+有了协议就需要具体的软件来实现这个协议.
+Xfree86是按照X协议的规定来完成X应用程序提交的在屏幕上显示的任务.
+实现X协议的软件也并不只有XFree86, XFree86只是实现X协议的一个免费X服务器软件.
+有些甚至能够在WINDOWS上有X服务器运行,这样您能够在linux系统上运行一个X应用程序然后在另一台windows系统上显示.
+只是在LINUX上最常用的是XFree86.不过现在的linux发行版大多用Xorg了
+
+窗口管理器的作用就是最大化、最小化、移动、关闭窗口等.而这些不是X服务器来负责完成的
+
+KDE 和GNOME是LINUX里最常用的图像界面操作环境,他们不但仅是个窗口管理器那么简单, KDE是K Desktop Environment 的缩写,他不但是个窗口管理器,更有很多配套的应用软件和方便使用的桌面环境,比如任务栏,开始菜单,桌面图标等等.GNOME是GNU Network Object Model Environment 的缩写,和KDE相同,也是个功能强大的综合环境
+
+QT/E 是用于嵌入式Linux系统的QT版本.QT/E中去掉了X lib的依赖而直接工作于Frame Buffer上,因而应用程序处理过程效率比较高.它的运行只要有Framebuffer设备就可以了,不需要X服务器的支持.但其本身运行也是有服务器和客户端的概念
+
+DirectFB项目是由德国Convergence公司推动的Open source计划的一部分,它是专门为满足嵌入式设备要求而开发的小巧、强大、灵活和易于使用的图形系统,并且试图成为一个建构于Linux Framebuffer Device之上的新图形标准.它在FrameBuffer的基础上提供了图形加速、输入设备处理提取、透明窗口和多重显示层的功能,能够对嵌入式系统GUI有较好的支持.与那些通用的嵌入式GUI系统相比,它具有非常简洁、高效的体系结构和硬件图形加速功能
+
+
+
+xinit启动X Window System过程初探 (初始化 X Window System)
+启动X主要有两种方法：一是Display Manager，如XDM、GDM、KDM，此种方法通过图形界面登录；另一种是通过xinit，此种方法适用于字符界面登录。
+
+LightDM的目标是创造一个轻量、快速、具扩充性以及多桌面环境的X显示管理器[6]。它使用了很多不同的前端来渲染出登录画面[7]，所以又被称为Greeters
+LightDM在Ubuntu 12.04作为默认的Unity登录前端
+
+https://wiki.archlinux.org/index.php/Display_Manager_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
+显示管理器或登录管理器是一个在启动最后显示的图形界面。和窗口管理器一样，显示管理器有很多种。通常每个显示管理器都能进行一些定制
+XDM: X 显示管理器 (xorg-xdm)
+GDM: GNOME 显示管理器 (gdm)
+KDM: KDE 显示管理器 (kdebase-workspace)
+SLiM: 简单登录管理器 (slim)
+LXDM: LXDE 显示管理器 (独立于桌面环境) (lxdm)
+Qingy: getty 使用 DirectFB 的替代者 (qingy)
+wdm: WINGs 显示管理器 (wdm)
+CDM: 控制台显示管理器 (available in the AUR: cdm-git)
+LightDM: Ubuntu 开发的 GDM 替代品，使用 WebKit (位于AUR: lightdm, lightdm-bzr)
+
+
+
+
+
+
+
+
+
+
+ubuntu界面操作，下面的文档配置  及 命令行
+
+http://blog.csdn.net/hustwarhd/article/details/3069066
+startx启动过程分析
+tartx的用法和xinit的基本一样：startx [ [ client ] options ... ] [ -- [ server ] options ... ]。
+为什么呢？这是因为startx其实就是一个脚本，它启动X server就是通过调用xinit命令实现的，startx的参数将全部传给xinit。
+因此，这些参数的意义和xinit的参数是一样的
+
+System Settings can be run from the launcher (pinned by default), the Dash, or the power cog. But what command would I enter in a terminal window if I want to run it from there?
+gnome-control-center 
+Hope this helps you
+
+如果隔一段时间不操作，电脑就会锁屏。怎么把锁屏给去掉
+怎么不让ubuntu锁屏
+Ubuntu小技巧——禁用Ubuntu的屏幕锁定
+http://os.51cto.com/art/201310/413549.htm
+登录Ubuntu，点击控制选项（位于菜单栏的最右边的图标）图标并选择“系统设置”
+点击系统设置面板里的“亮度和锁屏”图标
+最后，关闭“锁定屏幕选项”
+
+操作系统Ubuntu 10.10
+在菜单“系统”-》“系统管理”-》“用户和组”设置里有个密码“登录时不询问”已经修改为登录时不询问密码打钩；
+
+系统重新启动不需要输入密码了。
+顺便问一下挂起和睡眠后再启动系统总是需要输入密码，如何取消？
+
+ubuntu12.04如何设置系统不休眠和不挂起
+我的是桌面版的，在系统更新或者安装软件的时候，往往需要比较长的时间，但是过了一定时间，系统就会自动锁定屏幕，并且关闭网络连接，之前未完成的任务就无法继续了。
+官网上说，12.04默认关闭了休眠功能，但是我从电池选项中修改设置如下，还是不行，求高手解答
+
+
+关闭xorg图形界面
+ctrl+ale+F3进入字符界面
+ctrl+alt+f1启动shell登录 也可进入字符界面
+alt+Ctrl+f7 再回到图形界面
+
+tty'n',是文本模式下的控制台,n代表第几个控制台,可以用CTRL+ALT+F1...F7来切换
+
+重启命令：
+1、reboot
+2、shutdown -r now 立刻重启(root用户使用)
+3、shutdown -r 10 过10分钟自动重启(root用户使用) 
+4、shutdown -r 20:35 在时间为20:35时候重启(root用户使用)
+如果是通过shutdown命令设置重启的话，可以用shutdown -c命令取消重启
+关机命令：
+1、halt   立刻关机
+2、poweroff  立刻关机
+3、shutdown -h now 立刻关机(root用户使用)
+4、shutdown -h 10 10分钟后自动关机
+如果是通过shutdown命令设置关机的话，可以用shutdown -c命令取消重启
+
+
+怎么修改etc/init目录下的配置文件？
+以root权限用gedit打开文件 
+用sudo gedit filename 来打开，不行，报错；
+用su，然后输入密码，再gedit filename ，也不行，报错；
+如何做？用su - （中划线代表用户名）
+输入： su -
+输入： 密码
+再 gedit filename
+OK
+
+
+linux 常用命令
+ls ll
+
+这个不应该称得上是一个问题，但是，发现对于新手，确实是个难题因为少有人能够提到这一点，基本都是上来就直接讲用到的命令。
+我开始的时候也曾经被这个问题困扰着，后来，搜了一会儿才弄明白。
+1.在菜单内的附件上面有
+2.在运行命令的输入框打开
+3.快捷方式
+4.快捷键
+很好弄，在左上角的菜单上点一下，出来一列，在里面选择［附件］ 中的［终端］，点一下就OK。
+那是快捷执行图标，可以把图标拖到桌面然后释放，以后在桌面上直接执行。同理，可以拖到上面的任务 栏里面。以后在上面的任务栏点一下就行了。
+也不难弄，但不好找。首先按住Alt，然后按一下F2，出来一个运行框，在里面输入 gnome-terminal即可运行。
+在这个运行框里，可以执行很多命令，想当于windows的［运行］。
+把终端窗口打开放在鼠标右键，效果是在桌面或文件夹内的空白处右键点击，将出现“从终端打开”的快捷方式。那个需要使用一个软件。
+安装很简单，打开终端，在里面输入: 
+[c-sharp] view plaincopy
+sudo apt-get install nautilus-open-terminal   
+
+然后系统就在右键中自动添加该快捷方式了。
+Ctrl+Alt+T，快捷键搞定（多谢霜晓雄鹰的评论）
+
+sudo kill 3486
+
+
+
+
+【KVM虚拟机命令学习】
+
+qemu-spice -spice port=5930,disable-ticketing -drive file=/path/to/image -vga qxl -device AC97 -usbdevice tablet -m 1024 -enable-kvm -net nic -net user

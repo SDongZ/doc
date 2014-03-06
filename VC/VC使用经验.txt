@@ -1,0 +1,18 @@
+
+相同的代码（SVN同步的），一台机器上能编译过，一台机器编辑不过，都是VC2010。
+IWICImagingFactory *img_factory = nullptr;
+	IWICBitmapDecoder *bmp_decoder = nullptr;
+	IWICBitmapFrameDecode *frame_decode = nullptr;
+	IWICFormatConverter *format_converter = nullptr;
+最后发布是，正常的机器，打了SP1包。出错的机器未打VC2010-SP1包。
+
+
+
+
+wxcplusplus@live.com   下载 vc 2013
+https://wxcplusplus.visualstudio.com/  visual studio 账户  (在线版本) (Y) (可保存私有代码)
+每个 Visual Studio Online 帐户都可支持 5 个免费 Basic 用户，并包含用于生成和负载测试的月度共享资源
+
+
+Visual Studio 2010: chrono header file missing
+VS2010 only has partial C++11 support. You need VS2012+.

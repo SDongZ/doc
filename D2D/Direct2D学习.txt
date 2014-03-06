@@ -1,0 +1,107 @@
+
+How to Load a Bitmap from a File
+Direct2D uses the Windows Imaging Component (WIC) to load bitmaps. 
+To load a bitmap from a file, first use WIC objects to load the image and to convert it to a Direct2D-compatible format, 
+then use the CreateBitmapFromWicBitmap method to create an ID2D1Bitmap (ID2D1RenderTarget::CreateBitmapFromWicBitmap method)
+
+WIC绘制图片是在GPU上进行的，所以效率较高
+	//加载一个位图
+	HRESULT hr = S_OK;
+	IWICImagingFactory* pIWICFactory = NULL;  
+    IWICBitmapDecoder* pDecoder = NULL;  
+    IWICBitmapFrameDecode* pFrame = NULL;  
+    IWICFormatConverter* pConverter = NULL;  
+
+	CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pIWICFactory) ); 
+    hr = pIWICFactory->CreateDecoderFromFilename(  
+        TEXT("C:\\Users\\Public\\Pictures\\Sample Pictures\\11.jpg"),  
+        NULL,  
+        GENERIC_READ,  
+        WICDecodeMetadataCacheOnLoad,  
+        &pDecoder  
+        );     
+    hr = pDecoder->GetFrame(0, &pFrame);    
+    hr = pIWICFactory->CreateFormatConverter(&pConverter);  
+    hr = pConverter->Initialize(  
+        pFrame,                          // Input bitmap to convert  
+        GUID_WICPixelFormat32bppPBGRA,   // Destination pixel format  
+        WICBitmapDitherTypeNone,         // Specified dither pattern  
+        NULL,                            // Specify a particular palette   
+        0.f,                             // Alpha threshold  
+        WICBitmapPaletteTypeCustom       // Palette translation type  
+        ); 
+
+	m_d2d_target->CreateBitmapFromWicBitmap(pConverter, &m_d2d_bitmap);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+void CShowPositionWnd::DrawGrid() {
+	if(m_render_target) {
+		UINT x0 = 0, x1 = m_window_width, y = 0;
+		m_solid_brush->SetColor(D2D1::ColorF(D2D1::ColorF::DarkRed));  改变画刷的着色
+		while(y < m_window_height) {
+			m_render_target->DrawLine(D2D1::Point2F(x0, y), D2D1::Point2F(x1, y), m_solid_brush);
+			y += m_pixel_of_element;
+		}
+
+		UINT y0 = 0, y1 = m_window_height, x = 0;
+		while(x < m_window_width) {
+			m_render_target->DrawLine(D2D1::Point2F(x, y0), D2D1::Point2F(x, y1), m_solid_brush);
+			x += m_pixel_of_element;
+		}
+    	}
+}
+
+void CShowPositionWnd::DrawPoints() {
+	if(m_point_list.size()) {
+		auto point = m_point_list.begin();
+		while(point != m_point_list.end()) {
+		    m_solid_brush->SetColor(D2D1::ColorF(D2D1::ColorF::DarkGreen));
+			m_render_target->FillEllipse(D2D1::Ellipse(*point, 10, 10), m_solid_brush); 画圆
+			point++;
+		}
+
+		//draw last point
+	}
+}
+
+
+
+
+d2d
+HRESULT CShowPositionWnd::InitD2D() {
+	HRESULT hr = S_OK;
+	if(!m_d2d_factory) {
+		HRESULT hr;
+		hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_d2d_factory);
+		if(SUCCEEDED(hr)) {
+			hr = m_d2d_factory->CreateHwndRenderTarget(
+				D2D1::RenderTargetProperties(),
+				D2D1::HwndRenderTargetProperties(m_hWnd, D2D1::SizeU(m_window_width, m_window_height)),
+				&m_render_target);
+			if(SUCCEEDED(hr)) {
+				hr = m_render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red), &m_solid_brush);
+			}
+		}
+	}
+	return hr;
+}
+void CShowPositionWnd::OnPaint()
+{
+	if(IsIconic()) {
+	} else {
+		if(SUCCEEDED(InitD2D())) {
+			m_render_target->BeginDraw();
+			m_render_target->Clear(D2D1::ColorF(D2D1::ColorF::Yellow));
+			m_render_target->DrawLine(D2D1::Point2(0, 5), D2D1::Point2(m_window_width, 5), m_solid_brush);
+			m_render_target->EndDraw();
+		} else {
+		}
+	}
+}

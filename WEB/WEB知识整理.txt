@@ -1,0 +1,61 @@
+[JS][HTML/CSS][PHP][WEB-SERVER]
+
+
+
+WebRTC is a free, open project that enables web browsers with Real-Time Communications (RTC) capabilities via simple Javascript APIs. The WebRTC components have been optimized to best serve this purpose
+Google Ideas昨天宣布了三个促进推动言论自由表达的工具：P2P代理工具uProxy，提供网站托管抵御DDoS的服务Project Shield，可视化DDoS攻击的数字地图。其中最令普通用户感兴趣的是P2P代理工具uProxy。据softpedia报导，它的新颖之处是使用了WebRTC数据通道。uProxy是一个浏览器扩展，能将所有浏览器的流量重定向通过第三方计算机，它不像VPN那样依赖于专用代理服务器，而是通过点对点连接。uProxy是基于WebRTC技术的实现，目前支持WebRTC的只有Firefox和Chrome，WebRTC最初是设计用于创建Web音频和视频通信，它的数据通道设计可以传输任意类型的数据，而不仅仅限于音频和视频流，因此可用于文件传输和文本通信等。WebRTC技术提供了一种可靠的方法在浏览器之间进行实时异步数据传输，因此它也可用于在电脑之间重路由流量
+
+
+在FLASH脚本中，使用UDP协议，进行数据收发
+http://stackoverflow.com/questions/907041/is-it-possible-to-use-udp-in-flash-actionscript
+Both BinarySocket and Xml Socket is TCP/IP based. As SpliFF mentions UDP is being added in Flash 10 mainly for Flash Media Server tools and for RTMFP. Adobe Stratus is an example of the protocol so far.http://labs.adobe.com/technologies/stratus/
+However current UDP samples from Adobe are all Peer-to-Peer based. UDP has benefits in P2P but more so in larger scale multiuser or DVEs (Distributed Virtual Environments) so hopefully it is focus going forward.
+As of right now the answer is no.
+If you want UDP for a game Unity3D currently supports UDP in the web player. Or jMonkeyEngine using Java supports it. Also Torque 3D web based coming soon may also support it.
+
+
+http://nodejs.org/api/fs.html （同步，异步读写文件）【nodejs-readfile-sync.png】
+          var str = fs.readFileSync(TEMPLATE_NAME, 'utf8');
+          //console.log(str);
+          var html = ejs.render(str,{data:_data,str:data});
+          process.chdir(OUT_PATH);
+          fs.writeFileSync(OUT_FILENAME,html);
+
+
+
+
+http://desert3.iteye.com/blog/1418406
+http://desert3.iteye.com/blog/1418406
+Tomcat关于encoding编码的默认设置以及乱码产生的原因
+如果你不告诉Tomcat我的参数是用UTF-8编码的，那么tomcat就认为你是用ISO-8859-1来编码的，而ISO8859-1（兼容URI中的标准字符集US-ASCII）是兼容ASCII的单字节编码并且使用了单字节内的所有空间
+特性：把其他任何编码的字节流当作ISO-8859-1编码看待都没有问题
+ISO 8859-1，正式编号为ISO/IEC 8859-1:1998，又称Latin-1或“西欧语言”，是国际标准化组织内ISO/IEC 8859的第一个8位字符集
+tomcat设置URL字符串为UTF8
+D:\apache-tomcat-6.0.30\conf\server.xml
+    <!-- A "Connector" represents an endpoint by which requests are received
+         and responses are returned. Documentation at :
+         Java HTTP Connector: /docs/config/http.html (blocking & non-blocking)
+         Java AJP  Connector: /docs/config/ajp.html
+         APR (HTTP/AJP) Connector: /docs/apr.html
+         Define a non-SSL HTTP/1.1 Connector on port 8080
+    -->
+    <Connector port="8888" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" URIEncoding="UTF-8"/>
+
+
+
+http://wenku.baidu.com/view/eb3ead00e87101f69e319587.html
+嵌入式web服务器
+lighttpd (开源免费)
+thttpd
+shttpd
+BOA
+GoAhead Web 服务器是一款主要面向嵌入式系统的WEB服务器，它的目标也许不在于目前的WEB服务器市场，而是面向当嵌入式系统深入我们的工作与生活的明天，那时，它也许会成为使用最广泛的WEB服务器
+web 服务器 : CGI
+CGI程序属于一个外部程序，需要编译成可执行文件，以便在服务端运行。浏览器将用户输入的数据送到Web服务器，Web服务器将数据使用STDIN送给CGI程序，在执行CGI程序后，可能会访问存储数据的一些文档，最后使用STDOUT输出HTML形式的结构文件，经Web服务器送回浏览器显示给用户
+CGI 的工作方式，从 Web 服务器的角度看，是在特定的位置（比如：http://www.example.com/wiki.cgi）定义了可以运行 CGI 程序。当收到一个匹配URL的请求，相应的程序就会被调用，并将客户端发送的数据作为输入。程序的输出会由 Web 服务器收集，并加上合适的档头，再发送回客户端
+用户提交的界面参数则由WEB服务器程序或CGI脚本来将其转化成路由系统可以理解的配置格式，或文本或数据库或自定义数据结构。
+做这个界面层其实也可以分为2层，前端与后端；前端需要用到html/css/js 等技术，后端就是WEB服务器及CGI脚本，通常都是c/c++写的；路由器对WEB服务的性能要求并不是很高，所以通常使用的都是比较轻量级的WEB服务器，常见的开源的web服务器有lighthttpd,shttpd,goahead等
+CGI脚本简单地讲是个运行在Web服务器上的程序, 有浏览器的输入触发. 这个脚本通常象服务器和系统中其他程序如数据库的桥梁
+CGI 脚本是任何运行在web服务器上的程序. CGI意思是Common Gateway Interface

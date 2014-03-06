@@ -1,0 +1,6 @@
+
+http://www.howtogeek.com/howto/28653/debunking-myths-is-hiding-your-wireless-ssid-really-more-secure/
+隐藏SSID没有意义？
+netsh wlan show networks mode=bssid
+
+inSSIDer began as a replacement for NetStumbler, a popular Windows Wi-Fi scanner, which had not been actively developed for several years and reputedly did not work with modern 64-bit operating systems or versions of Windows higher than Windows XP. The project was inspired by Charles Putney on The Code Project

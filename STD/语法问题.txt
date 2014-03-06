@@ -1,3 +1,6 @@
+if语句造成的编译错误【if-error.png】
+
+
 RECT 成员变量，初始化, 无法初始化。
 error C2661: “tagRECT::tagRECT”: 没有重载函数接受 4 个参数
 
@@ -6,3 +9,246 @@ error C2661: 'tagRECT::tagRECT' : no overloaded function takes 4 parameters
 
 暂时改为，CRect,具有构造函数的，类。
 具有构造函数的类，与，没有构造函数的结构体，初始化的区别？
+
+初始化数组成员变量, 真没办法，只好，构造函数里，赋值了
+http://stackoverflow.com/questions/4057948/initializing-a-member-array-in-constructor-initializer
+error C2536 无法指定数组的显式初始值设定项
+下面这个方法编译不过 （应该是C++11的语法）
+class Foo {
+       const int twoD[2][2];
+   public:
+       Foo() : twoD((int[2][2]){{1,2},{3,4}}) {}
+       Foo(int a,int b,int c,int d) : twoD((int[2][2]){{a,b},{c,d}}) {}
+
+       void show () const {
+           std::cout << "[[" << twoD[0][0] << "," << twoD[0][1] << "],["
+                     << twoD[1][0] << "," << twoD[1][1] << "]]" << std::endl;
+       }
+};
+使用模板库来初始化。
+class Matrix {
+public:
+   Matrix() : n() { n.fill(-1); }
+protected:
+   std::array<int, 20> n;
+};
+
+
+
+
+[c++] 虚函数都 是动态绑定的？
+只有采用“指针->函数()”或“引用变量.函数()”的方式调用C++类中的虚函数才会执行动态绑定。对于C++中的非虚函数，因为其不具备动态绑定的特征，所以不管采用什么样的方式调用，都不会执行动态绑定
+
+类名::虚函数()   调用指定类的指定函数    静态绑定
+对象名.虚函数()  调用指定对象的指定函数  静态绑定
+
+引用变量.虚函数() 调用被引用对象所属类的指定函数 动态绑定
+指针->虚函数()    调用被引用对象所属类的指定函数 动态绑定
+
+[c++] 动态绑定 与 静态绑定的区别
+函数。
+函数地址。
+
+
+    C++惯用法：奇特的递归模板模式（Curiously Recurring Template Pattern，CRTP，Mixin-from-above）
+在实现多态时，需要重写虚函数，因而这是运行时绑定的操作。
+然而如果想在编译期确定通过基类来得到派生类的行为，CRTP便是一种独佳选择，它是通过派生类覆盖基类成员函数来实现静态绑定的
+class derived : public base<derived>    注意基类是一个 类模板
+                                        (以基类为参数，可以调用基类函数)。
+{  
+    // attributes and behaviors 
+}
+
+	
+[STD]
+	static int i = 0;
+	char i_c = '0' + i;
+	std::string name = "d:\\P";    //std::string name = "d:\\P" + i_c;  这是不行的为什么？得到的值不确定，怎么解释这行代码？
+	name += i_c;
+	name += ".jpg";
+	m_cam1_device.SnapShotJPG(name.c_str());
+	i++;
+试验得到下面的结果
+std::string name = "d:\\P" + '\2';   这个会返回“\P”
+
+	static int i = 0;
+	char i_c = '0' + i;
+	std::string name = "d:\\P";
+	name = name + i_c;              这样做也是正常的。
+	name += ".jpg";
+	m_cam1_device.SnapShotJPG(name.c_str());
+	i++;
+
+下面种写是错误的(编译不过)，字符串不能加一个整数。
+std::string name
+name = name + 54; 
+
+下面是可以正常编译的
+std::string name = "d:\\P" + 2; 这样写是可以的
+	
+
+[C++]
+字符中的转义符（即引号中的转义符）
+'\212'
+'\256' ?
+
+[c++]
+class CImageTrackingOption : CInitFile   这样写，默认是私有继承。
+class CImageTrackingOption : public CInitFile
+
+struct 的话默认是 public 继承
+class继承默认是private继承，而struct继承默认是public继承
+
+[c++]
+C中的struct跟C++中struct可是不一样的, 有什么不一样？
+C中结构体的，TAG的意义，及，C 语言中的命名空间，的含义。
+
+[c++]
+struct 与 union主要有以下区别: 
+1. struct和union都是由多个不同的数据类型成员组成, 但在任何同一时刻, union中只存放了一个被选中的成员, 而struct的所有成员都存在。在struct中，各成员都占有自己的内存空间，它们是同时存在的。一个struct变量的总长度等于所有成员长度之和。在Union中，所有成员不能同时占用它的内存空间，它们不能同时存在。Union变量的长度等于最长的成员的长度。 
+2. 对于union的不同成员赋值, 将会对其它成员重写, 原来成员的值就不存在了, 
+
+
+
+
+
+
+
+
+【类中成员变量的初始化顺序】 注意声名顺序
+class CPreviewDlg : public CDialogEx
+{
+	DECLARE_DYNAMIC(CPreviewDlg)
+
+	CDevice &m_device;
+	
+	CRect m_rect;
+	int &m_left;
+	int &m_top;
+	int &m_right;
+	int &m_bottom;
+
+构造函数
+CPreviewDlg::CPreviewDlg(ID2D1Factory *factory, int &left, int &top, int &right, int &bottom, CDevice &device, CWnd* pParent /*=NULL*/)
+	: CDialogEx(CPreviewDlg::IDD, pParent),
+	  m_view(factory, m_rect), m_device(device),
+	  m_rect(left, top, right, bottom),
+	  m_left(left), m_top(top), m_right(right), m_bottom(bottom)
+{
+
+}
+
+
+
+
+
+看下面的代码，错在那里？字节，字节，一个字节是两位十六进制
+extern float cal_pos(unsigned char low, unsigned char hi);
+afx_msg LRESULT CShowPositionWnd::OnNewPosition(WPARAM wParam, LPARAM lParam)
+{
+	float x = cal_pos((wParam >> 24) & 0xf, (wParam >> 16) & 0xf);
+	float y = cal_pos((wParam >> 8) & 0xf, wParam & 0xf);
+	m_point_list.push_back(D2D1::Point2F(x, y));
+	InvalidateRect(nullptr);
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+std::fstream  open 
+语法: 
+  void open( const char *filename );
+  void open( const char *filename, openmode mode );
+
+函数open()用于文件流。它打开filename 并将其与当前的流相关联。可以选择的模式有： 
+
+模式 含义 
+ios::app 添加输出 
+ios::ate 当已打开时寻找到EOF 
+ios::binary 以二进制模式打开文件 
+ios::in 为读取打开文件 
+ios::out 为写入打开文件 
+ios::trunc 覆盖存在的文件 
+
+
+
+
+
+
+[关于，字符编码问题]
+
+// 此源文件在Windows平台上必须保存为Unicode格式（即UTF-16小尾）
+// 因为包含的汉字“??”，不能在简体中文版Windows默认的代码页936（即GBK）中表示。
+// 该汉字在UTF-16小尾序中用4个字节表示，
+// Windows操作系统能正确显示这样的在UTF-16需用4字节表示的字符
+// 但是Windows API不能正确处理这样的在UTF-16需用4字节表示的字符，把它判定为2个UCS-2字符
+ 
+#include <windows.h>
+int main()
+{
+	const wchar_t lwc[]=L"??";
+ 
+	MessageBoxW(NULL, lwc, lwc, MB_OK);
+ 
+	int i = wcslen(lwc);
+	printf("%d\n", i);
+	int j = lstrlenW(lwc);
+	printf("%d\n", j);
+ 
+	return 0;
+}
+
+
+
+
+
+
+
+
+善用backtrace解决大问题
+一．用途：
+主要用于程序异常退出时寻找错误原因
+二．功能：
+回溯堆栈，简单的说就是可以列出当前函数调用关系
+三．原理：
+1． 通过对当前堆栈的分析，找到其上层函数在栈中的帧地址，再分析上层函数的堆栈，再找再上层的帧地址……一直找到最顶层为止，帧地址指的是一块：在栈上存放局部变量，上层返回地址，及寄存器值的空间。
+2． 由于不同处理器堆栈方式不同，此功能的具体实现是编译器的内建函数__buildin_frame_address及__buildin_return_address中，它涉及工具glibc和gcc, 如果编译器不支持此函数，也可自己实现此函数，举例中有arm上的实现
+
+利用backtrace和backtrace_symbols函数打印调用栈信息
+在头文件"execinfo.h"中声明了三个函数用于获取当前线程的函数调用堆栈。
+
+#include <execinfo.h>
+ int backtrace(void **buffer, int size);
+ char **backtrace_symbols(void *const *buffer, int size);
+ void backtrace_symbols_fd(void *const *buffer, int size, int fd);
+ 
+ void backtrace_symbols_fd (void *const *buffer, int size, int fd)
+    backtrace_symbols_fd与backtrace_symbols 函数具有相同的功能,不同的是它不会给调用者返回字符串数组,而是将结果写入文件描述符为fd的文件中,每个函数对应一行.它不需要调用malloc函数,因此适用于有可能调用该函数会失败的情况
+	backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
+
+
+std list
+
+begin / end  返回迭代器
+front / back  返回元素的引用
+
+
+http://en.wikipedia.org/wiki/One_Definition_Rule
+One Definition Rule (ODR)
+The One Definition Rule (ODR) is an important concept in the C++ programming language.
+
+
+
+返回值优化RVO
+编译器优化要维护原来计算的正确性，对于返回值优化来说，编译器将不对复杂的函数执行RVO。例如，如果一个函数有多个return语句返回不同名称的对象，那么RVO不会被使用。如果想用RVO，则必须使用相同名称的对象。此外，必须定义一个复制构造函数以“打开”返回值优化。如果有关类没有定义复制构造函数，那么RVO就会悄悄地关闭
+有些编译器只对返回匿名对象的函数使用RVO
+Complex operator + (const Complex &a, const Complex &b)  
+{  
+    return Complex(a.real + b.real, a.imag + b.imag);  
+} 

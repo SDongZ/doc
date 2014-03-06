@@ -44,7 +44,7 @@
   <section>
 	<title>GIT学习中的问题</title>
 	<listitem>git ls-files 与 git ls-tree -r HEAD 的意义？<listitem>
-	<listitem>git 修改文件夹的名称，由小写变成大写？</listitem>
+	<listitem>非安装版本，做个文件夹，放在U盘上（GIT 出单独的一个文件）</listitem>
   </section>
   <section>   
     <title>Git基本操作</title>

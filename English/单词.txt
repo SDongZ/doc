@@ -1,0 +1,31 @@
+
+backslash (\ or slash (/)
+
+manipulator[英][m??n?pjule?t?(r)] [美][m??n?pjule?t?r]
+
+violations[英][va??'le??nz] 违反( violation的名词复数 )；冒犯；违反（行为、事例）
+
+slot   （插）槽
+sink 水槽
+
+
+status state 区别
+status 与 state 的区别
+status 指人时暗指相对的地位，指物时相当于 situation。
+state 人或物存在或所处的状态，和 condition 大体上可以互换使用。 
+
+situation 较狭义地指由环境综合决定的特定时间上的状态或情形。
+condition 指一定的原因/条件或环境所产生的特定情况。
+
+
+以 Recordset 为例
+Recordset 具有 Status 和 State 属性，说明二者还是有区别的。
+Recordset.Status 表示进行批处理后，当前记录的情况。结果有：操作被取消，结果未被保存；记录被锁无法保存……。
+Recordset.State 表示 Recordset 对象是打开的，还是关闭的，还是正在执行异步操作。
+
+ 
+
+再举例子
+
+最近的国际形式如何？status。
+水在标准大气压下 100 摄氏度时是什么状态？state。

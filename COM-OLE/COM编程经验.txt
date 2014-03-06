@@ -1,0 +1,98 @@
+
+template <class T> void SafeRelease(T **ppT)
+{
+    if (*ppT)
+    {
+        (*ppT)->Release();
+        *ppT = NULL;
+    }
+}
+
+
+
+//
+// Generic test for success on any status value (non-negative numbers
+// indicate success).
+//
+
+#define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
+
+//
+// and the inverse
+//
+
+#define FAILED(hr) (((HRESULT)(hr)) < 0)
+
+
+
+
+CComPtr的用法和普通COM指针几乎一样，另外使用中有以下几点需要注意。
+1. CComPtr已经保证了AddRef和Release的正确调用，所以不需要，也不能够再调用AddRef和Release。
+2. 如果要释放一个智能指针，直接给它赋NULL值即可。
+3. CComPtr本身析构的时候会释放COM指针。
+4. 当对CComPtr使用&运算符（取指针地址）的时候，要确保CComPtr为NUL。（因为通过CComPtr的地址对CComPtr赋值时，不会自动调用AddRef，若不为NULL，则前面的指针不能释放，CComPtr会使用assert报警）
+以刚才的程序为例：
+void SomeApp( IHello * pHello )
+{
+CComPtr<IHello> pCopy = pHello;
+OtherApp();
+pCopy->Hello();
+}
+由于pCopy是一个局部的对象，所以即使OtherApp()抛出异常，pCopy也会被析构，指针能够被释放。
+如果不想在程序临近发布前，还因为COM指针的引用计数造成崩溃的话，就牢记这一点吧：程序中除了参数之外，不要直接使用COM指针类型，一定要全部以CComPtr<IXXX>代替
+
+
+
+
+
+
+
+
+
+
+Interface definition file 是一个接口文件，它应该由用户利用IDL(interface definition language)语言编辑uuidgen产生的IDL原型文件而成。IDL是一种用来说明操作（过程或函数），操作的参数以及数据类型的语言，它在语法上继承于C语言，但形式上和C语言有很多不同，当然也有一些符合自己特点的适合于分布计算的特殊语法。具体可参看DCE RPC specification中的IDL language specification部分 (idl.jpg)
+
+IDL文件可以定义C和C++风格的结构，并可用它们作为函数的参数。 当IDL文件中有一个library时，MIDL将生成一个类型库
+http://www.vckbase.com/index.php/wv/1218
+COM 在设计初期，就定了一个目标：要能实现跨语言的调用。既然是跨语言的，那么组件的接口描述就必须在任何语言环境中都要能够认识。怎么办？用 .h 文件描述？------ C语言程序员笑了，真方便！BASIC 程序员哭了:-( 因此，微软使用了一个新的文件格式---IDL文件（接口定义描述语言）。IDL 是一个文本文件，它的语言语法比较简单，很象C。具体 IDL 文件的讲解，见下一回《COM 组件设计与应用（八）之添加新接口》。IDL 经过编译，生成二进制的等价类型库文件 TLB 提供给其它语言来使用。图三示意了 ATL COM 程序编译的过程
+idl2-ATL 组件程序编译过程.jpg
+说明1：编译后，类型库以 TLB 文件形式单独存在，同时也保存在目标文件的资源中。因此，我们将来在 #import 引入类型库的时候，既可以指定 TLB 文件，也可以指定目标文件；
+说明2：我们作为 C/C++ 的程序员，还算是比较幸福的。因为 IDL 编译后，特意为我们提供了 C 语言形式的接口文件。
+说明3：IDL 编译后生成代理/存根源程序，有：dlldata.c、xxx_p.c、xxxps.def、xxxps.mak，我们可以用 NMAKE.EXE 再次编译来产生真正的代理/存根DLL目标文件(注1)
+
+idl文件转换成.h文件，你可以使用midl命令生成  idl-midl-h.gif
+将idl文件加入到工程项目中，然后右键属性在output中生成文件即可
+
+
+
+
+
+
+
+
+
+IWebBrowser2
+http://msdn.microsoft.com/en-us/library/aa752038(v=vs.85).aspx
+Windows Internet Explorer's components can easily be reused thanks to its Component Object Model (COM)-based architecture. 
+Two commonly used components are shdocvw.dll (the WebBrowser Control) and mshtml.dll (code-named "Trident").
+
+BEGIN_EVENTSINK_MAP(CWebPageDlg, CDialogEx)
+	ON_EVENT(CWebPageDlg, IDC_EXPLORER1, 259, CWebPageDlg::DocumentCompleteExplorer1, VTS_DISPATCH VTS_PVARIANT)
+END_EVENTSINK_MAP()
+
+Defines an OLE automation function in a dispatch map
+DISP_FUNCTION(theClass, pszName, pfnMember, vtRetVal, vtsParams )
+
+BEGIN_DISPATCH_MAP(CFixHtmlView, CHtmlView)
+	DISP_FUNCTION(CFixHtmlView, "ParentLogin", ParentLogin, VT_BOOL, VTS_I4 VTS_I4)
+	DISP_FUNCTION(CFixHtmlView, "ChildFinish", ChildFinish, VT_I4, VTS_I4 VTS_I4 VTS_BSTR)
+	DISP_FUNCTION(CFixHtmlView, "ParentReg",ParentReg,VT_BOOL,VTS_I4 VTS_BSTR VTS_BSTR)
+	DISP_FUNCTION(CFixHtmlView, "sessionOverTime",sessionOverTime,VT_I4, VTS_I4 VTS_I4)
+	DISP_FUNCTION(CFixHtmlView, "eyeOver",eyeOver, VT_BOOL, VTS_I4 VTS_I4)
+END_DISPATCH_MAP()
+<input type="button" onClick="send_result('123')" />
+<script text="text/javascript">
+function send_result(str){
+	window.external.eyeOver(0,0);
+}
+</script>

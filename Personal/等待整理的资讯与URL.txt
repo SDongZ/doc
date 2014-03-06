@@ -1,0 +1,39 @@
+VGA2USB 设备
+朝阳区拂林路9号景龙国际A座1701
+沙特阿拉伯的沙漠农业
+
+
+
+简单服务发现协议（SSDP，Simple Service Discovery Protocol）是一种应用层协议，
+是构成通用即插即用(UPnP)技术的核心协议之一
+
+
+
+Google Ideas昨天宣布了三个促进推动言论自由表达的工具：P2P代理工具uProxy，提供网站托管抵御DDoS的服务Project Shield，可视化DDoS攻击的数字地图。其中最令普通用户感兴趣的是P2P代理工具uProxy。据softpedia报导，它的新颖之处是使用了WebRTC数据通道。uProxy是一个浏览器扩展，能将所有浏览器的流量重定向通过第三方计算机，它不像VPN那样依赖于专用代理服务器，而是通过点对点连接。uProxy是基于WebRTC技术的实现，目前支持WebRTC的只有Firefox和Chrome，WebRTC最初是设计用于创建Web音频和视频通信，它的数据通道设计可以传输任意类型的数据，而不仅仅限于音频和视频流，因此可用于文件传输和文本通信等。WebRTC技术提供了一种可靠的方法在浏览器之间进行实时异步数据传输，因此它也可用于在电脑之间重路由流量
+http://www.digitalattackmap.com/#anim=1&color=0&country=ALL&time=16023&view=map
+ddos 攻击地图
+
+
+
+PaaS是Platform-as-a-Service的缩写，意思是平台即服务。 把服务器平台作为一种服务提供的商业模式。通过网络进行程序提供的服务称之为SaaS(Software as a Service)，而云计算时代相应的服务器平台或者开发环境作为服务进行提供就成为了PaaS(Platform as a Service)
+PAAS 平台大全
+所谓PaaS实际上是指将软件研发的平台（计世资讯定义为业务基础平台）作为一种服务，以SaaS的模式提交给用户
+https://docs.google.com/spreadsheet/ccc?key=0AiIXCd1D_TmGdFluZEJQakV5M0QwWXNWaXREcWR0Q0E#gid=0
+
+
+
+http://www.autohotkey.com/docs/misc/SendMessageList.htm
+https://help.ubuntu.com/community/BootFromUSB
+数字生活网络联盟 Digital Living Network Alliance (DLNA) 是一个由消费性电子、移动电话，以及电脑厂商组成的联盟组织。该组织的目标在于建立一套可以使得各厂商的产品互相连接，互相适应的工业标准，从而为消费者实现数位化生活。目前联盟的成员包括：宏达电、飞利浦、三星、松下、惠普、索尼、微软、英特尔和诺基亚在内的众多业界领袖
+
+
+
+http://www.fullhan.com/cp_35.asp
+FH8735 高性能H.264编码芯片
+
+        FH8735是一款高性能的多通道视音频编码芯片，支持H.264 Main Profile和Baseline Profile。FH8735具有1路1920*1080，2路1280*720或者8路标清的实时编码能力、内置丰富的视频预处理功能和多样的I/O接口，可满足视频监控产品的各种需求，能有效提高产品的集成度并降低系统成本，为视频监控产业的高清化提供强大的编码动力。 
+          FH8735的目标应用包括嵌入式DVR、视频采集卡、DVS和百万素网络摄像机
+		  
+		  富瀚微电子有限公司成立于2004年4月，专注于视频监控芯片及解决方案，满足高速增长的数字视频监控市场对视频编解码和图像信号处理的芯片需求。
+   富瀚提供高性能视频编解码SoC和图像信号处理器芯片，以及基于这些芯片的视频监控产品方案。 
+    富瀚致力于与国内外设备制造商、解决方案提供商建立紧密合作关系，共同把握市场契机，为客户提供高性价的产品和服务，持续创造价值

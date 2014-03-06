@@ -1,0 +1,575 @@
+【BOOST编译】
+b2 toolset=msvc-10.0 --with-iostreams
+b2.exe --show-libraries
+b2.exe --with-<library>
+
+【asio-tcp-iostream.png】
+【boost asio 缓存集】
+发送多个缓存
+                boost::array<boost::asio::const_buffer, 2> bufs;
+                bufs[0] = boost::asio::buffer(&id_, sizeof(id_));
+                bufs[1] = boost::asio::buffer(this, sizeof(this));
+                socket.send_to(bufs, remote);
+接收时，就需要有几个缓存
+                boost::array<boost::asio::mutable_buffer, 2> bufs = {
+                        boost::asio::buffer(&id, sizeof(id)),
+                        boost::asio::buffer(buffer)
+                };
+                size_t rcv_size = socket_.receive_from(bufs, remote_endpoint);
+                
+【asio 设置同步操作的超时？没有正规方法】
+由BOOST::THREAD创建的线程，调用receive_from阻塞住。
+当在另主线程里，调用server_thread_.interrupt();时，会出现下面的异常。
+UDP服务器接收数据时异常: receive_from: 一个封锁操作被对 WSACancelBlockingCall 的调用中断。
+socket_.shutdown(boost::asio::ip::udp::socket::shutdown_both);  一个效果
+
+
+[asio 串口编程]
+i/o 读写的codecvt local facet
+boost/program_options/detail/utf8_codecvt_facet.hpp
+		static std::locale utf8Locale( std::locale( "" ), new boost::program_options::detail::utf8_codecvt_facet() );
+		boost::property_tree::wptree xml;
+		boost::property_tree::read_xml( wstring2string( xml_file ), xml, boost::property_tree::xml_parser::trim_whitespace, utf8Locale );
+		
+static std::locale utf8Locale( std::locale( "" ), new boost::program_options::detail::utf8_codecvt_facet() );
+	boost::property_tree::read_xml( wstring2string( xml_path ), ptree, boost::property_tree::xml_parser::trim_whitespace, utf8Locale );
+	boost::property_tree::write_xml( wstring2string( xml_path ), ptree, utf8Locale, settings );
+
+http://msdn.microsoft.com/en-us/library/ff802693.aspx
+串口通信开发文档。
+Overlapped I/O operation
+
+boost::asio::socket 异步读写时  socket关闭问题？需要同步吗？
+
+Using the attached sample program (a slightly modified version of the daytime3 tutorial). When I connect with a telnet session to the server and close the connection directly I get the following output from the server: Transfer status: Success. Transfer status: Broken pipe. Transfer status: Broken pipe. Transfer status: Broken pipe.
+
+After the first error I close the socket and would expect a boost::asio::error::operation_aborted error instead of the broken pipe.
+
+Reproduced under both Debian Lenny (gcc 4.3.4) and Windows XP (MSVC 2008).
+当调用close后，正在写的操作，就completed with an error as soon as the client closed the connection
+The behaviour is correct. The write operations are not pending when you call close, it's just that the handlers haven't been called yet. The write operations themselves completed with an error as soon as the client closed the connection.
+
+CloseHandle(impl.handle_) 串口，即使只有一个线程，也会死在句。退不出来。USB2PORT
+I agree with both previous posts.
+
+This is a bug in the driver for FTDI chipset under Windows XP.
+The native method CloseHandle() never returns, when the port handle is closed.
+
+https://connect.microsoft.com/VisualStudio/feedback/details/202137/serialport-close-hangs-the-application
+
+This is not a normal situation.
+Unplugging the USB device usually helps.
+This problem is related to the glitches in the FTDI driver, which is responsible for implementing a virtual COM port. On the other hand those "glitches" are related to various malfunctions of the USB devices. (Of course this doesn't justify the FTDI driver).
+
+BTW there're several other known problems with some FTDI drivers:
+
+Sometimes call to CloseHandle just hangs the calling thread.
+Sometimes also the application is still "visible" in the task manager, even after it's closed. Task manager can't terminate the application, and the debugger can't be attached to it. Its EXE file is locked (can't be erased).
+Usually unplugging the USB device immediately helps in those situations. The FTDI driver, which seems to be "waiting for something" awakes.
+
+一个boost::asio::socket, 在不同的线程，写，不加互斥，是不安全的。
+The only way to protect you from hitting this case is to build your program to avoid situations like this.
+
+One way to do that is by writing an application layer send buffer 
+which a single thread is responsible for pushing onto the socket. 
+That way you could protect the send buffer itself only. 
+Keep in mind though that a simple std::vector won't work, 
+since adding bytes to the end may end up re-allocating it, 
+possibly while there is an outstanding async_write_some() referencing it. 
+Instead, it's probably a good idea to use a linked list of buffers, a
+nd make use of the scatter/gather feature of asio.
+
+write and async_write are not thread safe in the manner you are using them. 
+The canonical way to approach this is to queue your messages, then write them out one at a time.
+
+Tip::tcp::socket  hread Safety
+Distinct objects: Safe.
+Shared objects: Unsafe.
+
+boost::socket对象在工作线程中同步读写的情况，在另一线程里关闭？没有常规的办法。
+Thread-safely closing a boost::asio::ip::tcp::socket being used synchronously
+异步读写的情况下，可以先cancel
+If your acceptor is in async_accept, you can call ip::tcp::acceptor::cancel() to cancel any async operations on it. 
+试验结果，虽然cancel了，还是会接收到数据（m_serial_port.cancel  m_serial_port.close 那个会再引导异步I/O操作？）
+
+Cancel is useful if you want to stop pending operations without closing down the socket.
+Note that the Boost documentation recommends using close for greater portability (from doc page):
+... For portable cancellation, consider using one of the following alternatives:
+Disable asio's I/O completion port backend by defining BOOST_ASIO_DISABLE_IOCP.
+Use the close() function to simultaneously cancel the outstanding operations and close the socket.
+
+Note however the remarks for cancel() also state When running on Windows Vista, Windows Server 2008, and later, the CancelIoEx function is always used. 
+This function does not have the problems described above. 
+–  Sam Miller Jun 22 '11 at 15:33 
+thank you and Sam Miller for help,i understand a little now,thank you
+
+cancel won't close the socket, so use cancel if you intend to continue using the socket object. In particular, if you have code in asynchronous handler methods that references the socket's member functions, you may not want to close the socket until you are guaranteed that your currently executing asynchronous handlers have completed.
+
+cancel doesn't guarantee anything about currently executing asynchronous handlers, it only guarantees (per the boost documentation) that "This function causes all outstanding asynchronous connect, send and receive operations to finish immediately" in the case of the socket::cancel() call, or "This function forces the completion of any pending asynchronous operations on the host resolver" in the case of the resolver::cancel() call. This "completion" means that boost will call your asynchronous handler method, it has no jurisdiction to inject any cancellation logic into your asynchronous handler (not to mention it doesn't know about the handler's implementation to begin with).
+
+I would suggest adding your own logic into your asynchronous handler method to handle the case where the socket/resolver/etc. is canceled. If you are calling the cancel method, then you likely have the ability to communicate this cancellation to the asynchronous handler method.
+
+basic_serial_port::close (1 of 2 overloads)
+
+Close the serial port.
+
+void close();  根据下面的解释，Close前没有必要调用cancel
+This function is used to close the serial port. Any asynchronous read or write operations will be cancelled immediately, and will complete with the boost::asio::error::operation_aborted error.
+
+
+
+
+
+
+【结构体的序列化】
+http://stackoverflow.com/questions/3938307/serializing-c-style-structs-using-c
+Doing a memcpy of classes/structs is okay if they're just Plain Old Data (POD), but if that's the case, then you could rely on C++ doing the copying for you via copy constructors (which exist for bothstruct and class types in C++).
+Certainly you can do it the way you have been doing it - one of the products I've worked on serializes data using memcpy, sends the data over the wire, and client applications decode the bytestream to get the data back.
+But if you have a choice, you might want something higher level like boost.serialization, which offers more flexibility and deep-pointer copying. The aforementioned Google ProtoBuffers would work nicely too.
+Here are some threads discussing serialization methods in C++:
+boost serialization vs google protocol buffers?
+C++ Serialization Performance
+http://stackoverflow.com/questions/1061169/boost-serialization-vs-google-protocol-buffers
+Boost Serialisation
+is a library for writing data into a stream.
+does not compress data.
+does not support data versioning automatically.
+supports STL containers.
+properties of data written depend on streams chosen (e.g. endian, compressed).
+Protocol Buffers
+generates code from interface description (supports C++, Python and Java by default. C, C# and others by 3rd party).
+optionally compresses data.
+handles data versioning automatically.
+handles endian swapping between platforms.
+does not support STL containers.
+Boost serialisation is a library for converting an object into a serialised stream of data. Protocol Buffers do the same thing, but also do other work for you (like versioning and endian swapping). Boost serialisation is simpler for "small simple tasks". Protocol Buffers are probably better for "larger infrastructure".
+http://stackoverflow.com/questions/321619/c-serialization-performance
+I'm building a distributed C++ application that needs to do lots of serialization and deserialization of simple data structures that's being passed between different processes and computers.
+http://baike.baidu.com/view/1708160.htm
+Protocol Buffers是Google公司开发的一种数据描述语言，
+类似于XML能够将结构化数据序列化，可用于数据存储、通信协议等方面。
+它不依赖于语言和平台并且可扩展性极强。
+现阶段官方支持C++、JAVA、Python等三种编程语言，但可以找到大量的几乎涵盖所有语言的第三方拓展包
+Protocol Buffers经常被简称为protobuf
+Protocol Buffers在谷歌被广泛用于各种结构化信息存储和交换。
+Protocol Buffers作为一个自定义的远程过程调用（RPC）系统，
+用于在谷歌几乎所有的设备间的通信
+每一个protocol buffer 信息都是一小段结构，包含了一些名字。
+下面是一个.proto 文件内容的样例。
+[pre]message Point { required int32 x = 1; required int32 y = 2; optional string label = 3;} message Line { required Point start = 1; required Point end = 2; optional string label = 3;} message Polyline { repeated Point point = 1; optional string label = 2;}
+http://www.parashift.com/c++-faq-lite/serialize-text-format.html
+序列化的过程，是把结构体，改成一个字符串，再由对方解析出。
+http://www.ocoudert.com/blog/2011/07/09/a-practical-guide-to-c-serialization/
+
+
+【archive-xml-iarchive.png】
+http://stackoverflow.com/questions/652193/serialize-and-send-a-data-structure-using-boost
+std::ostringstream archive_stream;
+boost::archive::text_oarchive archive(archive_stream);
+archive << your_struct;
+outbound_data_ = archive_stream.str();
+boost::asio::async_write(socket_, 
+   boost::asio::buffer(outbound_data_), handler);
+http://www.boost.org/doc/libs/1_38_0/doc/html/boost_asio/example/serialization/server.cpp
+http://stackoverflow.com/questions/15251415/exception-when-using-boostserialization-with-boostasio
+
+
+
+【bitset】【bitset-1.png】【bitset-2.png】
+#include <iostream> 
+#include <bitset> 
+int main()  
+{  
+    std::bitset<8> bs(8);  
+    std::cout << "输出所有binary bit: " << bs << std::endl;  
+    std::cout << "bitset - any() 是否存在置为1的bit: " << std::boolalpha << bs.any() << std::noboolalpha << std::endl;  
+    std::cout << "bitset - none() 是否不存在置为 1 的bit: " << bs.none() << std::endl;  
+    std::cout << "bitset - count() bit为 1 的个数: " << bs.count() << std::endl;  
+    std::cout << "bitset - size() bit的个数: " << bs.size() << std::endl;  
+    bs.flip();  
+    std::cout << "bitset - flip() 把所有bit逐位取反 后: " << bs << std::endl;  
+    bs.flip(0);  
+    std::cout << "bitset - flip(size_t pos) 把在pos(zero-based)处的bit 按位取反 后: " << bs << std::endl;  
+    std::cout << "bitset - [] 使用[]操作符访问pos处的bit: " << bs[0] << std::endl;  
+    bs.set();  
+    std::cout << "bitset - set() 把所有的bit都置为1: " << bs << std::endl;  
+    bs.set(0);  
+    std::cout << "bitset - set(size_t pos) 把pos处的bit置为1: " << bs << std::endl;  
+    std::cout << "bitset - test(size_t pos) 测试pos处的bit是否为1: " << std::boolalpha << bs.test(0) << std::noboolalpha << std::endl;  
+    std::cout << "bitset - to_ulong() 返回一个unsigned long值: " << bs.to_ulong() << std::endl;  
+    std::cout << "bitset - to_string() 返回一个std::string值: " << bs.to_string() << std::endl;  
+    return 0;  
+}
+
+
+
+
+
+最好的JSON解析器
+http://stackoverflow.com/questions/245973/whats-the-best-c-json-parser
+JsonCpp (http://jsoncpp.sourceforge.net/)
+json_spirit::write( root, json_spirit::pretty_print );
+
+I'm using JSON Spirit on a project at the moment, I'm impressed with it so far.
+Note that it does rely on Boost (if only for headers).
+Handy features:
+Has Unicode support.
+Uses std::vector to hold Arrays which helps interoperability.
+Provides a pretty print function (write_formatted).
+Has read and write functions for strings and streams.
+Note that Objects are also implemented using vector (not map), which means slower access, but it does mean that the order of elements is maintained.
+
+Boost property_tree does not fully support all type information. 
+From the documentation: JSON values are mapped to nodes containing the value. 
+However, all type information is lost; numbers, as well as the literals "null", "true" and "false" 
+are simply mapped to their string form
+
+Packet injection(注入)
+By utilizing raw sockets, NDIS function calls, or direct access to a network adapter kernel mode driver, arbitrary packets can be constructed and injected into a computer network. These arbitrary packets can be constructed from any type of packet protocol (ICMP, TCP, UDP, and others) since there is full control over the packet header while the packet is being assembled
+
+The basic service set (BSS) provides the basic building-block of an 802.11 wireless LAN.
+Each BSS or ESS is identified by a service set identifier (SSID) - a 1 to 32 byte string
+
+An extended service set (ESS) is a set of two or more interconnected wireless BSSs that share the same SSID (network name), 
+security credentials and integrated (providing translation between 802.3 and 802.11 frames) wired local area networks that appear 
+as a single BSS to the logical link control layer at any station associated with one of those BSSs 
+which facilitates mobile IP and fast secure roaming applications; 
+the BSSs may work on the same channel, or work on different channels to boost aggregate throughput.
+
+boost::system::error_code 的类型判断
+void SerialPort::on_receive_(const boost::system::error_code& ec, size_t bytes_transferred)
+{
+	try {
+		//boost::mutex::scoped_lock lock( m_mutex );
+		
+		if( ec ) {                                          判断这个ERROR是否是，国为串已经关闭
+			// 如果出错了，直接读下次的
+			m_port.async_read_some( boost::asio::buffer( m_read_buf_raw, SERIAL_PORT_READ_BUF_SIZE), 
+				boost::bind( &SerialPort::on_receive_, this, 
+					boost::asio::placeholders::error, 
+					boost::asio::placeholders::bytes_transferred ) );
+			return;
+		}
+
+可以确认：如果需要关闭后，重新打开同一个串口，最好的方法是，用新串口对象及新io_service对象.
+
+	if(m_port) m_port.reset(); //在对应的服务重置前，先把旧的串口对象删除了（因为删除析构的时候，需要用到io_service）
+	m_io_service.reset(new boost::asio::io_service());
+	m_port.reset(new boost::asio::serial_port(*m_io_service));
+
+		//FIX：下面这个顺序是否有问题？  不正确，这样串口仍补占用，未关闭. 先调用m_port->close()再关闭服务就可以了。
+		if(m_io_service) m_io_service->stop();
+		if(m_io_service_thread) m_io_service_thread->join();
+		if(m_port) m_port->close();
+
+
+m_io_service.reset(new boost::asio::io_service);
+new boost::asio::io_service 后面需要添加括号吗？
+
+最近需要讀取及轉換USB devices的模式，會用到SetupDi****相關的API，這些API都是放在setupapi.h裡，找了很久，在網路上也有人提到，但都是片面的，也都分散在不同的地方，現在我就將其整合放在我自己的Blog裡，這樣下次要用也不會忘記。這一組API是Microsoft PlatformSDK提供的，路徑也在VS裡
+
+// Open a handle to the serial port.
+  ::HANDLE handle = ::CreateFileA(name.c_str(),
+      GENERIC_READ | GENERIC_WRITE, 0, 0,
+      OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+  if (handle == INVALID_HANDLE_VALUE)
+  {
+    DWORD last_error = ::GetLastError();
+    ec = boost::system::error_code(last_error,
+        boost::asio::error::get_system_category());
+    return ec;
+  }
+  
+  	if(m_port) {
+		m_port->stop();
+		//m_port.reset();
+	}
+	m_service.stop();    先停止了SERVICE,再调用串口对象的关闭函数,关闭是无效的。
+	if(m_comrev_thread) m_comrev_thread->join();
+	
+SerialPort 对象重新打开，最好的方法，是创建新的对象。同时其对应的SERVICE也需要，创建新的对象。
+
+
+
+
+通用唯一识别码（英语：Universally Unique Identifier，简称UUID）是一种软件建构的标准，亦为自由软件基金会组织在分散式计算环境领域的一部份。
+UUID的目的，是让分散式系统中的所有元素，都能有唯一的辨识信息，而不需要通过中央控制端来做辨识信息的指定
+一组UUID，是由一串16位组（亦称128位）的16进位数字所构成，是故UUID理论上的总数为216 x 8=2128，约等于3.4 x 1038。也就是说若每纳秒产生1兆个UUID，要花100亿年才会将所有UUID用完
+UUID的标准型式包含32个16进位数字，以连字号分为五段，形式为8-4-4-4-12的32个字符。示例：
+550e8400-e29b-41d4-a716-446655440000
+
+
+
+
+
+
+
+【chrono】
+boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
+误写成了
+boost::this_thread::sleep_for(boost::chrono::microseconds(500));
+导致线程，占用过多CPU。       
+
+【date_time】
+ptime -> utc 一个整数
+ptime -> string
+
+boost::date_time 的时间 -> 字符串的转换
+                 字符串 -> 时间的转换
+
+		CPositionData tmp(x, y, boost::posix_time::ptime::is_not_a_date_time); 这句话是错的，为什么？ 
+		CPositionData tmp(x, y, boost::posix_time::not_a_date_time); 这个是正确的
+
+时间点构造
+tmp.time = boost::posix_time::microsec_clock::local_time();
+ptime d3(not_a_date_time);
+
+时长构造
+tmp.duration = tmp.time - tmp.time;  构造时间段  tmp.duration = boost::posix_time::time_duration(0, 0, 0, 0);
+
+using namespace boost::posix_time;
+time_duration td(1,2,3,4); //01:02:03.000000004 when resolution is nano seconds
+time_duration td(1,2,3,4); //01:02:03.000004 when resolution is micro seconds
+
+using namespace boost::posix_time;      
+time_duration td = hours(1) + seconds(10); //01:00:01
+td = hours(1) + nanoseconds(5); //01:00:00.000000005
+
+Syntax	Description
+Example
+time_duration(hours,
+              minutes,
+              seconds,
+              fractional_seconds)
+Construct a duration from the counts. The fractional_second parameter is a number of units and is therefore affected by the resolution the application is compiled with (see Build-Compiler Information). If the fractional_seconds argument exceeds the limit of the compiled precision, the excess value will be "carried over" into the seconds field. See above for techniques to creating a resolution independent count.
+time_duration td(1,2,3,9);
+//1 hr 2 min 3 sec 9 nanoseconds
+time_duration td2(1,2,3,123456789);
+time_duration td3(1,2,3,1000);
+// with microsecond resolution (6 digits)
+// td2 => "01:04:06.456789"
+// td3 => "01:02:03.001000"
+// with nanosecond resolution (9 digits)
+// td2 => "01:02:03.123456789"
+// td3 => "01:02:03.000001000"
+time_duration(special_value sv)
+Special values constructor. Important note: When a time_duration is a special value, either by construction or other means, the following accessor functions will give unpredictable results:
+hours(), minutes(), seconds(), ticks(), 
+fractional_seconds(), total_nanoseconds(),
+total_microseconds(), total_milliseconds(),
+total_seconds()
+The remaining accessor functions will work as expected.
+
+std::string to_simple_string(time_duration)
+To HH:MM:SS.fffffffff were fff is fractional seconds that are only included if non-zero.
+10:00:01.123456789
+std::string to_iso_string(time_duration)
+Convert to form HHMMSS,fffffffff.
+100001,123456789
+
+time_duration td(1,2,3, 1000);
+td.fractional_seconds(); // --> 1000
+
+
+
+
+
+
+
+
+
+
+
+[filesystem]
+
+#include <boost/filesystem.hpp>
+std::string filename_noext;
+filename_noext = boost::filesystem::path("D:\\files\\file.lua").stem().string().
+const char* result_as_const_char = filename_noext.c_str();
+
+获取当前进程的EXE文件所在路径。
+http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
+Some OS-specific interfaces:
+
+Mac OS X: _NSGetExecutablePath() (man 3 dyld)
+Linux: readlink /proc/self/exe
+Solaris: getexecname()
+FreeBSD: sysctl CTL_KERN KERN_PROC KERN_PROC_PATHNAME -1
+FreeBSD if it has procfs: readlink /proc/curproc/file (FreeBSD doesn't have procfs by default)
+NetBSD: readlink /proc/curproc/exe
+DragonFly BSD: readlink /proc/curproc/file
+Windows: GetModuleFileName() with hModule = NULL
+
+To summarize:
+
+On Unixes with /proc really straight and realiable way is to:
+
+readlink("/proc/self/exe", buf, bufsize) (Linux)
+
+readlink("/proc/curproc/file", buf, bufsize) (FreeBSD)
+
+readlink("/proc/self/path/a.out", buf, bufsize) (Solaris)
+
+On Unixes without /proc (i.e. if above fails):
+
+If argv[0] starts with "/" (absolute path) this is the path.
+
+Otherwise if argv[0] contains "/" (relative path) append it to cwd (assuming it hasn't been changed yet).
+
+Otherwise search directories in $PATH for executable argv[0].
+
+Afterwards it may be reasonable to check whether the executable isn't actually a symlink. If it is resolve it relative to the symlink directory.
+
+This step is not necessary in /proc method (at least for Linux). There the proc symlink points directly to executable.
+
+Note that it is up to the calling process to set argv[0] correctly. It is right most of the times however there are occasions when the calling process cannot be trusted (ex. setuid executable).
+
+On Windows: use GetModuleFileName(NULL, buf, bufsize)
+
+boost 提出EXE当前路径
+boost 从文件路径里提出 文件名，及路径
+
+filesystem::path 类的成员
+// decomposition 分解
+        path  root_name() const;
+        path  root_directory() const;
+        path  root_path() const;
+        path  relative_path() const;
+        path  parent_path() const;
+        path  filename() const;
+        path  stem() const;
+        path  extension() const;
+		
+ // query
+        bool empty() const;
+        bool has_root_name() const;
+        bool has_root_directory() const;
+        bool has_root_path() const;
+        bool has_relative_path() const;
+        bool has_parent_path() const;
+        bool has_filename() const;
+        bool has_stem() const;
+        bool has_extension() const;
+        bool is_absolute() const;
+        bool is_relative() const;
+
+		
+// modifiers
+        void  clear();
+        path& make_absolute(const path& base);
+        path& make_preferred();  // ISO/IEC 9945: no effect. Windows: convert slashes to backslashes
+        path& remove_filename();
+        path& replace_extension(const path& new_extension = path());
+        void  swap(path& rhs);
+
+
+
+
+
+
+
+
+
+
+【字符串转换】
+UTF8 <-> UNICODE
+Class template std::wstring_convert performs conversions between byte string std::string and wide string std::basic_string<Elem>, 
+using an individual code conversion facet Codecvt. 
+std::wstring_convert assumes ownership of the conversion facet, and cannot use a facet managed by a locale. 
+The standard facets suitable for use with std::wstring_convert are std::codecvt_utf8 for UTF-8/UCS2 and UTF-8/UCS4 conversions and std::codecvt_utf8_utf16 for UTF-8/UTF-16 conversions
+
+void test()
+{
+wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
+string s8 = u8"This is a UTF8 string";
+wstring s16 = converter.from_bytes(s8);
+string s88 = converter.to_bytes(s16);
+if (s8!=s88)
+cerr <"Insane!\n";
+}
+
+string <-> number
+to_string
+
+
+
+
+【LOG】
+<boost/log/utility/manipulators/dump.hpp>
+dump binary data
+
+http://www.boost.org/doc/libs/1_54_0/libs/log/doc/html/log/detailed/utilities.html
+void on_receive(std::vector< unsigned char > const& packet)
+{
+   // Outputs something like "Packet received: 00 01 02 03 04 05 06 07 and 67 bytes more"
+   BOOST_LOG(lg) << "Packet received: " << logging::dump(packet.data(), packet.size(), 8);
+}
+void process(std::vector< double > const& matrix)
+{
+   // Note that dump_elements accepts the number of elements in the matrix, not its size in bytes
+   BOOST_LOG(lg) << "Matrix dump: " << logging::dump_elements(matrix.data(), matrix.size());
+}
+
+boost.log 全局类
+
+            // In pure C++ this should never happen, since there cannot be two
+            // different tag types that have equal type_infos. In real life it can
+            // happen if the same-named tag is defined differently in two or more
+            // dlls. This check is intended to detect such ODR violations. However, there
+            // is no protection against different definitions of the logger type itself.
+            throw_odr_violation(typeid(TagT), typeid(logger_type), *holder);
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT( log, boost::log::sources::logger_mt );
+定义了一个结构体：log 是结构体的TAG名称。并不是简单的定义一个全局对象。
+log::get 会创建一个LOGGER对象。这个对象是全局的。::get函数内部实现的线程的同步操作。
+这个宏的定义里，学习type_info类型。
+#include <boost/log/common.hpp>
+#include <boost/log/sources/logger.hpp>
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT( log, boost::log::sources::logger_mt );
+
+
+
+[线程]
+
+线程同步：
+互斥体的类型  锁的类型
+        typedef unique_lock<mutex> scoped_lock;
+        typedef detail::try_lock_wrapper<mutex> scoped_try_lock;
+
+boost condition(创建，销毁，发送信号，等待锁+条件) 、 mutex+lock , 
+
+Differences between <semaphore.h> and <sys/sem.h>
+<sys/sem.h> provides the interface for XSI (originally Unix System V) semaphores.
+<semaphore.h> defines POSIX semaphores, which are designed in such a way that they can be implemented entirely in userspace, except in the contended case where the process will call into the kernel to go to sleep. 
+
+信号量（英语：Semaphore）又称为号志，它以一个整数变量，提供信号，以确保在并行计算环境中，不同进程在访问共享资源时，不会发生冲突。是一种不需要使用忙碌等待（busy waiting）的一种方法。
+信号量的概念是由荷兰计算机科学家艾兹格·迪杰斯特拉（Edsger W. Dijkstra）发明的，广泛的应用于不同的操作系统中。在系统中，给予每一个进程一个信号量，代表每个进程目前的状态，未得到控制权的进程会在特定地方被强迫停下来，等待可以继续进行的信号到来。如果信号量是一个任意的整数，通常被称为计数信号量（Counting semaphore），或一般信号量（general semaphore）；如果信号量只有二进制的0或1，称为二进制信号量（binary semaphore）。在linux系中，二进制信号量（binary semaphore）又称Mutex。
+
+计数信号量具备两种操作动作，之前称为 V（又称signal()）与 P（wait()）。 V操作会增加信号量 S的数值，P操作会减少它。
+运作方式：
+初始化，给与它一个非负数的整数值。
+运行 P（wait()），信号量S的值将被减少。企图进入临界区段的进程，需要先运行 P（wait()）。当信号量S减为负值时，进程会被挡住，不能继续；当信号量S不为负值时，进程可以获准进入临界区段。
+运行 V（又称signal()），信号量S的值会被增加。退出离开临界区段的进程，将会运行 V（又称signal()）。当信号量S不为负值时，先前被挡住的其他进程，将可获准进入临界区段。
+
+
+
+
+
+散列函数 -> 冗余检校验 -> 校验和 -> 循环冗余校验（CRC）
+循环冗余校验（英语：Cyclic redundancy check，通称“CRC”）是一种根据网络数据数据包或电脑文件等数据产生简短固定位数校验码的一种散列函數，主要用来检测或校验数据传输或者保存后可能出现的错误
+生成的数字在传输或者存储之前计算出来并且附加到数据后面，然后接收方进行检验确定数据是否发生变化
+一般来说，循环冗余校验的值都是32位的整数
+它是由W. Wesley Peterson在他1961年发表的论文中披露
+校验和（英语：Checksum）是冗余校验的一种形式。 它是通过错误检测方法，对经过空间（如通信）或者时间（如计算机存储）传送的数据的完整性进行检查的一种简单方法。
+计算机领域常见的校验和的方法有循环冗余校验（CRC）、MD5、SHA家族等
+在通信领域中，冗余校验是消息中附加的用于错误检测与错误校正的数据。
+任何一个散列函数都可以用于冗余检校验。最简单的冗余校验，叫作校验和，它包括校验位、校验码以及纵向冗余校验（LRC，en:longitudinal redundancy check）。其它类型的冗余校验包括循环冗余校验（CRC，cyclic redundancy check）、水平冗余校验、竖直冗余校验以及en:cryptographic message digest。
+奇偶校验仅仅是一个错误检测的机制，根据所用奇校验与偶校验的不同可以检查偶数或者奇数的错误
+奇偶校验位是一个表示给定位数的二进制数中1的个数是奇数还是偶数的二进制数。奇偶校验位是最简单的错误检测码
+
+
+
+
+http://boost.cowic.de/rc/pdf/ 
+http://meetingcpp.com/tl_files/blog/boost_1_55.png
+c++ boost 库，联系图
+ 

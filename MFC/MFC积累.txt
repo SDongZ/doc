@@ -1,0 +1,46 @@
+线程间传递 C++ 对象（CWnd 对象）造成的错误
+
+http://bbs.csdn.net/topics/20115562
+线程间传递 C++ 对象（CWnd 对象）造成的错误
+描述：
+     因为程序功能的需要，将一个 View 类的 this 指针传递给了线程实现函数中对应 View类的指针。在随后的使用中（此时接受 this 指针的线程已执行结束），想要通过该 this 指针引用 View 类的成员函数，再在被引用的 View 类成员函数中通过指向框架类的指针来引用框架类成员变量或函数，但实际运行中，不能够引用任何框架类的成员，否则出现异常。
+错误原因：
+    因为在线程中传递了 CWnd 对象，即在线程的实现函数中，用 this 指针对该线程类的成员变量赋值。其实质就是在主线程和辅助线程间进行了 C++ 对象的传递（this 指针， CWnd 对象），因而造成上述错误。不能够依赖于 C++ 对象的持续存在，也不能在线程间共享 MFC 类对象（直接派生于 CObject 的及 CString CRect 等除外）---- 《Inside Visual C++》4th Edition  P 217 。
+解决办法：
+    使用 GetSafeHwnd() 将 CWnd 对象转换为 HWND 句柄，在线程间共享 HWND 句柄，使用消息或FromHandle() 来达到使用对象的目的。
+
+    
+    【vc-project-property-linker-uac.png】
+
+[MFC]按控件进行总结
+【save-as-dialog.png】选择输出文件夹 (svn)
+
+[MFC] 对话框模板中的，下方的“原型图像”的意思
+
+[MFC] 下拉框，用代码更改，选择项
+       SelectString(L"");
+	   或者
+	   m_cam_cbox.SetCurSel(m_current_device);
+	   
+[MFC] how to make a combobox read only
+Try changing the DropDown Style property to DropDownList. This can either be done through the designer or via code
+
+[MFC] 处理COMBOX，选择事件
+void CImageTrackerSettingDlg::OnCbnSelchangeCombo1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	int index = m_cam_cbox.GetCurSel();
+    
+    
+    
+CComboBox:: 添加在后面
+m_serial_port_cbox.AddString(L"COM1");
+m_serial_port_cbox.AddString(L"COM2");
+m_serial_port_cbox.AddString(L"COM3");
+m_serial_port_cbox.AddString(L"COM4");
+m_serial_port_cbox.AddString(L"COM5");
+m_serial_port_cbox.AddString(L"COM6");
+m_serial_port_cbox.AddString(L"COM7");
+CComboBox:: 获取当前编辑框的文本
+	CString cur_port;
+	m_serial_port_cbox.GetWindowText(cur_port);

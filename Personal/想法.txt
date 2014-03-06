@@ -1,0 +1,44 @@
+[思维] 所有题目列表 (大类，小类)（问题，【安装】，总结，资源，书签, 源码）
+【想法】 整理的代码最终的归宿为GIT库中,写一个等待整理代码更表
+
+【软件及库的版本管理】
+#define BOOST_VERSION_NUMBER( major, minor, patch ) ...
+http://stackoverflow.com/questions/12739185/webrtc-and-websockets-is-there-a-difference
+The arguments are:
+Major version number, as a constant value expression in the range [0,99].
+Minor version number, as a constant value expression in the range [0,99].
+Patch-level version number, as a constant value expression in the range [0,99999].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

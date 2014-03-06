@@ -1,4 +1,8 @@
-在显示视频的窗口之上，绘制控件的方法？
+托盘的鼠标移入移出事件
+
+
+
+在显示视频的窗口之上，绘制控件的方法？ （剪切区）
 窗口父子之间：WS_CLIPCHILDREN
 窗口兄弟之间：WS_CLIPSIBLINGS
 WS_CLIPCHILDREN
@@ -94,3 +98,236 @@ If an application has not captured mouse input and the user releases the mouse b
 
 A thread can use the GetCapture function to determine whether one of its windows has captured the mouse. 
 If one of the thread's windows has captured the mouse, GetCapture retrieves a handle to the window.
+
+
+
+
+
+
+WM_CREATE 返回值
+If an application processes this message, it should return zero to continue creation of the window. If the application returns –1, the window is destroyed and the CreateWindowEx or CreateWindow function returns a NULL handle.
+
+#define WM_ERASEBKGND                   0x0014 (注意其返回值 ) （对话框上的控件，刷新背景的问题，父窗口负责刷新背景, 返回TRUE与FALSE好像没有区别）
+                                        影响刷新背景的函数，InvalidateRect，等等。
+Sent when the window background must be erased (for example, when a window is resized). 
+The message is sent to prepare an invalidated portion of a window for painting.
+
+An application should return nonzero if it erases the background; otherwise, it should return zero.
+The DefWindowProc function erases the background by using the class background brush specified by the hbrBackground member of the WNDCLASS structure. If hbrBackground is NULL, the application should process the WM_ERASEBKGND message and erase the background.
+An application should return nonzero in response to WM_ERASEBKGND if it processes the message and erases the background; this indicates that no further erasing is required. If the application returns zero, the window will remain marked for erasing. (Typically, this indicates that the fErase member of the PAINTSTRUCT structure will be TRUE.)
+
+
+
+CPreviewDlg::OnInitDialog() 与 控件WM_PAINT消息之间
+                            与 控件WM_CREATE消息之间
+This method is called in response to the WM_INITDIALOG message.
+Windows sends the WM_INITDIALOG message to the dialog box during the Create, CreateIndirect, or DoModal calls, 
+                                                                     which occur immediately before the dialog box is displayed.
+Override this method if you want to perform special processing when the dialog box is initialized.
+In the overridden version, first call the base class OnInitDialog but ignore its return value.
+You will typically return TRUE from your overridden method.
+Windows calls the OnInitDialog function by using the standard global dialog-box procedure common to all Microsoft Foundation Class Library dialog boxes. 
+It does not call this function through your message map, and therefore you do not need a message map entry for this method.
+
+
+WM_INITDIALOG message
+Sent to the dialog box procedure immediately before a dialog box is displayed. Dialog box procedures typically use this message to initialize controls and carry out any other initialization tasks that affect the appearance of the dialog box.
+C++
+
+#define WM_INITDIALOG                   0x0110
+
+Parameters
+
+wParam
+A handle to the control to receive the default keyboard focus. The system assigns the default keyboard focus only if the dialog box procedure returns TRUE.
+lParam
+Additional initialization data. This data is passed to the system as the lParam parameter in a call to the CreateDialogIndirectParam, CreateDialogParam, DialogBoxIndirectParam, or DialogBoxParam function used to create the dialog box. For property sheets, this parameter is a pointer to the PROPSHEETPAGE structure used to create the page. This parameter is zero if any other dialog box creation function is used.
+
+Return value
+
+The dialog box procedure should return TRUE to direct the system to set the keyboard focus to the control specified by wParam. Otherwise, it should return FALSE to prevent the system from setting the default keyboard focus.
+The dialog box procedure should return the value directly. The DWL_MSGRESULT value set by the SetWindowLong function is ignored.
+Remarks
+
+The control to receive the default keyboard focus is always the first control in the dialog box that is visible, not disabled, and that has the WS_TABSTOP style. When the dialog box procedure returns TRUE, the system checks the control to ensure that the procedure has not disabled it. If it has been disabled, the system sets the keyboard focus to the next control that is visible, not disabled, and has the WS_TABSTOP.
+An application can return FALSE only if it has set the keyboard focus to one of the controls of the dialog box
+
+
+
+
+
+对话框的OnDraw函数并不是一直发送。 最后找到原因，用下面的代码解决这个问题。
+
+PAINTSTRUCT ps;
+BeginPaint(m_hwnd, &ps);
+EndPaint(m_hwnd, &ps);
+或者
+ValidateRect(nullptr);
+
+The BeginPaint function automatically validates the entire client area. Neither the ValidateRect nor ValidateRgn function should be called if a portion of the update region must be validated before the next WM_PAINT message is generated.
+The system continues to generate WM_PAINT messages until the current update region is validated.
+
+但是自己写了个CWnd派生窗口类，创建的窗口，其OnDraw会一直发送。为什么
+frequency WM_PAINT产生的频率，与窗口的样式有关吗？
+d2d 官方例子中，创建的窗口，WM_DRAW，也不是一直调用的。Circle
+http://msdn.microsoft.com/en-us/library/windows/desktop/ff381401(v=vs.85).aspx
+update region 更新区域
+Sometimes your program will initiate painting to update the appearance of the window. At other times, the operating system will notify you that you must repaint a portion of the window. When this occurs, the operating system sends the window a WM_PAINT message. The portion of the window that must be painted is called the update region
+
+After you are done painting, call the EndPaint function. 
+This function clears the update region, which signals to Windows that the window has completed painting itself
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void CPositionDlg::OnPaint()
+{
+	if (IsIconic())
+    {
+        // code for handling when window is minimized. Check original CPP file attached.
+    }
+	该函数确定给定窗口是否是最小化（图标化）的窗口。
+函数原型：BOOL IsIconic（HWND hWnd）；
+
+
+设置窗口，可拖动区域
+LRESULT CShowPositionWnd::OnNcHitTest(CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	//return CWnd::OnNcHitTest(point);
+	return HTCAPTION;
+}
+
+/*
+ * WM_NCHITTEST and MOUSEHOOKSTRUCT Mouse Position Codes
+ */
+#define HTERROR             (-2)
+#define HTTRANSPARENT       (-1)
+#define HTNOWHERE           0
+#define HTCLIENT            1
+#define HTCAPTION           2
+#define HTSYSMENU           3
+#define HTGROWBOX           4
+#define HTSIZE              HTGROWBOX
+#define HTMENU              5
+#define HTHSCROLL           6
+#define HTVSCROLL           7
+#define HTMINBUTTON         8
+#define HTMAXBUTTON         9
+#define HTLEFT              10
+#define HTRIGHT             11
+#define HTTOP               12
+#define HTTOPLEFT           13
+#define HTTOPRIGHT          14
+#define HTBOTTOM            15
+#define HTBOTTOMLEFT        16
+#define HTBOTTOMRIGHT       17
+#define HTBORDER            18
+#define HTREDUCE            HTMINBUTTON
+#define HTZOOM              HTMAXBUTTON
+#define HTSIZEFIRST         HTLEFT
+#define HTSIZELAST          HTBOTTOMRIGHT
+#if(WINVER >= 0x0400)
+#define HTOBJECT            19
+#define HTCLOSE             20
+#define HTHELP              21
+#endif /* WINVER >= 0x0400 */
+
+
+去标题栏，边框的方法
+Creating a Border-Less, Title Bar-Less
+直接Create出来，无论设置那种属性都不行。
+
+这样就可以创建，无边框窗口, 注意扩展属性为零
+CreateEx(0, ::AfxRegisterWndClass(0), L"show position", WS_POPUP, CRect(0, 0, m_window_width, m_window_height), nullptr, 0); 
+
+注意MFC创建窗口类的方法，它要把窗口类的消息处理函数，截获了。
+BOOL rtt = m_show_pos_window.CreateEx(WS_EX_DLGMODALFRAME, ::AfxRegisterWndClass(0), L"Title", WS_OVERLAPPED, CRect(0, 0, 300, 300), this, NULL);
+
+
+//
+//  函数: MyRegisterClass()
+//
+//  目的: 注册窗口类。
+//
+//  注释:
+//
+//    仅当希望
+//    此代码与添加到 Windows 95 中的“RegisterClassEx”
+//    函数之前的 Win32 系统兼容时，才需要此函数及其用法。调用此函数十分重要，
+//    这样应用程序就可以获得关联的
+//    “格式正确的”小图标。
+//
+ATOM MyRegisterClass(HINSTANCE hInstance)
+{
+	WNDCLASSEX wcex;
+
+	wcex.cbSize = sizeof(WNDCLASSEX);
+
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= WndProc;   //MFC 的窗口类怎么注册？
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= hInstance;
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TEST));
+	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_TEST);
+	wcex.lpszClassName	= szWindowClass;
+	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+
+	return RegisterClassEx(&wcex);
+}
+
+
+设接收这个消息的窗口过程 WindowProc为
+LRESULT CALLBACK WindowProc(
+HWND hwnd,
+UINT uMsg,
+WPARAM wParam,
+LPARAM lParam
+);
+当显示器的分辨率改变后，此窗口过程会接到WM_DISPLAYCHANGE消息
+wParam参数为显示设备新的颜色深度，即每个像素所占的颜色位数
+lParam参数的低字节部分为显示设备新的水平分辨率，高字节部分为显示设备的新的垂直分辨率。
+WM_DISPLAYCHANGE 定义所在的头文件为 Winuser.h (include Windows.h)
+
+
+
+
+
+更改编辑框的字体
+CWindow::SetFont
+Changes the window's current font by sending a WM_SETFONT message to the window.
+
+由StockObject font 创建一个CFont  m_Font.Attach(GetStockObject(DEFAULT_GUI_FONT)); 
+stock font size 
+CFont *m_pFont = new CFont;
+m_pFont->CreateFont(...);
+myEdit->SetFont(m_pFont);
+
+GetDlgItem(IDC_EDIT1)->SetFont(&m_editFont);
+
+void makebold(HWND hwnd)
+{
+	HFONT hFontB,hFont = (HFONT)SendMessage(hwnd,WM_GETFONT,0,0);
+	LOGFONT lf;
+	GetObject(hFont, sizeof(LOGFONT), &lf);
+	lf.lfWeight = FW_BOLD;
+	hFontB = CreateFontIndirect(&lf);
+	SendMessage(hwnd,WM_SETFONT,(int)hFontB,1);
+}
+
+To change the font: WM_SETFONT.
+To change the back color: WM_CTLCOLOREDIT.
