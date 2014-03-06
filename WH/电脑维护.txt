@@ -15,7 +15,12 @@ The "System Idle Process" represents waiting time. The status of a connection be
 http://technet.microsoft.com/en-us/sysinternals/bb897437.aspx
 Tcpview.exe   可以用来关闭某个连接,查看进程使用端口号，及，上传下载数据量
 ---------------------------------------------------------------------------
+
+【windows-sysinternals.png】windows实用工具
+http://technet.microsoft.com/en-US/sysinternals/bb896653（英文网页可以下载）
+http://technet.microsoft.com/zh-cn/sysinternals/bb795533(中文网页下载不了)
 ---------------------------------------------------------------------------
+制作，右键菜单，创建UTF-8格式文本文件的方法。
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------

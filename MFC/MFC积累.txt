@@ -1,5 +1,110 @@
-线程间传递 C++ 对象（CWnd 对象）造成的错误
 
+【SS_NOTIFY.png】
+http://www.cnblogs.com/pfa2008/archive/2010/01/25/1655947.html
+static 控件，默认不处理鼠标等等输入事件。
+CStatic 继承于 CWnd，是一种特殊的窗体。他可以显示文本字符串（这也是最常用的用法）、图标、指针(cursor)、位图和增强图文元件. 通常静态控件不提供输入和输出。但是如果把他的属性设置为 SS_NOTIFY，他可以通知其父窗口的击鼠标事件
+---------------------------------------------------------------------------
+设置对话框的初始，控件焦点（默认是TAB顺序第一个值） ctrl+d
+---------------------------------------------------------------------------
+【vc-open-file-dlg.png】 选择文件夹对话框，VSTUDIO 下面，怎么实现
+---------------------------------------------------------------------------
+CListCtrl 排序
+http://blog.csdn.net/joany_yang/article/details/1640448
+CListCtrl::SortItems
+原型：
+BOOL SortItems(
+   PFNLVCOMPARE pfnCompare,
+   DWORD_PTR dwData
+);
+http://msdn.microsoft.com/zh-cn/library/b4ceh1za(v=vs.90).aspx
+int CALLBACK CompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+The comparison function must
+return a negative value if the first item should precede the second
+return a positive value if the first item should follow the second
+return zero if the two items are equal
+---------------------------------------------------------------------------
+【static-control-end-mellipses.png】静态控件，文本过长时，使用省略号。
+ellipses[英][?'l?psi:z]
+
+椭园，省略号；椭圆( ellipse的名词复数 )；（语法结构上的）省略( ellipsis的名词复数 )
+---------------------------------------------------------------------------
+对话框中，去掉关闭按钮？
+去掉system menu,就可以了
+
+---------------------------------------------------------------------------
+class CMonthCalCtrl : public CWnd
+http://msdn.microsoft.com/en-us/library/windows/desktop/bb760939(v=vs.85).aspx
+MCN_SELECT notification code
+MCN_SELCHANGE notification code
+The MCN_SELECT notification code is similar to MCN_SELCHANGE, but MCN_SELECT is sent only in response to a user's explicit date selections. MCN_SELCHANGE applies to any selection change.
+什么是明确的日期选择？
+POSITION pos = m_myListCtrl.GetFirstSelectedItemPosition();
+if (pos == NULL)
+{
+  TRACE(_T("No items were selected!\n"));
+}
+else
+{
+  while (pos)
+  {
+     int nItem = m_myListCtrl.GetNextSelectedItem(pos);
+     TRACE(_T("Item %d was selected!\n"), nItem);
+     // you could do your own processing on nItem here
+  }
+}
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+PostQuitMessage  EndDialog  OnOK
+http://stackoverflow.com/questions/7562335/what-is-the-correct-way-to-programmatically-quit-an-mfc-application
+模态与非模态对话框 的 EndDialog不同的意义。
+
+Dialog-based app 的程序，主函数调用了，下面这个函数。对话框退出，程序就结束了。
+BOOL CAudioMgrApp::InitInstance()
+对话框回车，退出问题。
+处理
+void CAudioMgrDlg::OnOK()
+{
+        // TODO: 在此添加专用代码和/或调用基类
+        //CDialogEx::OnOK();
+}
+OnOK();
+http://stackoverflow.com/questions/16359005/cdialog-enddialog-from-a-modeless-dialog
+http://msdn.microsoft.com/en-us/library/66b3y2ab%28v=vs.100%29.aspx
+automatic data validation and exchange
+f you implement the OK button in a modeless dialog box, you must override the OnOK method and call DestroyWindow inside it. Do not call the base-class method, because it calls EndDialog which makes the dialog box invisible but does not destroy it.
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+
+#include <atlwin.h>  错误
+ error C2872: “CDialogImpl”
+ 
+ 【OnLvnItemchangedList.png】
+ void CAudioMgrDlg::OnLvnItemchangedList1(NMHDR *pNMHDR, LRESULT *pResult)
+{
+        LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+        if( ( pNMLV->uChanged & LVIF_STATE ) && ( pNMLV->uNewState & LVNI_SELECTED ) )
+                OnSelectedAudio( pNMLV->iItem );
+        *pResult = 0;
+}
+
+---------------------------------------------------------------------------
+线程间传递 C++ 对象（CWnd 对象）造成的错误
 http://bbs.csdn.net/topics/20115562
 线程间传递 C++ 对象（CWnd 对象）造成的错误
 描述：
@@ -9,22 +114,34 @@ http://bbs.csdn.net/topics/20115562
 解决办法：
     使用 GetSafeHwnd() 将 CWnd 对象转换为 HWND 句柄，在线程间共享 HWND 句柄，使用消息或FromHandle() 来达到使用对象的目的。
 
-    
+
+
+---------------------------------------------------------------------------
     【vc-project-property-linker-uac.png】
 
+
+---------------------------------------------------------------------------
 [MFC]按控件进行总结
 【save-as-dialog.png】选择输出文件夹 (svn)
 
+
+---------------------------------------------------------------------------
 [MFC] 对话框模板中的，下方的“原型图像”的意思
 
+
+---------------------------------------------------------------------------
 [MFC] 下拉框，用代码更改，选择项
        SelectString(L"");
 	   或者
 	   m_cam_cbox.SetCurSel(m_current_device);
-	   
+
+
+---------------------------------------------------------------------------
 [MFC] how to make a combobox read only
 Try changing the DropDown Style property to DropDownList. This can either be done through the designer or via code
 
+
+---------------------------------------------------------------------------
 [MFC] 处理COMBOX，选择事件
 void CImageTrackerSettingDlg::OnCbnSelchangeCombo1()
 {

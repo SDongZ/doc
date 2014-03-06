@@ -22,7 +22,66 @@ wchar_t exe_path[MAX_PATH] = {0};
 	::PathRemoveFileSpecW(exe_path);
     
 
+---------------------------------------------------------------------------
+Windows Event(事件)【windows-event.png】
 
+http://msdn.microsoft.com/en-us/library/windows/desktop/aa385780(v=vs.85).aspx
+ReportEvent function
+Windows event log backends (boost.log lib)
+
+---------------------------------------------------------------------------
+Handler Tracking
+---------------------------------------------------------------------------
+【DirectSound.png】
+window 声音组件
+http://mark-dot-net.blogspot.com/2008/06/what-up-with-wasapi.html
+http://stackoverflow.com/questions/4019733/which-api-should-i-use-for-playing-audio-on-windows
+1991 WinMM.dll/mmsys.dll PlaySound
+1995 MCIWnd (as suggested by @casablanca)
+1996 DirectSound
+1998 WaveOut
+1999 ASIO
+1999 Windows Media Player ActiveX control?
+2005 WASAPI (which is used by XAudio2 - as suggested by @Han)
+2007 XAudio2
+---------------------------------------------------------------------------
+【desktop-icon-48x48.png】程序桌面图标，虚的原因是，没有 48x48的图。
+---------------------------------------------------------------------------
+DragQueryFile
+---------------------------------------------------------------------------
+
+http://stackoverflow.com/questions/354902/open-in-explorer
+http://forums.codeguru.com/showthread.php?441316-Open-Windows-Explorer-to-Specific-Folder
+si.wShowWindow = SW_MINIMIZE;
+si.dwFlags |= STARTF_USESHOWWINDOW;
+CreateProcess( NULL, _T("explorer.exe C:\\windows"), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi );
+You probably are looking for the ShellExecute() function in shell32.h.
+It is called with an "action verb", a path, and optional parameters.
+In your case this will want either "open" or "explore" as follows
+ShellExecute(NULL, "open", "C:\", NULL, NULL, SW_SHOWDEFAULT);
+ShellExecute(NULL, "open", "http://www.google.com", NULL, NULL, SW_SHOWDEFAULT);
+---------------------------------------------------------------------------
+http://stackoverflow.com/questions/118547/creating-a-zip-file-on-windows-xp-2003-in-c-c
+http://www.microsoft-questions.com/microsoft/Platform-SDK-Shell/31056644/using-shfileoperation-to-copy-files-to-a-zip-file.aspx
+Windows 7 - Using SHFileOperation to copy files to a zip file
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 Preventing Logoff or Suspend During a Burn
 If proper precautions are not made within an application, it is possible for a user to log off during a burn operation. This leads to the interruption of the burn process, which can result in lost data and possibly render the disc unusable.
@@ -32,13 +91,13 @@ Due to changes in the Power Management Model for Windows Vista and Windows Serve
 As a result of these changes, it is recommended that applications call the SetThreadExecutionState function to prevent a system idle time-out which ordinarily results in the transition to Suspend. It is important to remember that calling this function with the appropriate flags set will only prevent system idle, not an in-progress Suspend.
 
 
-
+---------------------------------------------------------------------------
 
 
 线程的cycles delta属性是什么？【cpu-cycles-delta.png】  CPU周期又称机器周期【cpu-time.png】
 [循環差異 (Cycles Delta)] 顯示每一個處理序的執行緒在兩次 Process Explorer 更新之間執行的循環次數。因為 CPU 時間計量仍然是以間隔計時器為基礎，如果您同時新增 [CPU 時間] 欄位，則會看到許多處理序的執行緒耗用數百萬次 CPU 循環，卻仍然未更新其 CPU 時間，且未在 CPU 使用量欄位中顯示出來。
 又称机器周期，机器内部各种操作大致可归属为对CPU内部的操作和对主存的操作两大类，由于CPU内部操作速度较快，CPU访问一次内存所花的时间较长，因此用从内存读取一条指令字的最短时间来定义，这个基准时间就是CPU周期（机器周期）。一个指令周期常由若干CPU周期构成
-
+---------------------------------------------------------------------------
 
 【windows-sysinternals.png】windows实用工具
 http://technet.microsoft.com/en-US/sysinternals/bb896653（英文网页可以下载）

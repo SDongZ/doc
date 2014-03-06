@@ -2,6 +2,119 @@
 b2 toolset=msvc-10.0 --with-iostreams
 b2.exe --show-libraries
 b2.exe --with-<library>
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+
+http://boost.cowic.de/rc/pdf/ 
+http://meetingcpp.com/tl_files/blog/boost_1_55.png
+c++ boost 库，联系图
+Boost.Asio writes debugging output to the standard error stream.
+---------------------------------------------------------------------------
+【property-tree】
+boost::property_tree::ptree设置树路径 的分隔符
+http://stackoverflow.com/questions/1948745/boost-property-tree-with-filename-as-key
+第一种解决方法：
+pt.push_back( ptree::value_type("example.txt", ptree(10)) );
+第二种解决方法： (这种方法没有重载函数)
+pt.put('/', "example.txt", "10");
+pt.get<string>('/', "example.txt");
+http://www.boost.org/doc/libs/1_47_0/doc/html/boost_propertytree/accessing.html
+typedef ptree::path_type path;
+pt.get<float>(path("p.a.t.h/t.o/v.a.l.u.e", '/'));
+pt.get(path("p.a.t.h/t.o/v.a.l.u.e", '/'), 0, NULL);
+pt.get_optional<std::string>(path("p.a.t.h/t.o/v.a.l.u.e", '/'));
+
+
+写XML出现很多空的换行符
+So the solution was to add the trim_whitespace flag to the call to read_xml:
+read_xml("file.xml", pt, boost::property_tree::xml_parser::trim_whitespace );
+boost::property_tree::read_xml
+( wstring2string( xml_path ), ptree, boost::property_tree::xml_parser::trim_whitespace, utf8Locale );
+http://stackoverflow.com/questions/6572550/boostproperty-tree-xml-pretty-printing
+        boost::property_tree::xml_writer_settings<wchar_t> settings(L'\t', 1);
+        boost::property_tree::write_xml( wstring2string( xml_path ), ptree, utf8Locale, settings );
+        
+        
+WriteXMLData  wptree 含有有中文 时，
+        boost::property_tree::xml_writer_settings<wchar_t> settings(L'\t', 1);
+        boost::property_tree::write_xml( xml_path, ptree, std::locale(), settings ); 会异常。
+wptree问题
+http://stackoverflow.com/questions/10568531/boost-property-tree-issue-when-converting-to-unicode
+http://notes.xj-labs.net/?p=52
+Boost 目前是支持 UTF8 的，但是不能用 直接用 Unicode。所以，如果要存储宽字符就有点麻烦需要用到 Boost 提供的 utf8_codecvt_facet 做转换
+#include "boost/program_options/detail/utf8_codecvt_facet.hpp"
+std::locale utf8Locale(
+oldLocale,
+           new boost::program_options::detail::utf8_codecvt_facet());
+static std::locale utf8Locale( std::locale( "" ), new boost::program_options::detail::utf8_codecvt_facet() );
+boost::property_tree::xml_writer_settings<wchar_t> settings(L'\t', 1);  格式化输出XML
+boost::property_tree::write_xml( wstring2string( xml_path ), ptree, utf8Locale, settings );  
+把UNICODE输出为UTF8
+读的时候也出这个问题
+http://stackoverflow.com/questions/10568531/boost-property-tree-issue-when-converting-to-unicode/16071043#16071043  (这里方法显然不行)
+boost::property_tree::read_xml( wstring2string( xml_file ), xml, 0, utf8Locale );
+注意后面两个字符串，是用于输出 文件 流格式化的。
+ptree.put_child( node_name, file_node );  
+已经存在 ，就覆盖，能不能抛异常，或者其它处理方式呢？
+---------------------------------------------------------------------------
+boost optional
+ optional库使用"容器"语义，包装了"可能产生无效值"的对象，实现了"未初始化"的概念.
+http://blog.csdn.net/mmzsyx/article/details/8163259
+"无意义"的值:
+函数并不总能返回有效的返回值，很多时候函数可能返回"无意义"的值，
+这不意味着函数执行失败，而是表明函数正确执行了，但结果却不是有用的值
+optional很像一个仅能存放一个元素的容器，它实现了"未初始化"的概念：
+如果元素未初始化，那么容器就是空的，否则，容器内就是有效的，已经初始化的值
+optional的真实接口很复杂，因为它要能够包装任何的类型
+---------------------------------------------------------------------------
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+http://stackoverflow.com/questions/9538114/utf-8-locale-in-visual-c-2010
+这个会和boost的函数冲突造成
+static std::locale utf8Locale( std::locale( "" ), new boost::program_options::detail::utf8_codecvt_facet() );
+出现下面错误
+error C2661: “std::locale::facet::operator new”: 没有重载函数接受 3 个参数
+If you are looking for existing memory leaks, you can use DEBUG_NEW if you are in VS2010.
+---------------------------------------------------------------------------
+boost::is_any_of( "_." )  造成警告：
+warning C4996: 'std::_Copy_impl'  这个警告只在DEBUG版里出，RELEASE版本里不出。
+Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+http://stackoverflow.com/questions/14141476/warning-with-boostsplit-when-compiling
+忽略警告
+-D_SCL_SECURE_NO_WARNINGS
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+【VISCA.png】
+asio pdf
+http://meetingcpp.com/tl_files/mcpp/slides/12/Boost.Asio%20-%20Asynchronous%20IO.pdf
+http://en.wikipedia.org/wiki/VISCA_Protocol
+http://www.vaddio.com/images/downloads/tc_sony_z700_commandlist.pdf
+使用BOOST::ASIO 读取COM串口数据，最后，总是多出一些数据
+90 41 FF 90 51 FF
+
+Serial ports are available on all POSIX platforms. For Windows, serial ports are only available at compile time when the I/O completion port backend is used (which is the default). A program may test for the macro BOOST_ASIO_HAS_SERIAL_PORTS to determine whether they are supported.
+
+boost asio write_some 与 write有什么区别？
+                boost::asio::io_service::work work( m_io_service );
+                m_io_service.run();
+
 
 【asio-tcp-iostream.png】
 【boost asio 缓存集】
@@ -16,7 +129,14 @@ b2.exe --with-<library>
                         boost::asio::buffer(buffer)
                 };
                 size_t rcv_size = socket_.receive_from(bufs, remote_endpoint);
-                
+asio
+typedef std::pair<void*, std::size_t> mutable_buffer;
+typedef std::pair<const void*, std::size_t> const_buffer;
+asio 中的 I/O 对象  基于流的对象
+socket,
+ip::tcp::socket, ssl::stream<>, posix::stream_descriptor, windows::stream_handle
+
+
 【asio 设置同步操作的超时？没有正规方法】
 由BOOST::THREAD创建的线程，调用receive_from阻塞住。
 当在另主线程里，调用server_thread_.interrupt();时，会出现下面的异常。
@@ -121,6 +241,8 @@ This function is used to close the serial port. Any asynchronous read or write o
 
 
 
+
+---------------------------------------------------------------------------
 【结构体的序列化】
 http://stackoverflow.com/questions/3938307/serializing-c-style-structs-using-c
 Doing a memcpy of classes/structs is okay if they're just Plain Old Data (POD), but if that's the case, then you could rely on C++ doing the copying for you via copy constructors (which exist for bothstruct and class types in C++).
@@ -175,6 +297,8 @@ http://stackoverflow.com/questions/15251415/exception-when-using-boostserializat
 
 
 
+
+---------------------------------------------------------------------------
 【bitset】【bitset-1.png】【bitset-2.png】
 #include <iostream> 
 #include <bitset> 
@@ -204,6 +328,8 @@ int main()
 
 
 
+
+---------------------------------------------------------------------------
 
 最好的JSON解析器
 http://stackoverflow.com/questions/245973/whats-the-best-c-json-parser
@@ -236,6 +362,9 @@ as a single BSS to the logical link control layer at any station associated with
 which facilitates mobile IP and fast secure roaming applications; 
 the BSSs may work on the same channel, or work on different channels to boost aggregate throughput.
 
+
+
+---------------------------------------------------------------------------
 boost::system::error_code 的类型判断
 void SerialPort::on_receive_(const boost::system::error_code& ec, size_t bytes_transferred)
 {
@@ -292,6 +421,8 @@ SerialPort 对象重新打开，最好的方法，是创建新的对象。同时其对应的SERVICE也需要，
 
 
 
+---------------------------------------------------------------------------
+
 通用唯一识别码（英语：Universally Unique Identifier，简称UUID）是一种软件建构的标准，亦为自由软件基金会组织在分散式计算环境领域的一部份。
 UUID的目的，是让分散式系统中的所有元素，都能有唯一的辨识信息，而不需要通过中央控制端来做辨识信息的指定
 一组UUID，是由一串16位组（亦称128位）的16进位数字所构成，是故UUID理论上的总数为216 x 8=2128，约等于3.4 x 1038。也就是说若每纳秒产生1兆个UUID，要花100亿年才会将所有UUID用完
@@ -302,17 +433,26 @@ UUID的标准型式包含32个16进位数字，以连字号分为五段，形式为8-4-4-4-12的32个字符。
 
 
 
-
-
+---------------------------------------------------------------------------
+【boost::iostream】http://stackoverflow.com/questions/4961155/boostiostream-zlib-compressing-multiple-files-into-one-archive
+boost::iostream zlib compressing multiple files into one archive
+The zlib Filters depend on the third-party zlib library, which is not included in the Boost distribution. Prebuilt zlib binaries are available on most UNIX and UNIX-like systems, and will be found automatically by the Boost build system. Windows users can obtain prebuilt binaries at the zlib homepage. Users can also configure the Boost Iostream library to build zlib from the source code, which is available at the zlib homepage. For details on configuring the build system to find your zlib installation, please see Installation
+---------------------------------------------------------------------------
 【chrono】
 boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
 误写成了
 boost::this_thread::sleep_for(boost::chrono::microseconds(500));
 导致线程，占用过多CPU。       
 
+
+
+---------------------------------------------------------------------------
 【date_time】
 ptime -> utc 一个整数
 ptime -> string
+
+boost::gregorian::to_iso_wstring( time_.date() );
+boost::posix_time::to_iso_wstring( iter->time() )
 
 boost::date_time 的时间 -> 字符串的转换
                  字符串 -> 时间的转换
@@ -370,6 +510,28 @@ Convert to form HHMMSS,fffffffff.
 time_duration td(1,2,3, 1000);
 td.fractional_seconds(); // --> 1000
 
+posix time  字符串时间格式
+simple_string                  2012-12-12 10:12:22
+iso_string                        20121212T101222
+to_iso_extended_string
+ //! Allows expression of durations as milli seconds
+  /*! \ingroup time_basics
+   */
+  typedef date_time::subsecond_duration<time_duration,1000> millisec;
+  typedef date_time::subsecond_duration<time_duration,1000> milliseconds;
+  //! Allows expression of durations as micro seconds
+  /*! \ingroup time_basics
+   */
+  typedef date_time::subsecond_duration<time_duration,1000000> microsec;
+  typedef date_time::subsecond_duration<time_duration,1000000> microseconds;
+注意其中的断续关系
+ class seconds : public time_duration
+  {
+  public:
+    explicit seconds(long s) :
+      time_duration(0,0,s)
+    {}
+  };
 
 
 
@@ -378,7 +540,7 @@ td.fractional_seconds(); // --> 1000
 
 
 
-
+---------------------------------------------------------------------------
 
 [filesystem]
 
@@ -471,6 +633,8 @@ filesystem::path 类的成员
 
 
 
+
+---------------------------------------------------------------------------
 【字符串转换】
 UTF8 <-> UNICODE
 Class template std::wstring_convert performs conversions between byte string std::string and wide string std::basic_string<Elem>, 
@@ -494,6 +658,8 @@ to_string
 
 
 
+
+---------------------------------------------------------------------------
 【LOG】
 <boost/log/utility/manipulators/dump.hpp>
 dump binary data
@@ -526,8 +692,12 @@ log::get 会创建一个LOGGER对象。这个对象是全局的。::get函数内部实现的线程的同步操
 #include <boost/log/sources/logger.hpp>
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT( log, boost::log::sources::logger_mt );
 
+D:\project\3rdParty\boost_1_54_0\libs\log\example
+
+BOOST的例子
 
 
+---------------------------------------------------------------------------
 [线程]
 
 线程同步：
@@ -551,8 +721,12 @@ Differences between <semaphore.h> and <sys/sem.h>
 运行 V（又称signal()），信号量S的值会被增加。退出离开临界区段的进程，将会运行 V（又称signal()）。当信号量S不为负值时，先前被挡住的其他进程，将可获准进入临界区段。
 
 
+多线程同步方式
+http://www.boost.org/doc/libs/1_54_0/doc/html/thread/synchronization.html#thread.synchronization.barriers
 
+A barrier is a simple concept. Also known as a rendezvous, it is a synchronization point between multiple threads. The barrier is configured for a particular number of threads (n), and as threads reach the barrier they must wait until all n threads have arrived. Once the n-th thread has reached the barrier, all the waiting threads can proceed, and the barrier is reset
 
+---------------------------------------------------------------------------
 
 散列函数 -> 冗余检校验 -> 校验和 -> 循环冗余校验（CRC）
 循环冗余校验（英语：Cyclic redundancy check，通称“CRC”）是一种根据网络数据数据包或电脑文件等数据产生简短固定位数校验码的一种散列函數，主要用来检测或校验数据传输或者保存后可能出现的错误
@@ -567,9 +741,4 @@ Differences between <semaphore.h> and <sys/sem.h>
 奇偶校验位是一个表示给定位数的二进制数中1的个数是奇数还是偶数的二进制数。奇偶校验位是最简单的错误检测码
 
 
-
-
-http://boost.cowic.de/rc/pdf/ 
-http://meetingcpp.com/tl_files/blog/boost_1_55.png
-c++ boost 库，联系图
  

@@ -1,6 +1,91 @@
 if语句造成的编译错误【if-error.png】
 
 
+---------------------------------------------------------------------------
+std::map   size count的区别
+size
+Returns the number of elements in the map.
+count  返回指定键值的元素个数。
+Returns the number of elements in a map whose key matches a parameter-specified key.
+---------------------------------------------------------------------------
+获取 string 中的buffer
+http://stackoverflow.com/questions/1042940/writing-directly-to-stdstring-internal-buffers/1043032
+string::operator[] should not be used to get a pointer to a sequence of characters - it should only be used for single characters.
+Therefore the only safe way to do this, as others have said,
+is to avoid any attempt to directly write into the string buffer and
+use a vector, pass a pointer to the first element and
+then assign the string from the vector on return from the dll function
+---------------------------------------------------------------------------
+error C2146: 语法错误: 缺少“)”(在标识符“hwnd”的前面)
+原因是，构造函数格式，前面没有加类名，
+CPlayer::CPlayer( HWND hwnd, const std::wstring & fname ) : m_duration( 0 ) {
+}
+---------------------------------------------------------------------------
+istreambuf_iterator  std::istream_iterator  这两种 的区别
+http://stackoverflow.com/questions/5420317/reading-and-writing-binary-file
+std::ifstream input( "C:\\Final.gif", std::ios::binary );
+   std::ofstream output( "C:\\myfile.gif", std::ios::binary );
+
+   std::copy( 
+       std::istreambuf_iterator<char>(input), 
+       std::istreambuf_iterator<char>( ),
+       std::ostreambuf_iterator<char>(output));
+int main()
+{
+   std::ifstream input( "C:\\Final.gif", std::ios::binary );
+   // copies all data into buffer
+   std::vector<char> buffer((
+           std::istreambuf_iterator<char>(input)), 
+           (std::istreambuf_iterator<char>()));
+}
+---------------------------------------------------------------------------
+char                         -128 ~ +127                (1 Byte)
+short                         -32767 ~ + 32768        (2 Bytes)
+unsigned short         0 ~ 65536                (2 Bytes)
+int                         -2147483648 ~ +2147483647   (4 Bytes)
+unsigned int                 0 ~ 4294967295        (4 Bytes)
+long == int
+long long                 -9223372036854775808 ~ +9223372036854775807        (8 Bytes)
+double                 1.7 * 10^308                (8 Bytes)
+
+---------------------------------------------------------------------------
+#define _fstat      _fstat64i32
+#define _fstati64   _fstat64
+#define _stat       _stat64i32
+#define _stati64    _stat64
+#define _wstat      _wstat64i32
+#define _wstati64   _wstat64
+struct _stat64 {
+        _dev_t     st_dev;
+        _ino_t     st_ino;
+        unsigned short st_mode;
+        short      st_nlink;
+        short      st_uid;
+        short      st_gid;
+        _dev_t     st_rdev;
+        __int64    st_size;
+        __time64_t st_atime;
+        __time64_t st_mtime;
+        __time64_t st_ctime;
+        };
+---------------------------------------------------------------------------
+下面这样写，竟然没有出错。（怎么避免这种错误？）
+::_stprintf(szInfo,L"%.1f%%", (double) ( node->upload_size * 1000 / node->file_size ) / 10 ) / 1000;
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
 RECT 成员变量，初始化, 无法初始化。
 error C2661: “tagRECT::tagRECT”: 没有重载函数接受 4 个参数
 
@@ -36,6 +121,7 @@ protected:
 
 
 
+---------------------------------------------------------------------------
 [c++] 虚函数都 是动态绑定的？
 只有采用“指针->函数()”或“引用变量.函数()”的方式调用C++类中的虚函数才会执行动态绑定。对于C++中的非虚函数，因为其不具备动态绑定的特征，所以不管采用什么样的方式调用，都不会执行动态绑定
 
@@ -59,7 +145,8 @@ class derived : public base<derived>    注意基类是一个 类模板
     // attributes and behaviors 
 }
 
-	
+
+---------------------------------------------------------------------------
 [STD]
 	static int i = 0;
 	char i_c = '0' + i;
@@ -87,11 +174,13 @@ name = name + 54;
 std::string name = "d:\\P" + 2; 这样写是可以的
 	
 
+---------------------------------------------------------------------------
 [C++]
 字符中的转义符（即引号中的转义符）
 '\212'
 '\256' ?
 
+---------------------------------------------------------------------------
 [c++]
 class CImageTrackingOption : CInitFile   这样写，默认是私有继承。
 class CImageTrackingOption : public CInitFile
@@ -113,6 +202,7 @@ struct 与 union主要有以下区别:
 
 
 
+---------------------------------------------------------------------------
 
 
 【类中成员变量的初始化顺序】 注意声名顺序
@@ -140,6 +230,7 @@ CPreviewDlg::CPreviewDlg(ID2D1Factory *factory, int &left, int &top, int &right,
 
 
 
+---------------------------------------------------------------------------
 
 
 看下面的代码，错在那里？字节，字节，一个字节是两位十六进制
@@ -157,6 +248,7 @@ afx_msg LRESULT CShowPositionWnd::OnNewPosition(WPARAM wParam, LPARAM lParam)
 
 
 
+---------------------------------------------------------------------------
 
 
 
@@ -181,6 +273,7 @@ ios::trunc 覆盖存在的文件
 
 
 
+---------------------------------------------------------------------------
 [关于，字符编码问题]
 
 // 此源文件在Windows平台上必须保存为Unicode格式（即UTF-16小尾）
@@ -210,6 +303,7 @@ int main()
 
 
 
+---------------------------------------------------------------------------
 
 善用backtrace解决大问题
 一．用途：
@@ -233,18 +327,21 @@ int main()
 	backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
 
 
+---------------------------------------------------------------------------
 std list
 
 begin / end  返回迭代器
 front / back  返回元素的引用
 
 
+---------------------------------------------------------------------------
 http://en.wikipedia.org/wiki/One_Definition_Rule
 One Definition Rule (ODR)
 The One Definition Rule (ODR) is an important concept in the C++ programming language.
 
 
 
+---------------------------------------------------------------------------
 返回值优化RVO
 编译器优化要维护原来计算的正确性，对于返回值优化来说，编译器将不对复杂的函数执行RVO。例如，如果一个函数有多个return语句返回不同名称的对象，那么RVO不会被使用。如果想用RVO，则必须使用相同名称的对象。此外，必须定义一个复制构造函数以“打开”返回值优化。如果有关类没有定义复制构造函数，那么RVO就会悄悄地关闭
 有些编译器只对返回匿名对象的函数使用RVO
@@ -252,3 +349,16 @@ Complex operator + (const Complex &a, const Complex &b)
 {  
     return Complex(a.real + b.real, a.imag + b.imag);  
 } 
+
+
+
+---------------------------------------------------------------------------
+[UML]
+http://www.blogjava.net/wxb_nudt/archive/2005/06/20/6409.html
+类图释疑之一，Attribute和Property之区别
+
+
+---------------------------------------------------------------------------
+http://c2.com/cgi/wiki?PimplIdiom
+http://airekans.github.io/cpp/2012/10/20/pimpl-idiom-in-c/
+在C++里面, 经常出现的情况就是头文件里面的类定义太庞大了，而这个类的成员变量涉及了很多 其他文件里面的类，从而导致了其他引用这个类的文件也依赖于这些成员变量的定义。 在这种情况下，就出现了在C++里面特有的一个idiom，叫做Pimpl idiom

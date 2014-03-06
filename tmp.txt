@@ -6,7 +6,18 @@ QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
 
 
 
-
+【boost asio 缓存集】
+发送多个缓存
+                boost::array<boost::asio::const_buffer, 2> bufs;
+                bufs[0] = boost::asio::buffer(&id_, sizeof(id_));
+                bufs[1] = boost::asio::buffer(this, sizeof(this));
+                socket.send_to(bufs, remote);
+接收时，就需要有几个缓存
+                boost::array<boost::asio::mutable_buffer, 2> bufs = {
+                        boost::asio::buffer(&id, sizeof(id)),
+                        boost::asio::buffer(buffer)    这个BUFFER 是怎么定义的？
+                };
+                size_t rcv_size = socket_.receive_from(bufs, remote_endpoint);
 
 
 
