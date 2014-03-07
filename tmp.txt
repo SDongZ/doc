@@ -1,24 +1,238 @@
-�������������ط�������ȫ����������
-QQ����¼��baidu���̣�GOOGLE-DOC�������ĵ���
+【把其它几个地方的内容全整理过来】
+QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
+
+【D3D】
+D3DXLoadSurfaceFromMemory
+
+[语法]
+for(int i = 0; i < right; i++)  怎么样，I 加二？
+
+for(int i = 0; i < (right - left); i += 2)  语法是可行的。
+
+纠结了半天下面的代码：
+for(int i = 0; i < right; i += 2)  想处理左右座标间的像素个数，这样写，变成了0到右座标的像素个数。
 
 
-
-
-
-
-��boost asio ���漯��
-���Ͷ������
+【boost asio 缓存集】
+发送多个缓存
                 boost::array<boost::asio::const_buffer, 2> bufs;
                 bufs[0] = boost::asio::buffer(&id_, sizeof(id_));
                 bufs[1] = boost::asio::buffer(this, sizeof(this));
                 socket.send_to(bufs, remote);
-����ʱ������Ҫ�м�������
+接收时，就需要有几个缓存
                 boost::array<boost::asio::mutable_buffer, 2> bufs = {
                         boost::asio::buffer(&id, sizeof(id)),
-                        boost::asio::buffer(buffer)    ���BUFFER ����ô����ģ�
+                        boost::asio::buffer(buffer)    这个BUFFER 是怎么定义的？
                 };
                 size_t rcv_size = socket_.receive_from(bufs, remote_endpoint);
 
+【c++】
+非静态类成员变量的初始化。（initialization list）
+You cannot substitute one for the other. If the member variables are not static, you have to use the initialization list (or the constructor body, but the initialization list is better suited)*.
+
+It is mandatory 【['mændətərɪ] [美][ˈmændəˌtɔri, -ˌtori]强制的】 to initialize Reference Data Member in an Initialization List because it can not exist without being initialized.
+
+It is mandatory to initialize Constant Data Member in an Initialization List otherwise it would be constrcuted with some junk values and we cannot initialize it later anywhere else
+
+It is mandatory to construct and initialize, embedded class objects/base class objects in case of inheritance, in an Initialization List, if they do not themselves have a zero-argument/default constructor provided
+
+in C++11 you can also provide an initializer in the declaration for non-static member variables:
+class test {
+   int data = 5; 类声明时，初始化非静态成员变量。
+};
+注意下面的代码
+struct S {
+    int n = 42;
+    S() : n(7) {} // will set n to 7, not 42
+};
+Will have data(5) implicitly added to any initialization list where data is not explicitly mentioned (including an implicitly defined default constructor)
+
+类成员变量的初始化顺序
+class CPreviewDlg : public CDialogEx
+{
+	DECLARE_DYNAMIC(CPreviewDlg)
+
+	CDevice &m_device;
+	
+	CRect m_rect;
+	UINT &m_left;
+	UINT &m_top;
+	UINT &m_right;
+	UINT &m_bottom;
+
+下面m_rect可以正确的被初始化，虽然，它在四个引用变量之前声明。
+CPreviewDlg::CPreviewDlg(ID2D1Factory *factory, UINT &left, UINT &top, UINT &right, UINT &bottom, CDevice &device, CWnd* pParent /*=NULL*/)
+	: CDialogEx(CPreviewDlg::IDD, pParent),   注意这里CDialogEx，基类的初始化
+	  m_view(factory, m_rect), m_device(device),
+	  m_rect(left, top, right, bottom),
+	  m_left(left), m_top(top), m_right(right), m_bottom(bottom)
+{
+
+}
+
+下面的初始化，可以编译过，但是会造成，m_left，没有引用值，因为它先于m_top初始化
+同样的代码在GCC中，会引发错误或者警告：test.cpp:3:9: error: ‘Test::b’ will be initialized after [-Werror=reorder]
+CPreviewDlg::CPreviewDlg(ID2D1Factory *factory, UINT &left, UINT &top, UINT &right, UINT &bottom, CDevice &device, CWnd* pParent /*=NULL*/)
+	: CDialogEx(CPreviewDlg::IDD, pParent),
+	  m_view(factory, m_rect), m_device(device),
+	  m_rect(left, top, right, bottom),
+	  m_top(top), m_left(m_top), m_right(right), m_bottom(bottom)
+{
+
+}
+
+Make sure the members appear in the initializer list in the same order as they appear in the class
+Class C {
+   int a;
+   int b;
+   C():b(1),a(2){} //warning, should be C():a(2),b(1)
+}
+or you can turn -Wno-reorder
+VC 没有这个警告，下面这个链接有讨论这个问题
+https://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/2553854-c-compiler-should-warn-about-wrong-member-initia
+class Class {
+    Class( int var ) : var1( var ), var2(var1 ) {} // allright
+    //Class( int var ) : var2( var ), var1(var2 ) {} // var1 will be left uninitialized。 在VC不会有任何警告。
+
+    int var1;
+    int var2;
+};
+
+
+
+The reason is because they're initialized in the order they're declared in your class, not the order you initialize them in the constructor and it's warning you that your constructor's order won't be used.
+
+This is to help prevent errors where the initialization of b depends on a or vice-versa.
+
+The reason for this ordering is because there is only one destructor, and it has to pick a "reverse order" to destroy the class member. In this case, the simplest solution was to use the order of declaration within the class to make sure that attributes were always destroyed in the correct reverse order.
+
+
+
+Initialization order
+
+The order of member initializers in the list is irrelevant（irrelevant[英][ɪˈreləvənt] [美][ɪˈrɛləvənt] 牛头不对马嘴）:
+the actual order of initialization is as follows:
+1) If the constructor is for the most-derived class, virtual base classes are initialized in the order in which they appear in depth-first left-to-right traversal of the base class declarations (left-to-right refers to the appearance in base-specifier lists)
+2) Then, direct base classes are initialized in left-to-right order as they appear in this class's base-specifier【[英]['spɪsəfaɪə] [美]['spɪsəfaɪə] 区分符】 list
+3) Then, non-static data members are initialized in order of declaration in the class definition.（如果有引用成员变量呢？）
+4) Finally, the body of the constructor is executed
+
+为什么以成员的声明顺序，来定义，初始化顺序：因为，可以有多个构造函数，但是只有一个析构函数。析构函数，会按照构造时的返序，处理所有的成员变量。
+(Note: if initialization order was controlled by the appearance【[英][əˈpɪərəns] [美][əˈpɪrəns]出现】 in the member initializer lists of different constructors, then the destructor wouldn't be able to ensure that the order of destruction is the reverse of the order of construction)
+
+
+
+So I was reading up on C++11 initializer lists today via Wikipedia and saw that C++11 supports the following syntax for the standard containers:
+
+std::vector<std::string> v = { "xyzzy", "plugh", "abracadabra" };
+std::vector<std::string> v({ "xyzzy", "plugh", "abracadabra" });
+std::vector<std::string> v{ "xyzzy", "plugh", "abracadabra" }; 
+When I try the following in Visual Studio 2012 I get the compilation error C2552: 'vecs' : non-aggregates cannot be initialized with initializer list
+
+Visual Studio 2012 does not support initializer lists.
+
+Well, it didn't until the November 2012 CTP. Now it does, at least in an alpha state. Granted, this code still won't work in it because they're still putting initializer lists into the standard library itself.
+
+[VIDAUD]
+YUV是被欧洲电视系统所采用的一种颜色编码方法（属于PAL），是PAL和SECAM模拟彩色电视制式采用的颜色空间。
+在现代彩色电视系统中，通常采用三管彩色摄影机或彩色CCD摄影机进行取像，
+然后把取得的彩色图像信号经分色、分别放大校正后得到RGB，
+再经过矩阵变换电路得到亮度信号Y和两个色差信号R－Y（即U）、B－Y（即V），
+最后发送端将亮度和色差三个信号分别进行编码，用同一信道发送出去。
+这种色彩的表示方法就是所谓的YUV色彩空间表示。采用YUV色彩空间的重要性是它的亮度信号Y和色度信号U、V是分离的
+
+其中“Y”表示明亮度（Luminance或Luma），也就是灰阶值
+“U”和“V” 表示的则是色度（Chrominance或Chroma），作用是描述影像色彩及饱和度，用于指定像素的颜色
+
+“亮度”是透过RGB输入信号来建立的，方法是将RGB信号的特定部分叠加到一起。
+“色度”则定义了颜色的两个方面─色调与饱和度，分别用Cr和Cb来表示。   （其值是）
+Cr反映了RGB输入信号红色部分与RGB信号亮度值之间的差异。
+Cb反映的是RGB输入信号蓝色部分与RGB信号亮度值之间的差异。
+
+[yuy2-fmt.gif]格式
+YUY2 is the preferred 4:2:2 pixel format for Microsoft DirectX Video Acceleration (DirectX VA). It is expected to be an intermediate-term requirement for DirectX VA accelerators supporting 4:2:2 video.
+DirectX VA 视频加速，包括，编解码。
+
+YUYV YUYV ...
+宏像素是（MicroPixel），两个图片像素(PicturePixel)
+
+【YCbCr-color-space.GIF】YUV着色空间动态示意图
+
+颜色空间，其中空间，是因为，一种颜色由三个值决定，可以用三维立体空间表示出来。
+
+chrominance[英]['krəʊmɪnəns] [美]['kroʊmɪnəns] 
+n.色度（任意一种颜色与亮度相同的一个指定的参考色之间的差异，如彩色电视采用白色为参考色）
+
+luminance[英][ˈlu:mɪnəns] [美][ˈlumənəns] 
+n.亮度；发光度
+
+
+“Y”表示明亮度（Luminance、Luma）
+【RGB-to-YCbCr-conversion.png】
+【600px-YUV_UV_plane.svg.png】
+【RGB_color_solid_cube.png】（The RGB color model mapped to a cube. The horizontal x-axis as red values increasing to the left, y-axis as blue increasing to the lower right and the vertical z-axis as green increasing towards the top. The origin, black, is the vertex hidden from view）
+
+Example of U-V color plane, Y' value = 0.5, represented within RGB color gamut
+色度值（色调）U(Chrominance): 水平值
+浓度值（饱和度）V(Chroma)：   垂直值   这两个值就组成了一个平面，取值范围 -0.5 - 0.5  对应的 0 - 255
+
+These ranges assume 8 bits of precision for the Y'CbCr components
+Component	 Range
+Y'	         16–235
+Cb/Cr	     16–240, with 128 representing zero
+The Y knob has 256 steps, from 0-255, and the U and V knobs range from -128 to +128.
+
+色度指得是色彩的纯度，也叫饱和度或彩度，是“色彩三属性”之一。
+如大红就比玫红更红，这就是说大红的色度要高。
+它是HSV色彩属性模式，孟塞尔颜色系统等的描述色彩变量。
+
+从广义上说，黑白灰是“色度=0”的颜色。在各种色彩模型中，对色度有不同的量化模式。
+
+孟塞尔颜色系统中称为Chroma，并以黑白灰为彩度0点，将各种彩色按照表示“差别多大距离”而分级，导致各种颜色最鲜艳的彩度级别不一样。
+如色相5R （红）最高的彩度可以达到14，而色相5BG（青绿）最高的彩度只有8。
+即使同样是彩度6，各种颜色的鲜艳程度并不是和人的感官直觉很一致。
+
+HSV色彩属性模式中这个指标称为Saturation，即饱和度。
+日本PCCS系统中，这个指标汉字写作“彩度”，但是翻译成英文是称Saturation，即饱和度。
+将无彩色的黑白灰定为0，最鲜艳定为9s，这样大致分成十阶段，让数值和人的感官直觉一致。
+色度由光线强弱和在不同波长的强度分布有关。
+最高的色度一般由单波长的强光（例如激光）达到，在波长分布不变的情况下，光强度越弱则色度越低。
+
+[VIDAUD]
+yuv 与 RGB 相互转换的方法
+RGB to YUV Conversion
+
+Y  =      (0.257 * R) + (0.504 * G) + (0.098 * B) + 16
+
+Cr = V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128
+
+Cb = U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128
+
+YUV to RGB Conversion
+
+B = 1.164(Y - 16)                   + 2.018(U - 128)
+
+G = 1.164(Y - 16) - 0.813(V - 128) - 0.391(U - 128)
+
+R = 1.164(Y - 16) + 1.596(V - 128)
+
+
+
+Vinagre 是新近才出现的 VNC 客户端，它主要为 GNOME 桌面环境而设计。Vinagre 的主要功能包括：能够同时连接多个机器，可以收藏经常使用的连接，支持浏览 VNC 服务器网络，不需要为每个连接都提供密码等等
+
+
+
+
+
+
+
+
+使用 Ubuntu 软件中心搜索synaptic，找到“新立得软件包管理器”，一般第一个搜索结果就是了;
+
+
+
+
+构建一个开发环境，第三库等等。
 
 
 
@@ -32,21 +246,6 @@ QQ����¼��baidu���̣�GOOGLE-DOC�������ĵ���
 
 
 
-Vinagre ���½��ų��ֵ� VNC �ͻ��ˣ�����ҪΪ GNOME ���滷������ơ�Vinagre ����Ҫ���ܰ������ܹ�ͬʱ���Ӷ�������������ղؾ���ʹ�õ����ӣ�֧����� VNC ���������磬����ҪΪÿ�����Ӷ��ṩ����ȵ�
-
-
-
-
-
-
-
-
-ʹ�� Ubuntu ������������synaptic���ҵ�������������������������һ���һ���������������;
-
-
-
-
-����һ������������������ȵȡ�
 
 
 
@@ -56,21 +255,8 @@ Vinagre ���½��ų��ֵ� VNC �ͻ��ˣ�����ҪΪ GNOME ���滷������ơ�Vinagre ����Ҫ
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-��vim �����б���
-[�ȴ����������б�]
+【vim 命令列表】
+[等待整理代码列表]
 TestBurn - M
-D2D�е�Circle���ӣ������Զ��崰������о���
-��ֹ�������´򿪵���
+D2D中的Circle例子（其中自定义窗口类的研究）
+防止程序重新打开的类
