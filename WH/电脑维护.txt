@@ -30,9 +30,29 @@ http://technet.microsoft.com/zh-cn/sysinternals/bb795533(中文网页下载不了)
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+Windows PowerShell 是微软公司为Windows环境所开发的壳程序（shell）及脚本语言技术，采用的是命令行界面。这项全新的技术提供了丰富的控制与自动化的系统管理能力。
+之前的开发代号是Monad，程序另一个名称叫Microsoft Shell（MSH）
+UNIX系统一直有着功能强大的壳程序（shell），Windows PowerShell的诞生就是要提供功能相当于UNIX系统的命令行壳程序（例如：sh、bash或csh），同时也自带脚本语言以及辅助脚本程序的工具。
+您可轻易发现 Windows Powershell 的功能。例如，若要查找用于查看和更改Windows 服务的cmdlet 列表，执行：开始->运行->cmd，在命令行下输入 PowerShell 进入 windows PowerShell，再输入如下命令
 ---------------------------------------------------------------------------
+点击：控制面板—》管理工具。选中“Internet信息服务(IIS)管理器”
 ---------------------------------------------------------------------------
+调音台/音响没有声音
+
+如果说你放的好好的突然就没声音了，那可能你接的哪个地方可能连线了，短路。或是功率太大设备进行自动保护了。不过这种情况只是针对于那种调音台内置功放的那种。如果说你的调音台没有内置功放的话，就看看你的外置功放是不是自动保护了。如果都不是的话就可能是有故障了，你还是叫厂家的人给你看看吧。
+幻象电源为电源和相关电力工具名称。它具有频带宽广、响应曲线平直、输出高、非线性畸变小、瞬态响应好等非常突出的优点
 ---------------------------------------------------------------------------
+ Multiple displays,  多屏显示,  monitor
+http://en.wikipedia.org/wiki/Multi-monitor
+http://en.wikipedia.org/wiki/Hardware_overlay  (里面有关于Secondary displays)
+Multiple Display Monitors is a set of related features that allow applications to make use of multiple display devices at the same time.
+http://msdn.microsoft.com/en-us/library/windows/desktop/dd145071(v=vs.85).aspx
+http://msdn.microsoft.com/en-us/library/windows/desktop/dd145071(v=vs.85).aspx
+Overlay issue with Dual Monitors and a variety of games
+http://raptr.com/forums/showthread.php?t=14923
+Working with Multiple Monitor Systems (Direct3D 9)
+http://msdn.microsoft.com/en-us/library/windows/desktop/bb206364(v=vs.85).aspx
+d3d  Multiple monitor
 ---------------------------------------------------------------------------
 
 

@@ -1,0 +1,26 @@
+http://bbs.csdn.net/topics/80108210 （Powerpoint.Application）
+CLSIDFromProgID   CLSIDFromProgID(L"PowerPoint.Application", &clsid);
+HKEY_CLASSES_ROOT\PowerPoint.Application\CLSID  {91493441-5A91-11CF-8700-00AA0060263B}
+HKEY_CLASSES_ROOT\Wow6432Node\CLSID\{91493441-5A91-11CF-8700-00AA0060263B}
+Microsoft Office PowerPoint Application
+有注册类  错误
+com class not registered
+0x80040154  Class not registered.  2147746132
+CreateDispatch 80040154
+CreateDispatch Powerpoint.Application
+COleDispatchDriver类实现OLE自动化中的客户方。OLE调度接口为访问一个对象的方法和属性提供了途径。COleDispatchDriver的成员函数连接，分离，创建和释放一个IDispatch类型的调度连接
+BOOL CreateDispatch(
+  REFCLSID clsid,
+  COleException* pError = NULL 
+);
+BOOL CreateDispatch(
+  LPCTSTR lpszProgID,
+  COleException* pError = NULL 
+);
+一个COleException对象代表的是与一个OLE操作相关的异常情况。此COleException类包括一个公用数据成员，该成员包含了用来表明此异常的原因的状态代码
+class COleException : public CException
+CException::GetErrorMessage
+OLE异常
+COleException* pe = new COleException;
+pe->m_sc   是个 hresult值
+pe->Delete();

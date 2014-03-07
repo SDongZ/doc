@@ -12,6 +12,8 @@ GhDirect.exe 中的 0x5266a6a7 (DuiLib.dll) 处有未经处理的异常: 0xC0000005: 读取位
 http://blog.csdn.net/jidanit/article/details/2660098
 归根结底是内存分配的问题，如果不分配内存，就会导致访问冲突
 ---------------------------------------------------------------------------
+xcopy /e /c /y inc $(SolutionDir)..\..\include\CommonLib\   (后面那个反斜杠，必须要有，否则会出错)
+【xcopy-vc-error.png】
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
@@ -21,7 +23,62 @@ http://blog.csdn.net/jidanit/article/details/2660098
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+VC调试时如何查看函数返回值
+
+所谓C/C++函数调用规范，是指进行一次函数调用所采用的传递参数的方法，返回值的处理以及调用堆栈的清理。
+VC++集成调试环境中提供了如下三种调用规范，它们的参数入栈方式都是自右向左的，32位整型的返回值的处理也都是将返回值放到寄存器eax中，如果返回值是64位整型的，就用edx:eax。浮点返回值则放在浮点寄存器ST(0)中。这三种调用规范的区别主要在是函数堆栈的处理上。
+_cdecl：由调用者进行堆栈清理。优点是可以实现变参函数。缺点是每一次函数调用，调用者都要额外执行一条进行堆栈清理的代码，程序文件偏大一些。
+_stdcall：被调用者自己清理函数所用堆栈。优点是调用者无须清理堆栈了，程序文件会小一些。缺点是无法实现变参函数。（所谓变参函数，即类似与printf之类的函数）。
+_fastcall：它与_stdcall的仅有的区别是函数的前两个参数由寄存器ecx，edx传递，CPU寄存器的读写速度是最快的，所以其效率比上面两种高！windows的内核广泛采用了这种调用规范。
+注意：调用者与被调用者所采用的调用规范必须得一致，否则有可能会出现莫名其妙的错误。也就是说，如果你的被调用的函数是_stdcall格式的，那么调用者也必须是_stdcall格式。为了让代码更标准，在其他类型的C++编译器也能够运行，还是将微软的APIENTRY改成_stdcall吧。
+Visual C++.net 2003中可以对整个项目或者项目中的某些文件设置C/C++默认调用规范，VC++编译器的默认设置是_cdecl的。如果你要修改该默认值，可以在项目属性中进行设置（自个在项目属性对话框中找去吧，现在用Linux，没有VC了，无法抓图
 ---------------------------------------------------------------------------
+VC 中的函数  
+Also these are only defined for unsigned values they work for signed integers as well
+unsigned short _byteswap_ushort(unsigned short value);
+unsigned long _byteswap_ulong(unsigned long value);
+unsigned __int64 _byteswap_uint64(unsigned __int64 value);
+
+http://forums.codeguru.com/showthread.php?292902-C-General-How-do-I-convert-between-big-endian-and-little-endian-values
+inline void endian_swap(unsigned short& x)
+{
+   x = (x>>8) | 
+       (x<<8);
+}
+
+inline void endian_swap(unsigned int& x)
+{
+   x = (x>>24) | 
+       ((x<<8) & 0x00FF0000) |
+       ((x>>8) & 0x0000FF00) |
+       (x<<24);
+}
+
+// __int64 for MSVC, "long long" for gcc
+inline void endian_swap(unsigned __int64& x)
+{
+   x = (x>>56) | 
+       ((x<<40) & 0x00FF000000000000) |
+       ((x<<24) & 0x0000FF0000000000) |
+       ((x<<8)  & 0x000000FF00000000) |
+       ((x>>8)  & 0x00000000FF000000) |
+       ((x>>24) & 0x0000000000FF0000) |
+       ((x>>40) & 0x000000000000FF00) |
+       (x<<56);
+}
+http://stackoverflow.com/questions/7505388/inline-ntohs-ntohl-in-c-boost-asio
+uint32_t asm_ntohl(uint32_t a)
+{
+  __asm
+   {
+      mov eax, a;
+      bswap eax; 
+   }
+}
+BSWAP是汇编指令
+指令作用是：32位寄存器内的字节次序变反。
+比如：(EAX)=9668 8368H，执行指令：
+BSWAP EAX ，则(EAX)=6883 6896H。
 ---------------------------------------------------------------------------
 相同的代码（SVN同步的），一台机器上能编译过，一台机器编辑不过，都是VC2010。
 IWICImagingFactory *img_factory = nullptr;

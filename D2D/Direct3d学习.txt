@@ -1,0 +1,21 @@
+QCAP_COLORSPACE_TYEP_YV12 数据 显示在一个窗口上
+http://www.codeproject.com/Articles/207642/Video-Shadering-with-Direct3D
+Direct3D allows you to convert those frames into RGB format using graphics device, thus saving CPU power and boosting performance.
+显卡是支持YV12播放
+intel hd graphics 4000
+理论上讲，显卡不直接支技YV12之类的播放吧，我看到的代码多是把YV12数据发送到显卡，然后用Direct3D或OpenGL的显卡着色语言把YV12格式转换成RGB。原理和在CPU中YV转RGB一样的，只不过是把这一步工作放在显卡中并行运算，提高转换速度而已
+显卡D3D一般直接支持的纹理格式是ARGB，渲染YV12图像是通过ShaderModule来完成的，也就是传说中的像素着色器，自己写一个shader，载入显卡，而后将YV12数据给D3D，D3D调用shader完成图像转换，进行渲染。
+当然D3D有简单的方法支持YV12，那就是使用D3D的overlay surface，创建一个YV12渲染。
+还有就是用DirectDraw，也创建YV12格式的overlay surface，
+surface的创建需要显卡支持。如果不支持，还是得自己装换到ARGB，这格式只要是显卡都支持。完爆。
+具体设计上可以先做检查，判断显卡支持的特性，再选择需要的渲染器，至于DirectShow，这东西用伤了，兼容性和可操作性，可控制性就不吐槽了
+Overlay表面
+
+http://blog.csdn.net/dengzikun/article/details/5824874
+在PC机上，对于YUV格式的视频如YV12,YUY2等的显示方法，一般是采用DIRECTDRAW,使用显卡的OVERLAY表面显示。
+OVERLAY技术主要是为了解决在PC上播放VCD而在显卡上实现的一个基于硬件的技术
+http://bbs.lmtw.com/dispbbs.asp?boardid=20&id=113264
+DirectDraw中如何检测显卡是否支持YUV颜色格式
+我采用的是生成一个YUV Overlay表面，然后降4路在内存中平拼合为一路显示的方法，所以没有遇到你那些问题
+http://blog.csdn.net/dux003/article/details/5459391
+SDL提供了针对YUV格式数据的直接写屏操作

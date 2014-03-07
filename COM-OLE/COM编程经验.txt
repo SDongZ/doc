@@ -7,11 +7,137 @@
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+COM中不能直接使用数组，所以经常使用到SAFEARRAY与VARIANT的转换
 ---------------------------------------------------------------------------
+http://www.ypass.net/blog/2010/01/pcm-audio-part-3-basic-audio-effects-volume-control/
+The other catch is that volume as perceived by humans (measured in decibels) is logarithmic(对数的,指数级增长), not linear. Your first instinct would be to think "Well if I wanted to double the volume, I should just multiply the samples by 2." Unfortunately, it's not quite that easy.
+#include <MMDeviceAPI.h>
+        IMMDeviceEnumerator *  device_enumerator = NULL;
+        HRESULT hr = CoCreateInstance( __uuidof( MMDeviceEnumerator ), NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS( &device_enumerator ) );
+DeviceRole 设备角色
+ERole constant
+Device role
+Rendering examples
+Capture examples
+eConsole
+Interaction with the computer
+Games and system notifications
+Voice commands
+eCommunications
+Voice communications with another person
+Chat and VoIP
+Chat and VoIP
+eMultimedia
+Playing or recording audio content
+Music and movies
+Narration and live music recording
+In the current implementation of the MMDevice API, the only device resources that this interface can enumerate are audio endpoint devices
+IMMDeviceEnumerator 注册，通知，接口，截取所有的声音设备事件。
+插入: plug-in
+ the endpoint device is not plugged into the jack
+枚举声音设备： 筛选
+DEVICE_STATE_ACTIVE
+0x00000001
+The audio endpoint device is active. That is, the audio adapter that connects to the endpoint device is present and enabled. In addition, if the endpoint device plugs into a jack on the adapter, then the endpoint device is plugged in.
+DEVICE_STATE_DISABLED
+0x00000002
+The audio endpoint device is disabled. The user has disabled the device in the Windows multimedia control panel, Mmsys.cpl. For more information, see Remarks.
+DEVICE_STATE_NOTPRESENT
+0x00000004
+The audio endpoint device is not present because the audio adapter that connects to the endpoint device has been removed from the system, or the user has disabled the adapter device in Device Manager.
+DEVICE_STATE_UNPLUGGED
+0x00000008
+The audio endpoint device is unplugged. The audio adapter that contains the jack for the endpoint device is present and enabled, but the endpoint device is not plugged into the jack. Only a device with jack-presence detection can be in this state. For more information about jack-presence detection, see Audio Endpoint Devices.
+DEVICE_STATEMASK_ALL
+0x0000000F
+Includes audio endpoint devices in all states—active, disabled, not present, and unplugged.
+RegisterEndpointNotificationCallback（IMMNotificationClient *pNotify）
+HRESULT OnDeviceStateChanged(
+ [in]  LPCWSTR pwstrDeviceId,
+ [in]  DWORD dwNewState  
+);
+The IMMNotificationClient interface provides notifications when an audio endpoint device is added or removed, when the state or properties of an endpoint device change, or when there is a change in the default role assigned to an endpoint device. Unlike the other interfaces in this section, which are implemented by the MMDevice API system component, an MMDevice API client implements the IMMNotificationClient interface. To receive notifications, the client passes a pointer to itsIMMNotificationClient interface instance as a parameter to the IMMDeviceEnumerator::RegisterEndpointNotificationCallback method.
+http://wenku.baidu.com/view/2fc0c36d25c52cc58bd6bec7.html
+http://wenku.baidu.com/view/2fc0c36d25c52cc58bd6bec7.html
 ---------------------------------------------------------------------------
+COM  
+WINOLEAPI PropVariantClear(
+ _In_  PROPVARIANT *pvar
+);
+IPropertyStore * property_store = NULL;
+PROPVARIANT varString;
+property_store->GetValue( PKEY_Device_FriendlyName, &varString );
+HANDLE ev = CreateEventEx(NULL, NULL, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
+WAVEFORMATEX * wav = NULL;
+m_audio_client->GetMixFormat( &wav );
+// 注意，可以自定义采集的（不是录制的）声音格式
+                        wav->wFormatTag = WAVE_FORMAT_PCM;
+                        wav->nChannels = 2;
+                        wav->wBitsPerSample =16;
+                        wav->nBlockAlign = wav->wBitsPerSample / 8 * wav->nChannels;
+                        wav->nAvgBytesPerSec = wav->nBlockAlign * wav->nSamplesPerSec;
+                        wav->cbSize = 0;
+m_audio_client->Initialize( AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST, 20 * 10000, 0, wav, NULL);        
+必须在 audio_client初始化后，才能调用。        
+hr = m_audio_client->GetService( IID_PPV_ARGS( &m_audio_capture_client ) );
+m_audio_client->SetEventHandle( ev );
 ---------------------------------------------------------------------------
+#include <windowsx.h>
+#define     GetWindowOwner(hwnd)    GetWindow(hwnd, GW_OWNER)
+http://www.dreamincode.net/forums/topic/286954-using-windowsxh-for-better-code-organization-and-message-cracking/
+<windowsx.h> contains lots of really useful macros for straight Win32 programming.
+The WINDOWS.H and WINDOWSX.H header files provide the following features:
+New data types and their associated definitions
+A preprocessor variable, STRICT, which enforces the strictest possible type checking by the compiler
+Macros to simplify many common operations in Windows programming
+Control macros to simplify communication with Windows controls
+Message crackers (which are a convenient, portable, and type-safe method to handle messages) and their associated parameters and return values in the Windows environment
+无窗口模式 （windowless）
+http://blogs.msdn.com/b/oldnewthing/archive/2005/02/11/371042.aspx
+DrawFrameControl & DrawThemeBackground
+
+MFC的CHTMLView和CDHTMLDialog，以及Windows Forms的WebBrowser类
+http://visualstudiogallery.msdn.microsoft.com/1B69C9FE-E422-4799-9EB5-6AC7034C52E1/
+DirectUI is a gui library to make win32 gui development more easy, It has the similar principle with the Microsoft "DirectUIHWND", and it uses xml and script to configure ui
 ---------------------------------------------------------------------------
+【 COM-Error-Codes.png】
+http://msdn.microsoft.com/zh-cn/library/vstudio/ms690088.aspx 
+http://en.wikipedia.org/wiki/HRESULT#HRESULT_format
+Structure of COM Error Codes
+The following illustration shows the format of an HRESULT or SCODE; the numbers indicate bit position
+
+An HRESULT value has 32 bits divided into three fields: a severity code, a facility code, and an error code.
+GetLastError
+http://support.microsoft.com/kb/169505/zh-cn
+        if(!m_pptApp.CreateDispatch(_T("Powerpoint.Application")))
+        {
+                MessageBox(NULL,_T("error"),_T("Couldn't start PowerPoint."),0);
+                return;
+        }
+http://stackoverflow.com/questions/7008047/is-there-a-way-to-get-the-string-representation-of-hresult-value-using-win-api
+_com_error err(hr);
+LPCTSTR errMsg = err.ErrorMessage();
+http://stackoverflow.com/questions/455434/how-should-i-use-formatmessage-properly-in-c
+http://msdn.microsoft.com/en-us/library/0ye3k36s(v=vs.100).aspx    _com_error Class  comdef.h
+HRESULT 转成十六进制代码串 ？
+                err_str.Format( L"[Couldn't start PowerPoint][SCODE:%02X%02X%02X%02X]%s",
+                                    pe->m_sc >> 24 & 0xff, pe->m_sc >> 16 & 0xff,
+                                    pe->m_sc >> 8 & 0xff, pe->m_sc & 0xff,
+                                                err.ErrorMessage() );
+http://support.microsoft.com/kb/256348/en-us
+How to obtain error message descriptions using the FormatMessage API
 ---------------------------------------------------------------------------
+BOOL CreateDispatch(
+  LPCTSTR lpszProgID,
+  COleException* pError = NULL 
+);
+一个COleException对象代表的是与一个OLE操作相关的异常情况。此COleException类包括一个公用数据成员，该成员包含了用来表明此异常的原因的状态代码
+class COleException : public CException
+CException::GetErrorMessage
+OLE异常
+COleException* pe = new COleException;
+pe->m_sc   是个 hresult值
+pe->Delete();
 ---------------------------------------------------------------------------
 template <class T> void SafeRelease(T **ppT)
 {

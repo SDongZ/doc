@@ -8,8 +8,55 @@ http://blog.jqian.net/post/boost-asio.html
 http://boost.cowic.de/rc/pdf/asio_doc.pdf
 http://www.boost.org/development/index.html google 日历
 http://sourceforge.net/projects/mp4joiner/
+http://stackoverflow.com/questions/1683665/where-is-boost-process
+http://www.highscore.de/boost/process/process/tutorials.html
+http://www.highscore.de/boost/process/
+http://www.highscore.de/boost/process0.5/
+http://www.highscore.de/cpp/process/#introduction
+http://zh.wikipedia.org/wiki/Nginx
+http://screencast.com/t/2sgjMevf9    视频分享网站（录屏视频）
+http://www.cnblogs.com/tambor/archive/2011/12/28/vim_rumen_file_edit.html
+http://blog.jobbole.com/44891/
+七个高效的文本编辑习惯（以Vim为例）
+http://www.csdn.net/article/2013-08-26/2816691-html5-development-tools
+http://www.csdn.net/article/2013-08-22/2816667-JavaScript-tips-both-novice-and-veteran-developers-can-benefit-from
+http://www.privoxy.org/
+http://cssdeck.com/labs/the-matrix
+http://msdn.microsoft.com/zh-cn/library/windows/apps/hh465424
+http://www.csdn.net/article/2013-08-09/2816510-Web-Design-Mistakes-you-should-Avoid-to-Increase-Usability
+http://www.csdn.net/article/2013-08-09/2816506-google-unveils-pagespeed-insights-tool
+http://www.csdn.net/article/2013-08-07/2816481-w3c-web-storage-api
+http://www.goto-software.com/
+https://github.com/google/gumbo-parser#gumbo---a-pure-c-html5-parser
+http://macshuo.com/?p=755
+箭扣长城
+http://blog.sina.com.cn/s/blog_4a45896b0101auu0.html
+http://www.mafengwo.cn/i/951714.html
+http://www.jkwall.com/portal.php
+http://www.csdn.net/article/2013-08-22/2816665-10-useful-advanced-git-commands
+https://zh.wikipedia.org/zh-cn/Markdown
+使用易读易写的纯文本格式编写文档，然后转换成有效的XHTML(或者HTML)文档
+https://developers.google.com/gadgets/docs/dev_guide?hl=zh-cn
+是Google个人化网页（Google Personalized Homepage）的迷你程式（mini-applications）
+Microsoft Gadgets 是微软Vista操作系统上的迷你程式（mini-applications）
+笔记本电脑的 SideShow 设备在合上机盖并关闭计算机电源的情况下，用户仍然可以阅读电子邮件、检查日历、查看数码照片以及查看当前日期/时间等等
+http://msdn.microsoft.com/zh-cn/magazine/cc163488.aspx
+SideShow 设备还可以有其他类型，例如带有 LCD 显示屏的键盘、数码相框甚至手机
+Windows SideShow 小工具，可通过其在 SideShow 辅助硬件设备上显示用户的信息
+---------------------------------------------------------------------------
+boost process
+http://www.crystalclearsoftware.com/cgi-bin/boost_wiki/wiki.pl?BoostProcess/ExistingLibraries
+On Windows a named pipe must be used though as Windows doesn't support asynchronous I/O with anonymous pipes. That's why create_pipe can't be used for asynchronous I/O - at least not on Windows
+依赖的其它BOOST库
+libboost_iostreams-vc100-mt-gd-1_54.lib
+boost::process::initializers::run_exe( "notepad.exe" )  会在当前路径下查看EXE
+boost::filesystem::path exe_path = boost::filesystem::path( exe_path_with_name ).parent_path();
+exe_path += L"\\ffmpeg.exe";
+boost::process::child child_process = boost::process::execute( boost::process::initializers::run_exe( exe_path ), boost::process::initializers::throw_on_error(), boost::process::initializers::show_window( SW_HIDE ) );  参数顺序可以随便调，？奇怪
+boost::process::wait_for_exit( child_process );
 
 
+
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
@@ -18,11 +65,52 @@ http://sourceforge.net/projects/mp4joiner/
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+Qubulus API让开发者在手机应用中添加高精度室内定位功能
+
+Indoors Positioning System
+室内定位技术
+Qubulus是一家提供室内定位服务的公司。公司根据无线电信号（Radio Signature）来定位。每一个位置的无线电信号数量、频度、强度等也是不同的，Qubulus根据这些差异计算出你的具体位置。使用Qubulus的方案，你同样需要收集室内的无线电信号。Qubulus也提供了开发工具包，很容易申请下来
+定向测距
 ---------------------------------------------------------------------------
+九宫格拉伸
+http://www.ehein.cc/tutorial/tutorial-2/
 ---------------------------------------------------------------------------
+mysql 前端工具  HeidiSQL_8.0_Portable  可导入，导出SQL脚本。
 ---------------------------------------------------------------------------
+curl ftp 上传
+http://jmrtn.tumblr.com/post/225397629/curl-ftp-upload-in-binary-mode
+curl.exe 下载
+http://www.paehl.com/open_source/?CURL_7.32.0
 ---------------------------------------------------------------------------
+C++之父 B. Stroustrup 近期言论
+http://jjhou.boolan.com/myan-bjarne.htm
+ B. Stroustrup 的图书列表
+http://www.stroustrup.com/books.html
+http://www.amazon.com/The-Programming-Language-4th-Edition-ebook/dp/B00DUW4BMS/ref=dp_kinw_strp_1
+
+比雅尼?斯特劳斯特鲁普 (Bjarne Stroustrup) 是C++的设计者和最初实现者。同时也是
+《C++程序设计语言》
+《C++语言的设计和演化》
+《程序设计原理与实践》
+和其他诸多著作的作者。
+
+斯特劳斯特鲁普博士是德州农工大学工程学院计算机科学首席教授。
+他是美国国家工程院会员、AT&T会员、IEEE会员和ACM会员。
+他的研究领域包括分布式系统、原型设计、编程技术、软件开发工具和编程语言。
+他积极参与了ANSI/ISO C++的标准化工作用斯特劳斯特鲁普他本人的话来说，
+自己“发明了C++，写下了它的早期定义并做出了首个实现……选择制定了C++的设计标准，
+设计了C++主要的辅助支持环境，而且负责处理C++标准委员会的扩展提案。
+”他还写了一本《C++程序设计语言》，它被许多人认为是C++的范本经典，
+目前是第四版（于2013年5月19日出版），最新版中囊括了C++11所引进的一些新特性
 ---------------------------------------------------------------------------
+http://blog.monogram.sk/janos/tools/monogram-graphstudio/
+ 台湾  9:28:18
+但是建議你用 graphstuido
+wangxiang  9:28:26
+好
+台湾  9:28:25
+這是 microsoft 新的 tool
+graphedit 他已經不更新了
 ---------------------------------------------------------------------------
 简单服务发现协议（SSDP，Simple Service Discovery Protocol）是一种应用层协议，
 是构成通用即插即用(UPnP)技术的核心协议之一

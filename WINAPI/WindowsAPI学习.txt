@@ -73,14 +73,313 @@ Windows 7 - Using SHFileOperation to copy files to a zip file
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+What is a SAFEARRAY and how do you get information from it?
+
+http://www.purebasic.fr/english/viewtopic.php?p=227926
+value List of drive letters and NTFS mount points for the device. Each element of the list is a VARIANT of type VT_BSTR. The bstrVal member of the variant contains the path.
+http://www.roblocher.com/whitepapers/oletypes.aspx
+you should instead either use the API functions, or much better yet use the helper class CComSafeArray
+CComSafeArray is a template class; you provide the type of an element as one of the template parameters.  (The example code in the MSDN documentation forCComSafeArray is lousy, if you ask me.  If you can't figure it out, check out the  ATLSafeArray sample.)
+http://blog.csdn.net/tangaowen/article/details/6554640
+SAFEARRAY 和 CComSafeArray  的使用
+SafeArrayAccessData    将锁计数器加1，并返回数组数据的指针。
+SafeArrayAllocData    根据由SafeArrayallocDescriptor 创建的描述符号为一安全数组分配内存。
+SafeArrayAllocDiscriptor(Ex)    为安全数组描述符分配内存。
+SafeArrayCopy    复制已有的数组。
+SafeArrayCopyData    在释放目标资源后将源数组复制到目标数组中。
+SafeArrayCreate(Ex)    建立新的数组描述符。
+SafeArrayCreateVector(Ex)    建立一个下标为0的一维数组。
+SafeArrayDestroy    撤消一个数组描述符。
+SafeArrayDestroyData    释放安全数组中的数据元素所使用的内存。
+SafeArrayDestroyDescriptor    释放安全数组描述符所使用的内存。
+SafeArrayGetDim    返回数组的维数。
+SafeArrayGetElement    获得数组的某一元素。
+SafeArrayGetElemsize    返回数组某一元素的大小。
+SafeArrayGetLBound    获得数组给定维的下限。
+SafeArrayGetUBound    获得数组给定维的上限。
+SafeArrayLock    将数组锁计数器加1。
+SafeArrayPtrOfIndex    返回一指向数组元素的指针。
+SafeArrayPutElement    将一元素赋给数组。
+SafeArrayRedim    更改数组大小。
+SafeArrayUnaccessData    释放一个数组数据指针并将锁计数器减1。
+SafeArrayUnlock    将锁计数器减1。
+SafeArraySetRecordInfo    设置存储在给定安全数组中的RecordInfo。
+SafeArrayGetRecordInfo    取出存储在给定安全数组中的RecordInfo。
+SafeArraySetIID    设置给定安全数组接口的GUID值。
+SafeArrayGetIID    取出给定安全数组接口的GUID值。
+SafeArrayGetVartype    返回存储于给定安全数组中的类型。
+http://msdn.microsoft.com/en-us/library/ms221482.aspx
+typedef struct FARSTRUCT tagSAFEARRAY {
+  unsigned short cDims;       // Count of dimensions in this array. // 数组的维数
+  unsigned short fFeatures;   // Flags used by the SafeArray
+                       // routines documented below.
+#if defined(WIN32)
+  unsigned long cbElements;   // Size of an element of the array. 每个元素的大小
+                       // Does not include size of
+                       // pointed-to data.
+  unsigned long cLocks;      // Number of times the array has been 
+                       // locked without corresponding unlock.
+#else
+  unsigned short cbElements;
+  unsigned short cLocks;
+  unsigned long handle;      // Used on Macintosh only.
+#endif
+  void HUGEP* pvData;             // Pointer to the data.
+  SAFEARRAYBOUND rgsabound[1];      // One bound for each dimension. 上下界指针数组
+} SAFEARRAY;
+ typedef  struct   tagsSAFEARRAYBOUND
+{
+           ULONG        cElements;  //当前维度的 元素个数
+       LONG           lLbounds;//  下界，开始的下表，比如0
+} SAFEARRAYBOUND;
+#include "atlsafe.h"
+CComSafeArray是ATL对SAFEARRAY结构体的包装，是一个模板类。 SAFEARRAY只能够保存VARIANT内的那些数据一个子集
+Detach将所有权从CComSafeArray转移到SAFEARRAY,而Attach正好相反，Attach是将所以权从SAFEARRAY转移到CComSafeArray,这个跟CComVariant相似
+atlcomcli.h  CComVariant
+bool GetMsftDiscDrive( std::vector<std::wstring> & drives ) {
+        HRESULT        hr = S_OK;
+        IDiscMaster2*  discMaster = NULL;
+        hr = CoCreateInstance(CLSID_MsftDiscMaster2, NULL, CLSCTX_ALL, IID_PPV_ARGS(&discMaster));
+        if( discMaster ) {
+                LONG cnt = 0;
+                discMaster->get_Count( &cnt );
+                for( int i = 0; i < cnt; i++ ) {
+                        IDiscRecorder2* discRecorder = NULL;
+                        hr = CoCreateInstance(CLSID_MsftDiscRecorder2, NULL, CLSCTX_ALL, IID_PPV_ARGS(&discRecorder));
+                        if( !discRecorder ) continue;
+                        BSTR bstrDeviceName;
+                        discMaster->get_Item(i, &bstrDeviceName);
+                        if( S_OK != discRecorder->InitializeDiscRecorder( bstrDeviceName ) ) {                                
+                                discRecorder->Release();
+                                continue;
+                        }
+                        SAFEARRAY * vlm_path_name;
+                        discRecorder->get_VolumePathNames( &vlm_path_name );
+                        CComSafeArray<VARIANT> arr( vlm_path_name );
+drives.push_back( arr[0].bstrVal );
+                        CComVariant var( arr[0] );  
+                        drives.push_back( var.bstrVal );
+                        discRecorder->Release();
+                }
+                discMaster->Release();
+                return true;
+        }
+        return false;
+}
 ---------------------------------------------------------------------------
+DWORD WINAPI QueryDosDevice(
+The device name cannot have a trailing backslash; for example
+  _In_opt_  LPCTSTR lpDeviceName,   for example, use "C:", not "C:\"
+  _Out_     LPTSTR lpTargetPath,
+szName[MAX_PATH];            // 存储 MS-DOS 设备信息
+  _In_      DWORD ucchMax
+The maximum number of TCHARs that can be stored into the buffer pointed to by lpTargetPath
+);
+the return value is the number of TCHARs stored into the buffer pointed to by lpTargetPath
+        wchar_t buff[256] = { 0 };
+        ::GetLogicalDriveStringsW( 255, buff );
+        wchar_t * ptr = buff;
+        while( *ptr ) {
+                if( DRIVE_CDROM == ::GetDriveTypeW( ptr ) ) {
+                        wchar_t dos_name[MAX_PATH] = { 0 };
+                        wchar_t drive_path[3] = { 0 };
+                        wcsncpy_s( drive_path, 3, ptr, 2 );
+                        ::QueryDosDeviceW( drive_path, dos_name, MAX_PATH );
+                        wchar_t dos_num_char = *( dos_name + wcslen( dos_name ) - 1 );
+                        int dos_num = dos_num_char - L'0';
+                        cd_letters[dos_num] = drive_path;
+                }
+                ptr += wcslen( ptr ) + 1;
+        }
+        if( !cd_letters.size() ) return BURN_ERROR_NORECORDER;
+::QueryDosDevice(drive_le, dos_device_name, MAX_PATH);
+在Windows NT中，DOS设备名会映射成NT系统设备名
+获取的 MS-DOS 设备名为：
+B:  \Device\RAMDriv
+C:  \Device\HarddiskVolume2
+D:  \Device\HarddiskVolume1
+E:  \Device\HarddiskVolume3
+F:  \Device\CdRom0
+X:  \Device\EncryptedDiskVolumeX
+BUFSIZE  This size does not include the terminating null character
+GetLogicalDriveStrings(BUFSIZE (字符数，不包含), szDevice);
+注意这里，-1 ， 是正确的写法，（理解This size does not include the terminating null character）
+GetLogicalDriveStrings(BUFSIZE-1, szTemp)
+szDevice
+A pointer to a buffer that receives a series of null-terminated strings, one for each valid drive in the system, plus with an additional null character. Each string is a device name
+the return value is the length, in characters, of the strings copied to the buffer, not including the terminating null character.
+C:\
 ---------------------------------------------------------------------------
+Virtual-Key Codes
+http://msdn.microsoft.com/en-us/library/dd375731(v=vs.85).aspx
+LowLevelKeyboardProc
+SetWindowsHookEx
+KBDLLHOOKSTRUCT
+scan code -> character value -> virtual-key code(区分左右手的值  与  不区分左右手的值)
+UINT WINAPI MapVirtualKey(
+ _In_  UINT uCode,
+ _In_  UINT uMapType
+);
+uCode is a virtual-key code and is translated into a scan code   MAPVK_VK_TO_VSC 0
+uCode is a virtual-key code and is translated into an unshifted character value in the low-order word of the return value   MAPVK_VK_TO_CHAR 1
+VK_LSHIFT
+VK_RSHIFT                  与 VK_SHIFT
+VK_LCONTROL
+VK_RCONTROL
+VK_LMENU
+VK_RMENU
+#define VK_SHIFT          0x10
+#define VK_CONTROL        0x11
+#define VK_MENU           0x12
+#define VK_PAUSE          0x13
+#define VK_CAPITAL        0x14
+鼠标，也可做为虚拟键
+VK_LBUTTON
+Copies the status of the 256 virtual keys to the specified buffer
+BOOL WINAPI GetKeyboardState(
+ _Out_  PBYTE lpKeyState
+);
+When the function returns, each member of the array pointed to by the lpKeyState parameter contains status data for a virtual key. If the high-order bit is 1, the key is down; otherwise, it is up.
+SHORT WINAPI GetAsyncKeyState(
+ _In_  int vKey
+);
+Determines whether a key is up or down at the time the function is called, and whether the key was pressed after a previous call to GetAsyncKeyState
+GetAsyncKeyState(VK_LBUTTON)
+Retrieves the status of the specified virtual key. The status specifies whether the key is up, down, or toggled (on, off—alternating each time the key is pressed)
+SHORT WINAPI GetKeyState(
+ _In_  int nVirtKey
+);
+Translates the specified virtual-key code and keyboard state to the corresponding Unicode character or characters.
+int WINAPI ToUnicodeEx(
+ _In_      UINT wVirtKey,
+ _In_      UINT wScanCode,
+ _In_      const BYTE *lpKeyState,
+ _Out_     LPWSTR pwszBuff,
+ _In_      int cchBuff,
+ _In_      UINT wFlags,
+ _In_opt_  HKL dwhkl
+);
+Translates the specified virtual-key code and keyboard state to the corresponding character or characters. The function translates the code using the input language and physical keyboard layout identified by the input locale identifier.
+int WINAPI ToAsciiEx(
+ _In_      UINT uVirtKey,
+ _In_      UINT uScanCode,
+ _In_opt_  const BYTE *lpKeyState,
+ _Out_     LPWORD lpChar,
+ _In_      UINT uFlags,
+ _In_opt_  HKL dwhkl
+);
+BOOL WINAPI RegisterHotKey(
+ _In_opt_  HWND hWnd,
+ _In_      int id,
+ _In_      UINT fsModifiers,
+ _In_      UINT vk
+);
+MOD_ALT MOD_CONTROL MOD_SHIFT MOD_NOREPEAT(不重复改送热键消息) MOD_WIN
+When a key is pressed, the system looks for a match against all hot keys. Upon finding a match, the system posts theWM_HOTKEY message to the message queue of the window with which the hot key is associated. If the hot key is not associated with a window, then the WM_HOTKEY message is posted to the thread associated with the hot key.
+BOOL WINAPI UnregisterHotKey(
+ _In_opt_  HWND hWnd,
+ _In_      int id
+);
+WM_SETHOTKEY 和 RegisterHotKey 有啥区别？
+前者,按键会发送WM_SYSCOMMAND消息,后者发送WM_HOTKEY消息
 ---------------------------------------------------------------------------
+WAV（Waveform Audio Format），是微软与IBM公司所开发的一种声音编码格式，在Windows平台的应用软件受到广泛的支援。[2]由于此音频格式未经过压缩，所以在音质方面不会出现失真的情况，但文件的体积因而在众多音频格式中较为大
+http://en.wikipedia.org/wiki/WAV
+#pragma pack (push,1)
+typedef struct
+{
+        char                        szRIFF[4];
+        long                        lRIFFSize;
+        char                        szWave[4];
+        char                        szFmt[4];
+        long                        lFmtSize;
+        WAVEFORMATEX        wfex;
+        char                        szData[4];
+        long                        lDataSize;
+} WAVEHEADER;
+#pragma pack (pop)
+// Prepare a WAVE file header for the captured data
+sprintf(sWaveHeader.szRIFF, "RIFF");
+sWaveHeader.lRIFFSize = 0;
+sprintf(sWaveHeader.szWave, "WAVE");
+sprintf(sWaveHeader.szFmt, "fmt ");
+sWaveHeader.lFmtSize = sizeof(WAVEFORMATEX);        
+        
+sWaveHeader.wfex.nChannels = 1;
+sWaveHeader.wfex.wBitsPerSample = 16;
+sWaveHeader.wfex.wFormatTag = WAVE_FORMAT_PCM;
+sWaveHeader.wfex.nSamplesPerSec = 22050;
+sWaveHeader.wfex.nBlockAlign = sWaveHeader.wfex.nChannels * sWaveHeader.wfex.wBitsPerSample / 8;
+                
+sWaveHeader.wfex.nAvgBytesPerSec = sWaveHeader.wfex.nSamplesPerSec * sWaveHeader.wfex.nBlockAlign;
+sWaveHeader.wfex.cbSize = 0;
+sprintf(sWaveHeader.szData, "data");
+sWaveHeader.lDataSize = 0;
+https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+WAVE PCM soundfile format
 ---------------------------------------------------------------------------
+函数功能：翻译加速键表。该函数处理菜单命令中的加速键。
+该函数将一个WM_KEYDOWN或WM_SYSKEYDOWN消息翻译成一个WM_COMMAND或WM_SYSCOMMAND消息（如果在给定的加速键表中有该键的入口），然后将WM_COMMAND或WM_SYSCOMMAND消息直接送到相应的窗口处理过程。
+TranslateAccelerator直到窗口过程处理完消息后才返回。
+函数原型：int TranslateAccelerator（HWND hWnd,HACCEL hAccTable，LPMSG IpMsg）
+window message
+http://www.autohotkey.com/docs/misc/SendMessageList.htm
 ---------------------------------------------------------------------------
+http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4029/URL-Encoding.htm
+http://www.codeguru.com/cpp/cpp/algorithms/strings/article.php/c12759/URI-Encoding-and-Decoding.htm
+uri - encode  
+uri - decode
+问题： 路径中的/需要编码吗？  参数中的 & 需要编码吗？  URL后的 ?号 怎么编码？
 ---------------------------------------------------------------------------
+怎么判断一个进程是否运行?
+与一个进程通信，如果不回应，就认为停止 了。
+保存 PID 然后打开 HANDLE
+获取进程名字 PID
+http://stackoverflow.com/questions/4102569/get-process-name-from-process-id-win32
+process id 会被重用吗？
+http://blogs.msdn.com/b/oldnewthing/archive/2011/01/07/10112755.aspx
+#include <TlHelp32.h>
+#include <boost/algorithm/string.hpp>
+HANDLE process_handle_by_name(const std::wstring & pname) {
+        HANDLE handle = 0;
+    HANDLE hSnapShot = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS,0 );
+    PROCESSENTRY32* processInfo = new PROCESSENTRY32;
+    processInfo->dwSize = sizeof( PROCESSENTRY32 );
+    int index = 0;
+    while(Process32Next(hSnapShot,processInfo)!=FALSE) {
+                //忽略大小写比较
+                if( boost::iequals(pname, processInfo->szExeFile) ) {
+                //if ( !pname.compare(processInfo->szExeFile) ){
+                        handle = ::OpenProcess( PROCESS_ALL_ACCESS, TRUE, processInfo->th32ProcessID );
+        }
+    }
+    CloseHandle(hSnapShot);
+    delete processInfo;
+        return handle;
+}
 ---------------------------------------------------------------------------
+【ShellExecuteExA.png】
+从 ShellExecuteExA 运行命令行出现，提示。解决方法：属性-》解除锁定。
 ---------------------------------------------------------------------------
+【CreateProcess-exception.png】
+STARTUPINFO si;
+PROCESS_INFORMATION pi;
+ZeroMemory( &pi, sizeof(pi) );
+ZeroMemory( &si, sizeof(si) );
+si.cb = sizeof(si);
+::CreateProcess( NULL, L"Notepad.exe", NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
+出现下面的错误:
+
+解决上面的问题的方法，是使用缓存
+        wchar_t exe_name[255] = { 0 };
+        wcscpy( exe_name, L"Notepad.exe" );
+        ::CreateProcess( NULL, exe_name, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
+::CreateProcess( L"Notepad.exe", NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
+出错：找不到指定的文件。
+::CreateProcess( L"D:\\boost-test\\process\\Debug\\notepad.exe", NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
+指定全路径就可以了
+CreateProcess  的第一个参数 lpApplicationName [in, optional]，注意
+The string can specify the full path and file name of the module to execute or it can specify a partial name. In the case of a partial name, the function uses the current drive and current directory to complete the specification. The function will not use the search path. This parameter must include the file name extension; no default extension is assumed.
 ---------------------------------------------------------------------------
 
 Preventing Logoff or Suspend During a Burn

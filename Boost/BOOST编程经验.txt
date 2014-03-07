@@ -3,20 +3,162 @@ b2 toolset=msvc-10.0 --with-iostreams
 b2.exe --show-libraries
 b2.exe --with-<library>
 ---------------------------------------------------------------------------
+http://stackoverflow.com/questions/4586768/how-to-iterate-a-boost-property-tree
+boost property_tree 使用 迭代器，
+BOOST_FOREACH is just a convenient way for iterating that can be done by iterator, begin() and end()
+http://www.boost.org/doc/libs/1_54_0/libs/crc/crc.html
+http://www.boost.org/doc/libs/1_41_0/libs/spirit/doc/html/spirit/qi/reference/binary/binary_little.html
+分析字符串，"\x01\x02"，并转成，对应的 高位序  与  底位序
+http://stackoverflow.com/questions/105252/how-do-i-convert-between-big-endian-and-little-endian-values-in-c
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+json 文件里中的，字符串，转义符（escape character）问题？http://stackoverflow.com/questions/4113967/escaping-character-in-json-string
+std::pair主要的作用是将两个数据组合成一个数据，两个数据可以是同一类型或者不同类型。例如std::pair<int,float> 或者 std：：pair<double,double>等。pair实质上是一个结构体，其主要的两个成员变量是first和second，这两个变量可以直接使用。初始化一个pair可以使用构造函数，也可以使用std::make_pair函数
+This class couples together a pair of values, which may be of different types (T1 and T2). The individual values can be accessed through its public members first and second.
 ---------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
+http://cpp.ezbty.org//myfiles/boost/libs/smart_ptr/smart_ptr.htm
+boost智能指针
+scoped_ptr
+<boost/scoped_ptr.hpp>
+简单的单一对象的唯一所有权。不可拷贝。
+scoped_array
+<boost/scoped_array.hpp>
+简单的数组的唯一所有权。不可拷贝。
+shared_ptr
+<boost/shared_ptr.hpp>
+在多个指针间共享的对象所有权。
+shared_array
+<boost/shared_array.hpp>
+在多个指针间共享的数组所有权。
+weak_ptr
+<boost/weak_ptr.hpp>
+一个属于 shared_ptr 的对象的无所有权的观察者。
+intrusive_ptr
+<boost/intrusive_ptr.hpp>
+带有一个侵入式引用计数的对象的共享所有权。
 
+---------------------------------------------------------------------------
+[http-request-response.png][http-request.png][http-response.png]
+http 协议  客户端请求
+GET / HTTP/1.1
+Host:www.google.com
+<request line>
+<headers>
+<blank line>
+[<request-body>]
+表单提交中get和post方式的区别归纳如下几点：
+
+（1）get是从服务器上获取数据，post是向服务器传送数据。
+（2）对于表单的提交方式，在服务器端只能用Request.QueryString来获取Get方式提交来的数据，用Post方式提交的数据只能用Request.Form来获取。
+（3）一般来说，尽量避免使用Get方式提交表单，因为有可能会导致安全问题。比如说在登陆表单中用Get方式，用户输入的用户名和密码将在地址栏中暴露无遗。但是在分页程序中，用Get方式就比用Post好
+
+http://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/http_basics.html
+
+---------------------------------------------------------------------------
+http://stackoverflow.com/questions/3150942/c-delete-this
+http://www.parashift.com/c++-faq-lite/delete-this.html
+http://stackoverflow.com/questions/447379/what-is-the-use-of-delete-this
+关于delete this 的思考：
+delete this
+1. 违背了“谁分配，谁释放”的原则。
+( C++ 不充许 对象自己创建自己。必然是另一个对象创建了它。)
+2. 使分配的指针，变成了“野指针”。（无法把指针置空）
+As long as you're careful, it's OK for an object to commit suicide (delete this).
+"delete this" is commonly used for ref counted objects（引用计数的对象）. For a ref counted object the decision of when to delete is usually placed on the object itself.
+ATL COM objects are a prime example of this pattern.
+int MyRefCountedObject::Release() {
+ _refCount--;
+ if ( 0 == _refCount ) {
+   delete this;
+   return 0;
+ }
+ return _refCount;
+}
+http://stackoverflow.com/questions/550189/is-it-safe-to-delete-this
+delete this is a "code smell" (代码异味) that your code might not have a symmetric(均衡的) strategy(策略) for object ownership (who allocates and who deletes).
+https://www.securecoding.cert.org/confluence/display/cplusplus/OOP05-CPP.+Avoid+deleting+this
+Avoid deleting this
+
+Deleting this leaves it as a "dangling" pointer, which leads to undefined behavior if it is accessed. Deleting this is only valid if you can guarantee that the this pointer is never dereferenced again. Furthermore, deleting this is only valid if you can guarantee the object was allocated using the {{new]} operator.
+---------------------------------------------------------------------------
+http://www.cnblogs.com/TianFang/archive/2013/02/04/2891538.html
+http://blog.csdn.net/vagrxie/article/details/4225133
+boost 字符串比较算法
+<boost/algorithm/string.hpp>
+忽略大小写比较字符串
+tolower()
+将字符转换成小写字符
+toupper()
+将字符转换成大写字符 
+boost库在头文件<boost/algorithm/string.hpp>中提供了不少字符串处理函数，用以帮助我们实现基本的字符串处理功能，极大程度上缓解了字符串函数不够用的问题
+#include <boost/algorithm/string.hpp>
+// Or, for fewer header dependencies:
+//#include <boost/algorithm/string/predicate.hpp>
+
+std::string str1 = "hello, world!";
+std::string str2 = "HELLO, WORLD!";
+
+if (boost::iequals(str1, str2))  还可比较 宽字符串 与 多字节字符串，（转码不行。。。默认怎么转的？）
+boost::iequals(pname, processInfo->szExeFile)
+---------------------------------------------------------------------------
+boost::flyweight
+
+使用Boost.Flyweight的好处
+
+http://www.cnblogs.com/zhangwusheng/archive/2011/09/23/2185957.html
+http://blog.csdn.net/zirandeai/article/details/8288404
+简单点说，就是当需要生成N个实例，而这N个实例中有部分域是冗余重复的，那么这个时候就可以使用flyweight模式了，就是享元模式
+享元模式的思想就是把重复的数据只在一个桶中保存一份，当外部对象需要使用数据时，只要保存一个该数据在桶中的引用即可，而无需每个对象都持有该数据
+vector< boost::flyweight<string> >  boost_v
+boost_v.push_back( boost::flyweight<string>( tmp )  );
+vector< string >  stl_v;
+stl_v.push_back( (tmp)  );
+使用flyweight后，每次保存的不是实际的对象，而只是handler，从而使得在存储冗余数据时，内存消耗大大减小
+---------------------------------------------------------------------------
+http://www.cppblog.com/youxia/archive/2010/10/17/130218.html
+http://stlab.adobe.com/gil/presentation/index.htm
+gil - Generic Image Library, from Lubomir Bourdev and Hailin Jin  通用图形库
+---------------------------------------------------------------------------
+#include <Windows.h>
+#include <boost/asio.hpp>  
+vc 命令行程序（不包含任何其它头文件的情况下），
+出现下面的错误
+boost_1_54_0\boost\asio\detail\socket_types.hpp(22): fatal error C1189: #error :  WinSock.h has already been included
+#ifndef _WINSOCKAPI_
+#include <winsock2.h>
+#endif
+在头文件前加上这个宏处理片段，就可以正常编译了。
+http://stackoverflow.com/questions/9750344/boostasio-winsock-and-winsock-2-compatibility-issue
+Try and change the order or includes. Start with boost/asio.hpp and put windows.h after it.
+There's a similar issue with ACE, including ace/OS.h before anything else solves it.
+---------------------------------------------------------------------------
+inprocess  server 程序，使用，managed_window_shared_memory,  
+boost::interprocess::open_only  打开，出下面的错误。 
+(debug版本没有问题，debug是用户启动的，不是系统启动的服务。)  改成managed_shared_memory 就可以用了。
+[查看录播机状态]创建共享内存异常 : 系统找不到指定的文件。
+---------------------------------------------------------------------------
+http://www.boost.org/community/review_schedule.html
+BOOST预览库(注意其中的dropbox链接)
+---------------------------------------------------------------------------
+BOOST_FOREACH 原理？会调用 begin()吗？还是别的函数
+http://www.boost.org/doc/libs/1_54_0/doc/html/foreach.html
+So you can't use a range-based for-loop here. You have to use a real for-loop over the iterators
+for(auto &attrIt = children.begin(); attrIt != children.end();)
+---------------------------------------------------------------------------
+https://svn.boost.org/trac/boost/ticket/4182
+包含boost库出现 警告
+warning C4005: “INT8_MIN”
+This is nothing to do with us - the fact that two Microsoft headers conflict with each other is their issue not ours - sorry to be so blunt, but we should be able to use <stdint.h> without worrying what other headers may have been included.
+#include <intsafe.h>
+#include <stdint.h>
+warning c4005宏重定义  boost
+http://wanwan722.wordpress.com/category/boost/
+發現是Visual Studio 2010和Windows SDK 7.0的定義衝突問題  下面是这个问题的链接
+Including stdint after intsafe generates warnings  (This is fixed in VS 2012.)
+http://connect.microsoft.com/VisualStudio/feedback/details/621653/including-stdint-after-intsafe-generates-warnings
+解决方法：（在stdafx.h头文件，开头写入下面两行）
+#define _INTSAFE_H_INCLUDED_
+#include <stdint.h>
 ---------------------------------------------------------------------------
 
 http://boost.cowic.de/rc/pdf/ 
@@ -70,6 +212,74 @@ boost::property_tree::read_xml( wstring2string( xml_file ), xml, 0, utf8Locale )
 注意后面两个字符串，是用于输出 文件 流格式化的。
 ptree.put_child( node_name, file_node );  
 已经存在 ，就覆盖，能不能抛异常，或者其它处理方式呢？
+
+http://www.boost.org/doc/libs/1_43_0/doc/html/boost/property_tree/basic_ptree.html#id979449-bb  ptree文档
+assoc_iterator find(const key_type & key) ;  应该输入什么？键值吗？可是还是找不到啊(只找其子节点的)
+Find a child with the given key, or not_found() if there is none
+始终不对, 不存在，也能找到
+http://boost.2283326.n4.nabble.com/property-tree-find-no-match-for-operator-td3860490.html
+ I know that ptree uses multi_index
+Anyway :
+- you have a get_optional() method.
+- you can try replacing end() with not_found()
+用find 未找到使用方法，暂时用get_child_optional 来判断。
+        std::string path = "product." + wstring2string( pro );
+        if( m_tree.get_child_optional( path ) ) {
+                throw std::exception( "产品名称已经存在" );
+        }
+        m_tree.put( path, "" );
+
+理解 key_type
+ptree 的数据结构，可以理解为下面的形式
+struct ptree
+{
+  data_type data;                         // data associated with the node
+  list< pair<key_type, ptree> > children; // ordered list of named children
+};
+Both key_type and data_type are configurable, but will usually be std::string
+optional< self_type & > get_child_optional(const path_type & path) ;
+Get the child at the given path, or return boost::null.
+boost property_tree 判断已经存在的节点
+http://stackoverflow.com/questions/7568607/boost-property-tree-check-if-child-exists
+if( node.count("possibliy_missing") == 0 )
+{
+  ...
+}
+ptree::const_assoc_iterator it = ptree.find("possibly_missing");
+if( it == ptree.not_found() )
+{
+  ...
+}
+
+
+boost property tree delete child
+http://stackoverflow.com/questions/11047950/boost-property-tree-remove-a-node
+/** Erase the child pointed at by the iterator. This operation
+        * invalidates the given iterator, as well as its equivalent
+        * assoc_iterator.
+        * @return A valid iterator pointing to the element after the erased.
+        */
+       iterator erase(iterator where);
+ptree::const_assoc_iterator it = ptree.find("possibly_missing");
+
+
+
+boost property_tree ptree write_xml 空节点问题
+recordfileinfo.add_child( "Tags",  boost::property_tree::ptree( "" ) );
+recordfileinfo.add( "Tags",  “”);
+有区别吗？  两者一样都是： <Tags/>  空节点问题
+
+
+关于ini文件的注释格式http://blog.163.com/wangzhenbo85@126/blog/static/101363282201011146306646/
+
+[xxx]
+a=a
+;这里是a的注释
+b=b
+;这里是b的注释
+c=c
+d=d
+注意： 这样写会把后面的分号及之后的内容都包含进去只能在行头加分号
 ---------------------------------------------------------------------------
 boost optional
  optional库使用"容器"语义，包装了"可能产生无效值"的对象，实现了"未初始化"的概念.
@@ -100,6 +310,13 @@ http://stackoverflow.com/questions/14141476/warning-with-boostsplit-when-compili
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 
+md5 sha1 boost
+http://en.wikipedia.org/wiki/Crypto%2B%2B
+www.boost.org/doc/libs/1_46_0/boost/uuid/sha1.hpp
+boost::uuids::detail::sha1 s
+s.process_bytes(a.c_str(), a.size());
+unsigned int digest[5];
+s.get_digest(digest);
 ---------------------------------------------------------------------------
 【VISCA.png】
 asio pdf
@@ -136,6 +353,23 @@ asio 中的 I/O 对象  基于流的对象
 socket,
 ip::tcp::socket, ssl::stream<>, posix::stream_descriptor, windows::stream_handle
 
+
+
+获取本地IP地址   BOOST ASIO如何做？  （所有地址列表）
+gethostbyname ip address
+http://beej.us/guide/bgnet/output/html/multipage/gethostbynameman.html
+http://msdn.microsoft.com/en-us/library/windows/desktop/ms738552(v=vs.85).aspx
+typedef struct hostent {
+ char FAR      *h_name;
+ char FAR  FAR **h_aliases;
+ short         h_addrtype;
+ short         h_length;
+
+ char FAR  FAR **h_addr_list;  
+A NULL-terminated list of addresses for the host.
+Addresses are returned in network byte order.
+
+} HOSTENT, *PHOSTENT, FAR *LPHOSTENT;
 
 【asio 设置同步操作的超时？没有正规方法】
 由BOOST::THREAD创建的线程，调用receive_from阻塞住。
@@ -296,7 +530,35 @@ http://www.boost.org/doc/libs/1_38_0/doc/html/boost_asio/example/serialization/s
 http://stackoverflow.com/questions/15251415/exception-when-using-boostserialization-with-boostasio
 
 
+序列化
+http://en.wikipedia.org/wiki/Serialization
+http://stackoverflow.com/questions/652193/serialize-and-send-a-data-structure-using-boost
+http://stackoverflow.com/questions/523872/how-do-you-serialize-an-object-in-c
+http://www.boost.org/doc/libs/1_54_0/libs/serialization/doc/index.html
+serialization   序列化
+将任意一组C++数据结构解构为一串字节的、可逆的过程
+把类的对象  序列化  保存到文件里，
+从文件里读出 序列化数据，加载成类对象
+void save_schedule(const bus_schedule &s, const char * filename){
+   // make an archive
+   std::ofstream ofs(filename);
+   boost::archive::text_oarchive oa(ofs);
+   oa << s;
+}
 
+void
+restore_schedule(bus_schedule &s, const char * filename)
+{
+   // open the archive
+   std::ifstream ifs(filename);
+   boost::archive::text_iarchive ia(ifs);
+
+   // restore the schedule from the archive
+   ia >> s;
+}
+ we have used a particular archive class - text_oarchive for saving and text_iarchive for loading
+
+The binary_oarchive and binary_iarchive classes are implemented in terms of the more basicstd::streambuf
 
 ---------------------------------------------------------------------------
 【bitset】【bitset-1.png】【bitset-2.png】
@@ -327,7 +589,19 @@ int main()
 
 
 
+std::bitset
 
+ 
+C++
+ 
+Utilities library
+ 
+std::bitset
+ 
+Defined in header <bitset>
+template< std::size_t N >
+class bitset;
+The class template bitset represents a fixed-size sequence of N bits. Bitsets can be manipulated by standard logic operators and converted to and from strings and integers.
 
 ---------------------------------------------------------------------------
 
@@ -448,6 +722,9 @@ boost::this_thread::sleep_for(boost::chrono::microseconds(500));
 
 ---------------------------------------------------------------------------
 【date_time】
+boost ptime
+http://remonstrate.wordpress.com/2011/07/03/boost-%E7%9A%84-date_time/
+
 ptime -> utc 一个整数
 ptime -> string
 
@@ -535,9 +812,29 @@ to_iso_extended_string
 
 
 
+boost::local_time::time_zone_ptr tz( new boost::local_time::posix_time_zone( "MST+07" ) );
+boost::local_time::local_date_time ltm = boost::local_time::local_sec_clock::local_time( tz);
+会获取指定时区的 正确的当前时间。
+http://stackoverflow.com/questions/6730422/boost-chrono-vs-boost-date-time
+Boost.Chrono seems focused on dealing with time intervals[间隔时间 ['?ntevl]
 
+]. 不关心，日期（大于小时的时间单位）。
+http://en.cppreference.com/w/cpp/chrono  c++11 std::chrono 实现
+时间区段  boost posix_time time_period 对象的，contains，方法：
+如果是结束点，则返回FALSE
+A period that is created with beginning and end points being equal, or with a duration of zero, is known as a zero length period. Zero length periods are considered invalid (it is perfectly legal to construct an invalid period). For these periods, the last point will always be one unit less that the begin point
+指定的结束点，实际结束点，比指定结束时间点，小一个 time_count ()
 
-
+bool contains(ptime)
+True if ptime is within the period. Zero length periods cannot contain any points.
+date d(2002,Jan,01);
+ptime t1(d, seconds(10)); //10 sec after midnight
+ptime t2(d, hours(10)); //10 hours after midnight
+ptime t3(d, hours(2)); //2 hours after midnight
+time_period tp(t1, t2); 
+tp.contains(t3); // true
+time_period tp2(t1, t1);
+tp2.contains(t1); // false
 
 
 ---------------------------------------------------------------------------
@@ -625,14 +922,53 @@ filesystem::path 类的成员
         void  swap(path& rhs);
 
 
+boost filesystem
+常用函数 :
+path p (argv[1]);
+exists(p)
+is_regular_file(p)
+is_directory(p)
+可以复制文件，文件夹，快捷方式
+可以创建，删除：文件，文件夹
+directory_iterator
+
+explicit directory_iterator(const path& p);
+directory_iterator() noexcept;  // creates the "end" iterator   唯一合法的，结束条件
+recursive_directory_iterator  递归，所有子文件夹
+
+
+在Windows平台下我们知道可以使用API函数GetModuleFileName来获取应用程序的路径。最近发现boost库也可以实现这个功能
+http://blog.csdn.net/clever101/article/details/5822296
+string fullpath = boost::filesystem::initial_path<boost::filesystem::path>().string();
+boost::filesystem::initial_path Returns: current_path() as of the first call to initial_path()
+boost::filesystem::current_path (获取的是当前(工作)路径)
+The current path as returned by many operating systems is a dangerous global variable. It may be changed unexpectedly by a third-party or system library functions, or by another thread
+http://stackoverflow.com/questions/1528298/get-path-of-executable
+There is no cross platform way that I know. (没有跨平台的方法，用于获取程序所在路径)
+For Linux: readlink /proc/self/exe
+Windows: GetModuleFileName
+http://stackoverflow.com/questions/5694190/boostfile-system-how-to-find-out-in-which-directory-your-executable-is
+Do you mean the current working directory (en.wikipedia.org/wiki/Working_directory), or the actual directory where the executable lives?
+However if you're on windows you can call GetModuleFileName to get the complete path of the executable and then use boost::filesystem to get the directory. ( see parent_path)
+http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
+GetModuleFileName
+第一个参数 _In_opt_  HMODULE hModule,
+If this parameter is NULL,GetModuleFileName retrieves the path of the executable file of the current process
+This function is useful for input idle detection.
+BOOL WINAPI GetLastInputInfo(
+ _Out_  PLASTINPUTINFO plii
+);
+typedef struct tagLASTINPUTINFO {
+ UINT  cbSize;
+ DWORD dwTime;  The tick count when the last input event was received.
+                 DWORD WINAPI GetTickCount(void);
+
+} LASTINPUTINFO, *PLASTINPUTINFO;
 
 
 
-
-
-
-
-
+filesystem - Portable paths, iteration over directories, and other useful filesystem operations, from Beman Dawes
+文件创建，复制，删除；文件夹创建删除等等操作。
 
 ---------------------------------------------------------------------------
 【字符串转换】
@@ -696,7 +1032,10 @@ D:\project\3rdParty\boost_1_54_0\libs\log\example
 
 BOOST的例子
 
-
+http://www.csdn123.com/html/itweb/20130912/114957_114950_114945.htm
+http://blog.csdn.net/karl_max/article/details/4972664
+boost log 学习
+和boost的其他类库一样，充分的发挥了C++的各种高级用法，命名参数、lamba表达式、函数编程。结果就是一大堆还不算太旧的编译器都无法编译，例如：MSVC 7.0 and older，GCC 4.0 and older。对其他库的依赖也很厉害，需要Boost.Filesystem, Boost.System, Boost.DateTime, Boost.Thread  and Boost.Regex，用户代码还必须启用RTTI
 ---------------------------------------------------------------------------
 [线程]
 

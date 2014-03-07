@@ -1,3 +1,115 @@
+流媒体开发
+http://bbs.rosoo.net/forum.php
+
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+音视频编码知识
+interleaved  / interlaced  (隔行扫描)
+去交错：将交错式扫描讯号(interlaced video signal)转换成非交错式扫描(non-interlaced)讯号，业内一般称之为“去场”
+去交错来将交错式影像转换为渐进式影像
+交错式影像从拍摄、传输到储存都是使用交错格式，相邻的场被拍摄的时间并不相同，相邻的两个场并不能完美的结合在一起
+每次只传输和显示一半的扫描线，既场
+一场只包含偶数行 (即偶场) 或者奇数行 (即奇场) 扫描线  （这里的奇偶数，是指行号）
+由于视觉暂留效应，人眼不会注意到两场只有一半的扫描行，而会看到完整的一帧
+摄像机采集的方式和隔行扫描显示的方式是完全相同的
+摄像机采集图像时，偶场和奇场不是同时采集的。例如在一个每秒50场的摄像机中，第122行和124行的采集在第121行和123行的采集大约1/50秒之后进行
+当代的显示器和电视中，由于非隔行扫描显示的刷新率的提高，使用者已经不会再感觉到闪烁现象，因此，隔行扫描技术逐渐被取代
+---------------------------------------------------------------------------
+Visualizing volume of PCM samples
+
+A crude(简略，原生) volume calculation would be rms (root mean square), i.e. taking a rolling average of the square of the samples and take the square root of that average. This will give you a postive quantity when there is some sound; the quantity is related to the power represented in the waveform.
+RMS is averaging the area displaced by the signal, the area between the waveform and the linear zero line (not 0dB, but the axis)
+In the C++ Boost libraries, why is there a ".ipp" extension on some header files?
+If you want to split up your template sources into interface and implementation (there are lots of good reasons to do that, including controlling instantiation), you can't very well use the same name (foo.hpp) twice, and foo.cpp wouldn't be appropriate for either one. foo.ipp clearly delineates the file as an implementation file intended to be #included in foo.hpp.
+http://www.geosci.usyd.edu.au/users/jboyden/vad/#chapter-pcm-vis
+Visualising audio data
+
+calculate volume from pcm data
+http://www.kvraudio.com/forum/viewtopic.php?t=291758
+http://stackoverflow.com/questions/2445756/how-can-i-calculate-audio-db-level
+dB = 20 * log10(amplitude)
+amplitude = 14731 / 32767
+         = 0.44
+
+dB = 20 * log10(0.44)
+  = -7.13
+线性增长(linear)，转为(对数)级数增长(logarithmic)（类似与通常说的“翻番”——2、4、8、16、32、64、128）。
+You may convert percentage (linear) to dB (logarithmic) by using the following equations:
+dB = 10 log(1 + X)
+Example X = 1%
+Thus,
+dB = 10 log(1 + 0.01)
+dB = 0.0432
+e在科学技术中用得非常多，一般不使用以10为底数的对数。以e为底数，许多式子都能得到简化，用它是最“自然”的，所以叫“自然对数”。
+以常数e为底数的对数叫做自然对数，记作ln N(N>0)
+e是一个无限不循环小数，其值约等于2.718281828…，它是一个超越数
+自然指数—是以e作为基的指数函数
+自然对数（英语：Natural logarithm）是以e为基的对数函数（）
+对数表是指，通过计算得出从1开始各个整数的对数（现在一般用常用对数），所编排成的表格
+首先，假设我们要计算1055×8712。
+查表得lg1055≈3.023，lg8712≈3.940。
+将两数相加，得6.963。
+计算。
+验算：直接计算1055×8712=9191160，可见有一定误差。在对数位数取值更多时，数值将更为精确。
+根据对数运算的基本公式，可知且 (b≠0)，因此在知道两大数的对数情况下，可很快计算出两数的积和商
+---------------------------------------------------------------------------
+Detect silence when recording
+
+分贝（decibel）是量度两个相同单位之数量比例的单位，主要用于度量声音强度，常用dB表示。“分”（deci-）指十分之一，个位是“贝”（bel），但一般只采用分贝
+常用的空气参考声压为 = 20 μPa（微帕斯卡） (rms)，它通常被认为是人类的最少听觉响应值（大约是3米以外飞行的蚊子声音）
+分贝(dB)是十分之一贝尔(B): 1B = 10dB
+http://msdn.microsoft.com/en-us/library/ee663260(v=vs.85).aspx
+http://msdn.microsoft.com/en-us/library/dd370805(v=vs.85).aspx
+Core Audio Interfaces
+---------------------------------------------------------------------------
+http://stackoverflow.com/questions/2534595/get-master-sound-volume-in-c-sharp
+http://stackoverflow.com/questions/5890499/pcm-audio-amplitude-values
+http://www.sae.edu/reference_material/audio/pages/Microphones.htm
+音箱的原理，上下震动，所有就是正负值。（如果是unsigned, 8bit，则127表示音量为零）
+声音格式
+PCM unsigned, 8bit mono,11025 Hz
+signed 16-bit little-endian mono @ 44.1kHz
+S16LE (signed 16-bit little-endian)
+S32BE (signed 32-bit big-endian)
+0~65535  unsigned short
+-32768至+32767  short
+
+音量范围
+Volume levels are in the range 0.0 to 1.0
+高级Linux声音体系（英语：Advanced Linux Sound Architecture，缩写为ALSA）是Linux内核中，为声卡提供的驱动组件，以替代原先的OSS（开放声音系统）
+
+How to get the dB(or any kind of volume) level from a microphone in java?  amplitude[??mpl??tud, -?tjud]振幅
+
+振幅是在波动或振动中距离平衡位置或静止位置的最大位移。符号A，单位米。振幅永为正值
+http://stackoverflow.com/questions/5808913/how-to-get-the-dbor-any-kind-of-volume-level-from-a-microphone-in-java
+由振幅转为分贝
+http://stackoverflow.com/questions/2167513/iphone-how-to-measure-amplitude-of-a-pcm-coded-signal
+float amplitude( short * s ) {
+        if( *s < 0 ) return ( ( float )abs( *s ) ) / 32768;  也可以写成 ( float )abc( *s ) / 32768;
+        else return ( ( float ) *s ) / 32767;
+}
+float amplitude_avg( short *s, int cnt ) {
+        float total_amplitude = 0;
+        for( int i = 0; i < cnt; i++ ) {
+                total_amplitude += amplitude( s + i );
+        }
+        return total_amplitude / cnt;
+}
+
+---------------------------------------------------------------------------
+Well it's all about time. FFMpeg uses in fact three different timestamps in different bases in order to work.
+tbn = the time base in AVStream that has come from the container
+tbc = the time base in AVCodecContext for the codec used for a particular stream
+tbr = tbr is guessed from the video stream and is the value users want to see when they look for the video frame rate
+tbn和tbc应该都是在相应层上的时间单元
+tbn=2997就相当于在视频流层把1s的时间分成了2997个时间单元，如此精细可以更好的与其他流比如音频流同步，对应着fps=29.97就表示每100个时间单元中有一帧
+1200k tbn代表文件层（st）的时间精度，即1S=1200k
+50 tbc代表视频层（st->codec）的时间精度，即1S=50
+25   tbr代表帧率
+90k tbn代表文件层（st）的时间精度，即1S=1200k，和duration相关；
+50   tbc代表视频层（st->codec）的时间精度，即1S=50，和strem->duration和时间戳相关
+---------------------------------------------------------------------------
+
 sqcif
                128x96
            qcif
@@ -52,6 +164,7 @@ sqcif
 
 
 
+---------------------------------------------------------------------------
 [VID-AUD] yuv 
 YUV，是一种颜色编码方法。
 YUV是编译true-color颜色空间（color space）的种类，Y'UV, YUV, YCbCr，YPbPr等专有名词都可以称为YUV，彼此有重叠。
@@ -119,6 +232,7 @@ Other file formats that make important use of the four-byte ID concept are the S
 
 
 
+---------------------------------------------------------------------------
 
 硬件，传输线
 http://en.wikipedia.org/wiki/Serial_digital_interface

@@ -9,11 +9,74 @@
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+WM_NCCREATE
+CreateWindow 会 以 WM_NCCREATE为参数 调用消息处理函数。
+（如果返回FALSE， 创建窗口失败）
+ Sent prior to the WM_CREATE message when a window is first created
+WM_CREATE
+Sent when an application requests that a window be created by calling the CreateWindowEx orCreateWindow function. (The message is sent before the function returns.)
+The window procedure of the new window receives this message after the window is created, but before the window becomes visible.
+If an application processes this message, it should return zero to continue creation of the window. If the application returns –1, the window is destroyed and the CreateWindowEx or CreateWindow function returns a NULL handle.
+m_hWnd = ::CreateWindowEx(dwExStyle, GetWindowClassName(), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance(), this);
+CREATESTRUCT::lpCreateParams  
+Contains additional data which may be used to create the window. If the window is being created as a result of a call to the CreateWindow or CreateWindowEx function, this member contains the value of the lpParam parameter specified in the function call.
+GWLP_USERDATA
+::SetWindowLongPtr(hWnd, GWLP_USERDATA,
+                                           reinterpret_cast<LPARAM>(pThis));
+pThis = reinterpret_cast<CWindowWnd*>(
+                                   ::GetWindowLongPtr(hWnd,  GWLP_USERDATA));
+The WM_NCDESTROY message is sent after the child windows have been destroyed. In contrast(与之相比),WM_DESTROY is sent before the child windows are destroyed.
 ---------------------------------------------------------------------------
+设置不规则窗口
+SetWindowRgn(hRGN,TRUE);//将创建的区域设定为窗口区域
+When this function is called, the system sends the WM_WINDOWPOSCHANGING and WM_WINDOWPOSCHANGED messages to the window.
+The coordinates of a window's window region are relative to the upper-left corner of the window, not the client area of the window.
+After a successful call to SetWindowRgn, the system owns the region specified by the region handle hRgn.
+The system does not make a copy of the region. Thus, do not make further function calls with this region handle.
+In particular, do not delete this region handle. The system deletes the region handle when it no longer needed.
+If you call SetWindowRgn on a window, you cannot later move or resize the window.
+If you do, you are left with lost regions on the screen that never repaint and never go away. To resolve this, call SetWindowRgn(NULL) before calling SetWindowPos, and then call SetWindowRgn again with the new region.
+To obtain the window region of a window, call the GetWindowRgn function.
+Windows Embedded CE does not accept regions on windows that fit exactly into entire screen or greater dimensions.
+http://www.codeproject.com/Articles/6048/Creating-Bitmap-Regions-for-Forms-and-Buttons (这里有一些示例图片)
+HRGN hRGN=BitmapToRegion(hBmp,RGB(255,0,0),0)
+http://www.codeguru.com/cpp/g-m/bitmap/usingregions/article.php/c1751/Converting-a-bitmap-to-a-region.htm
+某人利用 ExtCreateRegion 与 CombineRgn 实现的，把位图转为RGN句柄
+When you no longer need the HRGN object call the DeleteObject function to delete it
 ---------------------------------------------------------------------------
+Note  The _TrackMouseEvent function calls TrackMouseEvent if it exists, otherwise _TrackMouseEventemulates TrackMouseEvent
+WM_MOUSEHOVER WM_MOUSELEAVE  子窗口
 ---------------------------------------------------------------------------
+获取子窗口句柄
+获取兄弟窗口句柄
+HWND hNextWnd = ::GetWindow(play_bar,GW_HWNDNEXT);
+GW_CHILD
+Owned Windows
+
+An overlapped or pop-up window can be owned by another overlapped or pop-up window. Being owned places several constraints on a window.
+An owned window is always above its owner in the z-order.
+The system automatically destroys an owned window when its owner is destroyed.
+An owned window is hidden when its owner is minimized.
 ---------------------------------------------------------------------------
+WM_CONTEXTMENU
+
+按下shitf+F10的时候,OnContextMenu中的point为(-1, -1);
+
+应该是WM_RBUTTONUP和WM_CONTEXTMENU比较相似，是右键释放的时候，这2个消息都会响应。
+DefWindowProc generates the WM_CONTEXTMENU message when it processes the WM_RBUTTONUP or WM_NCRBUTTONUP message or when the user types SHIFT+F10. The WM_CONTEXTMENU message is also generated when the user presses and releases the VK_APPS key.
+可见，一般WM_RBUTTONUP都会伴随着WM_CONTEXTMENU,但如果收到WM_CONTEXTMENU未必就收到WM_RBUTTONUP，还可能是 WM_NCRBUTTONUP，又可能是按下SHIFT+F10了  APPSKEY(键盘上的那个属性键)也会发送这个消息
+
+A window can process this message by displaying a shortcut menu using the TrackPopupMenu orTrackPopupMenuEx functions. To obtain the horizontal and vertical positions, use the following code.
+xPos = GET_X_LPARAM(lParam);   屏幕的左上角
+yPos = GET_Y_LPARAM(lParam);
+wParam 是窗口句柄，（可以是传递给父窗口消息的子窗口句柄）
 ---------------------------------------------------------------------------
+window消息，在父子窗口中的传递过程。
+连续两次 （duilib  CWindowWnd::Close(UINT nRet) ）
+PostMessage(WM_CLOSE, (WPARAM)nRet, 0L);
+即在 OnFinalMessage 里调用  CWindowWnd::Close ,程序会立即退出
+线程互斥体 是用来线程间同步的。
+用来，保证两段在不同线程的代码，前后运行（不管顺序 即 保证不会同时运行）。
 ---------------------------------------------------------------------------
 
 在显示视频的窗口之上，绘制控件的方法？ （剪切区）

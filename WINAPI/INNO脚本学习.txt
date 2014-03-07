@@ -1,0 +1,19 @@
+inno 设置程序随机启动
+Name: "{commonstartup}\应用系统桌面客户端"; Filename: "{app}\DgDesk.exe"
+
+inno setup
+安装前运行某个命令
+http://stackoverflow.com/questions/3493416/how-to-run-a-file-before-setup-with-inno-setup
+Exec(ExpandConstant('{win}\notepad.exe'), '', '', SW_SHOW,
+    ewWaitUntilTerminated, ResultCode)
+    
+    
+    inno script 中的 escape character
+http://www.jrsoftware.org/ishelp/index.php?topic=consts
+http://stackoverflow.com/questions/12800425/how-escape-a-and-a-in-inno-setup
+http://www.jrsoftware.org/ishelp/index.php?topic=params
+To embed a double-quote character inside a quoted value, use two consecutive double-quote characters. For example:
+"This "" contains "" embedded "" quotes"
+[RUN] [ini]
+谁前谁后，
+[RUN] 中的命令，会按顺序执行吗？前后，会等待吗？

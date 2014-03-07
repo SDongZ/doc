@@ -13,7 +13,39 @@
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+Tomcat是由Apache软件基金会下属的Jakarta项目开发的一个Servlet容器，按照Sun Microsystems提供的技术规范，实现了对Servlet和JavaServer Page（JSP）的支持，并提供了作为Web服务器的一些特有功能，如Tomcat管理和控制平台、安全域管理和Tomcat阀等。由于Tomcat本身也内含了一个HTTP服务器，它也可以被视作一个单独的Web服务器。但是，不能将 Tomcat 和 Apache Web 服务器混淆，Apache Web Server 是一个用 C 语言实现的 HTTP web server；这两个 HTTP web server 不是捆绑在一起的。Apache Tomcat 包含了一个配置管理工具，也可以通过编辑 XML 格式的配置文件来进行配置。
+Tomcat是使用Java开发的，所以它可以运行在任何一个装有JVM的不同操作系统之上
+很少会将Tomcat单独作为Web服务器, Tomcat的Servlet引擎通常与Apache或者其他Web服务器一起工作
+Tomcat : 安装windows服务：
+                                 D:\tomcat\bin\service.bat
+tomcat的目录结构
+/bin：          存放windows或Linux平台上启动和关闭Tomcat的脚本文件
+/conf：        存放Tomcat服务器的各种全局配置文件，其中最重要的是server.xml和web.xml
+/doc：         存放Tomcat文档
+/server：     包含三个子目录：classes、lib和webapps
+/server/lib：存放Tomcat服务器所需的各种JAR文件
+/server/webapps：  存放Tomcat自带的两个WEB应用admin应用和 manager应用
+/common/lib：         存放Tomcat服务器以及所有web应用都可以访问的jar文件
+/shared/lib：            存放所有web应用都可以访问的jar文件（但是不能被Tomcat服务器访问）
+/logs：                     存放Tomcat执行时的日志文件
+/src：                       存放Tomcat的源代码
+/webapps：             Tomcat的主要Web发布目录，默认情况下把Web应用文件放于此目录
+/work：                    存放JSP编译后产生的class文件
+bin (运行脚本）
+conf (配置文件）
+lib (核心库文件）
+logs (日志目录)
+temp (临时目录)
+webapps (自动装载的应用程序的目录）
+work (JVM临时文件目录[java.io.tmpdir])
 ---------------------------------------------------------------------------
+JS 错误
+http://stackoverflow.com/questions/4404526/unexpected-token-illegal-in-webkit
+C:\Program Files (x86)\大唐高鸿全自动高清录播\web\datastatics\coursesta.ejs
+<script type="text/javascript">
+        var data =<%- str%>;
+        var datastr ='<%- str%>';  这一行是多余的，而且 单引号  造成错误。
+</script>
 ---------------------------------------------------------------------------
 
 WebRTC is a free, open project that enables web browsers with Real-Time Communications (RTC) capabilities via simple Javascript APIs. The WebRTC components have been optimized to best serve this purpose

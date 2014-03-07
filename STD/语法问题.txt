@@ -2,6 +2,526 @@ if语句造成的编译错误【if-error.png】
 
 
 ---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+标准c数学函数#include <stdlib.h>
+ #include <math.h>
+abs()
+求绝对值
+acos()
+求反余弦
+asin()
+求反正弦
+atan()
+求反正切
+atan2()
+求反正切，按符号判定象限
+ceil()
+求不小于某值的最小整数 （求上界）
+cos()
+求余弦
+cosh()
+求双曲余弦
+div()
+求商和余数
+exp()
+求e的幂
+fabs()
+求浮点数的绝对值
+floor()
+求不大于某值的最大整数 （求下界）
+fmod()
+求模数
+frexp()
+求数的科学表示法形式
+labs()
+求长整型数的绝对值
+ldexp()
+以科学计数法计算
+ldiv()
+以长整型返回商和余数
+log()
+自然对数 (以e为底的指数)
+log10()
+以10为底的自然对数
+modf()
+将一个数分解成整数和小数部分
+pow()
+求幂
+sin()
+求正弦
+sinh()
+求双曲正弦
+sqrt()
+求平方根
+tan()
+求正切
+tanh()
+求双曲正切
+---------------------------------------------------------------------------
+类型转换的优先级
+.  ->优先级高于强制类型转换。所以是b.c或者b->c转换成A
+.  ->优先级低于强制类型转换，但是 强制类型转换 和 .  -> 都是向右结合，所以会先运算后者（这句好像也不对）
+http://baike.baidu.com/view/1516130.htm
+左结合与右结合  （表达式运算顺序） （同一个运算符出现多次的情况）
+左结合的例子，四则运算
+右结合的例子，= (赋值运算符)
+左结合 ->
+a->b->c->d;
+右结合
+a = b = c = d;
+理解下面这个表达式运算顺序
+(A)b.c;
+---------------------------------------------------------------------------
+c++ how to write/read ofstream in unicode / utf8
+
+fstream类读取UTF-8
+
+1、解决UTF-8类型的文本文档中文乱码读取（思路:将UTF-8转成Unicode然后再转ANS）
+basic_ifstream  指定 locale  utf8
+MSVC C++ std::locale and C setlocale
+codepage can't be 65001/UTF-8 and should be consistent with ANSI codepage for this locale (or just omitted)
+http://blogs.msdn.com/b/michkap/archive/2007/01/03/1392379.aspx
+The point of the blog is that code page 65001 cannot be an ACP, which means it cannot be used as a C++ standard library locale.
+And it is still true that UTF-8 (code page 65001) cannot be an ACP ("ANSI" code page") for a locale
+Windows 的 locale 类实现不支持 UTF-8（代码页 65001），所以要用 GBK 的 locale，对应的 locale 名为 chs，长名字：Chinese_People's Republic of China.936
+boost::ptree  xml 不支持中文
+boost::property_tree::read_xml( m_recordfiles_xml, pt );  XML中有中文，产生异常。
+unexpected end of data  异常    这个错误产生在boost  1.46.1   换成 boost 1.53.0就没有这个错误了。
+#include "boost/program_options/detail/utf8_codecvt_facet.hpp"
+请注意，RapidXML 并不了解编码规范。如果你传入一个字符缓冲区，它会假定其中的数据已正确编码； 如果你传入一个文件名，它将使用你给定的locale (如果你没有给定，则使用全局locale)的字符转换。 这意味着，为了分析一个UTF-8编码的XML文件并存入 wptree，你必须提供一个替代locale， 或者直接提供，或者替换掉全局locale
+template<typename Ptree> 
+       void read_xml(const std::string &, Ptree &, int = 0, 
+                     const std::locale & = std::locale());
+boost::property_tree::read_xml( m_recordfiles_xml, pt )
+boost::property_tree::xml_parser::read_xml( m_recordfiles_xml, pt );
+这两者的区别是什么？
+ 
+int test()
+{
+   std::wifstream f(L"测试.xml");
+   std::locale utf8Locale(std::locale(),new boost::program_options::detail::utf8_codecvt_facet());
+   f.imbue(utf8Locale);
+    
+   if(f)
+   {
+       boost::property_tree::read_xml(f,pt);
+       std::wstring text = pt.get(L"test",L"");
+       MessageBox(NULL,text.c_str(),L"",MB_OK);
+   }
+}
+i18n 测试
+本库的核心组件是 basic_ptree 类模板。该类的实例就是属性树。它按键类型和数据类型， 以及键值比较策略进行参数化；ptree, wptree(宽字符版本), iptree（不区分大小版本） 和wiptree 分别为 各个模板参数的不同预定义组合的 basic_ptree 的 typedef。基本上，属性树是一个简化的 标准容器(最接近于 std::list)，加上一组额外的成员函数。这些函数可以让你方便且快速地 访问保存在属性树中的数据。它们分别是 get, put, get_value, put_value, get_child, put_child 的各种变体。另外，还有一个 data 函数用于直接访问节点数据。
+self_type & put_child(const path_type & path, const self_type & value) ;  会替换已经存在的子节点
+self_type & add_child(const path_type & path, const self_type & value) ;  添加新的节点，无论是否重复
+pt.add( "RecordFileConfig.RecordFiles.RecordFileInfo", 1 );
+会添加新子节点（父节点存在的情况下）
+有时候用ifstream或ofstream打开带有中文路径的文件会失败
+std::locale::global(std::locale(""));
+boost::property_tree xml pretty printing
+
+So the solution was to add the trim_whitespace flag to the call to read_xml
+http://www.boost.org/doc/libs/1_41_0/doc/html/boost/property_tree/xml_parser/read_xml_id954816.html
+read_xml("file.xml", pt, boost::property_tree::xml_parser::trim_whitespace );
+写的时候，使用制表符 ‘\t’
+boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+boost::property_tree::write_xml( m_recordfiles_xml, pt, std::locale(), settings );
+                std::ofstream f( file );
+                if( f.good() ) {
+                        f << ‘0’;   //写到文件里的是 0x30  但是还需要写入一个EOF
+                }
+http://stackoverflow.com/questions/3061135/can-we-write-an-eof-character-ourselves
+There is no EOF character. EOF by definition "is unequal to any valid character code". Often it is -1. It is not written into the file at any point
+Well, EOF is just a value returned by the function defined in the C stdio.h header file.
+是因为，没有 f.close() 的原因
+std::ios::trunc | std::ios::out
+文件打开方式选择项标志 含义
+ios::ate 如果文件存在，输出内容加在末尾
+ios::in 具有输入能力（ifstream默认）
+ios::out 具有输出能力（ofstream默认）
+ios::trunc 如文件存在，清除文件内容（默认）
+ios::nocreate 如文件不存在，返回错误
+ios::noreplace 如文件存在，返回错误
+ios::binary 以二进制方式打开文件
+---------------------------------------------------------------------------
+http://blog.csdn.net/winterttr/article/details/4446860
+std::ifstream 读取 ANSI 编码正常，std::wifstream 读取 ANSI 编码错误...默认 locale("C") 不能识别中文字符
+ std::wifstream 设置 imbue(locale("")) 或 locale(".936") 后正常读取。936 为 GB2312 的代码页。
+清空流
+std::basic_stringstream<char> ss;
+                ss << tm;
+                recordfileinfo.add( "StartTime", ss.str() );
+                ss.clear();  // 清除状态标志
+                         ss. flush() // 清空缓冲区    seekp  将写指针移动最前   ss.seekg( 0, ss.beg );
+                ss << tm + boost::posix_time::hours( 1 ); 这里会是前后两个串的相加的结果。
+ss.str(“”);
+http://blog.csdn.net/chjp2046/article/details/5460462
+---------------------------------------------------------------------------
+http://stackoverflow.com/questions/10499582/c-initialization-of-static-object-in-class-declaration
+// interface
+
+class A {
+
+   static B b;
+};
+
+// implementation
+
+B A::b(arguments, to, constructor); // or B A::b = something;  初始化
+---------------------------------------------------------------------------
+std::ofstream("text.txt") << u8"z\u6c34\U0001d10b";
+---------------------------------------------------------------------------
+
+http://zh.wikipedia.org/wiki/Locale
+<locale> 是C++标准程序库中的一个头文件，定义了C++标准中的区域设置（本地化策略集）的类及相关的模板类实例
+C++标准定义的locale类，作为本地化的策略集
+以下相关的环境变量
+LC_COLLATE 字符排序规则
+LC_CTYPE 字符分类，字符编码，字符是单字节还是多字节
+LC_MONETARY 货币格式
+LC_NUMERIC 数字格式
+LC_TIME 日期时间格式
+LC_MESSAGES 提示信息的语言
+LC_ALL 以上所有
+LANG 除以上其它任何用途
+默认区域设置是C或POSIX，二者基本是一码事
+locale 是多种 facet 的容器（实际上在locale类对象中用一个std::vector存储该locale类支持的所有facet的指针），每种 facet 管理与 locale 相关的一种功能
+因为C++的<locale>的类型都是const，一旦定义变量就不能修改。可以用自定义的facet去改造一个locale产生新locale，然后植入（imbue）IO流中
+---------------------------------------------------------------------------
+是C++11标准提供的功能
+http://www.cppblog.com/mythma/archive/2013/08/02/190297.html
+扔掉MultiByteToWideChar 吧，使用std::wstring_convert和 std::codecvt_utf8 来处理UTF8与WChar之间的互转。
+VC和Clang都支持哦~
+#include <iostream>
+#include <string>
+#include <locale>
+#include <codecvt>
+#include <fstream>
+int main(int argc, char *argv[])
+{
+   std::wstring str = L"123,我是谁？我爱钓鱼岛！";
+   std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+   std::string narrowStr = conv.to_bytes(str);
+   {
+      std::ofstream ofs ("c:\\test.txt");
+      ofs << narrowStr;
+   }
+   std::wstring wideStr = conv.from_bytes(narrowStr);
+   {
+      std::locale::global(std::locale("Chinese-simplified"));
+      std::wofstream ofs (L"c:\\testW.txt");
+      ofs << wideStr;
+   }
+｝
+---------------------------------------------------------------------------
+
+http://www.parashift.com/c++-faq/inline-member-fns.html
+inline 函数写法
+1.  inline 要写在函数定义的前头。
+2.  定义要写在头文件里。
+---------------------------------------------------------------------------
+typedef struct与struct的区别
+typedef为C语言的关键字，作用是为一种数据类型定义一个新名字
+在C和C++中struct和typedef struct的区别
+typedef struct {
+int data;
+int text;
+} S1;    //这种方法可以在c或者c++中定义一个S1结构
+struct S2 {
+int data;
+int text;
+};        // 这种定义方式只能在C++中使用，而如果用在C中，那么编译器会报错
+struct {
+int data;
+int text;
+} S3;  这种方法并没有定义一个结构，而是定义了一个s3的结构变量，编译器会为s3内存
+
+http://stackoverflow.com/questions/612328/difference-between-struct-and-typedef-struct-in-c
+In C, there are two different namespaces of types:
+a namespace of struct/union/enum tag names
+a namespace of typedef names
+struct Foo { ... };
+Foo x;                在C中这样写是错误的，因为Foo只是个 tag名称空间
+struct Foo x;      在C里，前面的struct相当于，指定了，名称空间 struct
+http://stackoverflow.com/questions/3793952/understanding-c-namespaces  C语言的名称空间
+C does have namespaces. One for structure tags, and one for other types
+http://www.kernelchina.org/content/namespace-c
+http://www.findfunaax.com/notes/file/134
+C语言标准定义了4种命名空间
+C语言预定义了3个全局的命名空间（label, struct/union/enum, 其它标志符）
+           其它标志符包括 变量名、函数名、类型名(typedef)和枚举常量
+             注意：局部变量不在这个命令空间里。
+并且可以通过再定义struct或union添加新的命名空间
+http://blog.csdn.net/daheiantian/article/details/6219590
+“结构体的tag”和“结构体成员”不在同一个命名空间
+理解 windows.h 头文件里的结构体，为什么这样写？因为 c/c++都可以使用。
+tagRECT 中的 tag 意思是
+typedef struct tagRECT
+{
+    LONG    left;
+    LONG    top;
+    LONG    right;
+    LONG    bottom;
+} RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
+---------------------------------------------------------------------------
+C++11 provides a for each loop
+vc 2010 实现了没？ no
+http://stackoverflow.com/questions/6898859/does-msvc10-visual-studio-2010-support-c-range-based-loops
+http://www.cnblogs.com/520zijuan/archive/2013/02/02/2889510.html
+---------------------------------------------------------------------------
+【associative-container.png】关联式容器的比较
+---------------------------------------------------------------------------
+reinterpret_cast是为了映射到一个完全不同类型的意思，
+这个关键词在我们需要把类型映射回原有类型时用到它。
+我们映射到的类型仅仅是为了故弄玄虚和其他目的，这是所有映射中最危险的。(这句话是C++编程思想中的原话)
+---------------------------------------------------------------------------
+stringstream 格式化【stringstream-formatting.png】
+strstream << std::hex;
+strstream << std::hex << std::setfill( L'0' ) << std::uppercase;
+http://www.cnblogs.com/CaiNiaoZJ/archive/2011/08/17/2142010.html
+---------------------------------------------------------------------------
+tellg  get-pointer
+tellp   put-pointer
+---------------------------------------------------------------------------
+http://qiezhuifeng.diandian.com/post/2012-08-27/40038339477
+所谓的Most Vexing Parse是个什么东西呢。它是C++中的一个特性，这个特性表述起来其实是这样子的：
+      凡是长得像是函数声明的，就是函数声明
+string my_str;   与  string my_str();  是不同的意义。
+C++语法分析中最让人头疼的歧义
+https://www.byvoid.com/zhs/blog/cpp-most-vexing-parse
+
+最优美的解决方案是使用C++11的统一初始化语法  Uniform initialization
+TimeKeeper time_keeper{Timer()};
+http://www.oschina.net/translate/cplusplus-11-features-in-visual-cplusplus-2013-pre
+
+std::string buf( std::istreambuf_iterator<char>( f ), std::istreambuf_iterator<char>() );
+理解这句的意义，是声明一个函数。  istreambuf_iterator 前后要加上括号。
+std::string buf( ( std::istreambuf_iterator<char>( f ) ), ( std::istreambuf_iterator<char>() ) );
+在C++中，当一个表达式可以被解析为一个函数的时候，编译器就会将其作为函数看待
+在C++中，函数声明时使用括号包含实参的声明是不合法的，但是使用括号包含函数调用是合法的
+声明一个函数 以一个double变量作为参数，返回值类行为int型
+int f(double(d));   这是声明一个函数，
+int f(double);
+---------------------------------------------------------------------------
+std::ifstream 读取文件到内存
+http://stackoverflow.com/questions/181634/simplest-efficient-ways-to-read-binary-and-ascii-files-to-string-or-similar-in
+std::ifstream in("file.txt");
+std::string contents((std::istreambuf_iterator<char>(in)), 
+   std::istreambuf_iterator<char>());
+   
+std::ifstream in("file.txt");
+std::vector<char> contents((std::istreambuf_iterator<char>(in)),
+   std::istreambuf_iterator<char>());
+std::ifstream in("file.txt");
+std::stringstream buffer;
+buffer << in.rdbuf();
+std::string contents(buffer.str());
+---------------------------------------------------------------------------
+何为序列式容器，C++标准程序库上面是这样说的：此乃可序(ordered)群集，其中每个元素均有固定的位置—取决于插入时机和地点，和元素的值无关。如果以追加方式对一个群集置入六个元素，它们的排列次序将和置入次序一致。STL提供三个定义好的序列式容器：vector,deque,list;
+---------------------------------------------------------------------------
+Why doesn't C++ have an equivalent to realloc()?
+
+C++ 中最好使用标准库中的容器，让它自然的增长[内存]。
+C++ 是好不要使用 realloc
+If you want to, you can of course use realloc(). However, realloc() is only guaranteed to work on arrays allocated by malloc() (and similar functions) containing objects without user-defined copy constructors. Also, please remember that contrary to naive expectations, realloc() occasionally does copy its argument array.  
+In C++, a better way of dealing with reallocation is to use a standard library container, such as vector, and let it grow naturally.
+静态成员函数 重载（Overloaded）
+static member function overloading
+http://stackoverflow.com/questions/5365689/c-overload-static-function-with-non-static-function
+http://bytes.com/topic/c/answers/644070-can-static-member-function-overloaded
+我遇到的情况，是不能重载，提示，找不到重载函数
+一静态成员函数  
+一非静态成员函数（Non-static member functions）  重载，总是题提示:
+非静态成员函数（Non-static member functions），找不到声明
+error C2511: “void CPptMgr::CheckUserInputThread(void)”:“CPptMgr”中没有找到重载的成员函数
+1>          d:\project\trunk\src\client\pptrecord\pptrecord\PptMgr.h(8) : 参见“CPptMgr”的声明
+实现是可以重载的，发生上面的错误原因是，让人郁闷的 预编译头文件包含方式，
+预编译头文件包含 包含了，工程内的头文件，修改头文件后，不编译stdafx.cpp，就无法找到新修改的头文件内容。
+修改了好个工程内的头文件，构建工程时，不会重新编译  预编译头文件
+http://blog.csdn.net/robberm/article/details/8680247
+预编译头文件 的跨平台问题 (GCC可以使用预编译头文件)
+http://stackoverflow.com/questions/1191248/handling-stdafx-h-in-cross-platform-code
+---------------------------------------------------------------------------
+c++ move 减少了一次构造函数的调用 (分配空间，然后，复制内存)  
+move 就是一种构造 （move constructor）  叫做 move 构造
+和复制构造函数（copy constructor）的区别？
+http://stackoverflow.com/questions/9152798/c11-move-copy-construction-ambiguity
+copy 和 move 的区别？   copyfile 和 movefile的区别？（会具有相同的指针吗？）
+怎么使一个 左值 变成 右值？ move操作符？
+http://stackoverflow.com/questions/14667921/pass-lvalue-to-rvalue
+http://stackoverflow.com/questions/18995369/push-back-objects-into-vector-memory-issue-c
+push_back  临时对象问题问题 (会调用对象的析构函数)
+http://stackoverflow.com/questions/515071/destructor-called-on-object-when-adding-it-to-stdlist
+Maybe you want to store pointers instead of objects in the list. By doing that, only the pointers get copied instead of the object. But, by doing so, you have to make sure to delete the objects once you are done.
+Alternatively, you can try to use some kind of 'smart pointer' class, for example from the Boost libraries.
+http://stackoverflow.com/questions/11875939/vector-push-back-rvalue-and-copy-elision
+http://en.cppreference.com/w/cpp/container/vector/emplace_back
+std::vector::emplace_back c++11
+http://stackoverflow.com/questions/4303513/push-back-vs-emplace-back
+VC10 里 push_back 与 emplace_back效果一样
+As you may know, variadic templates aren't implemented in VC10.
+C++ －－ variadic template （可变参数模板）
+http://www.cnblogs.com/liyiwen/archive/2013/04/13/3018608.html
+怎样用C++处理内存缓冲
+http://www.uml.org.cn/net/200508012.htm
+std::vector 内存是连续内存块
+思考：连续的内存，添加和删除时，可能需要，删除旧内存创建新内存，就引发了对象的析构与构造。
+http://stackoverflow.com/questions/750336/is-stl-vector-a-better-version-of-realloc
+vector, which is guaranteed to have contiguous memory(建议是连续内存)
+http://stackoverflow.com/questions/849168/are-stdvector-elements-guaranteed-to-be-contiguous
+http://stackoverflow.com/questions/247738/is-it-safe-to-assume-that-stl-vector-storage-is-always-contiguous
+标准STL 只要PUSH_BACK  迭代器就失效
+http://zh.cppreference.com/w/cpp/container/forward_list
+ forward_list. forward_list是C++11版本才有的。forward_list被实现为单链表，而list是一个双向链表，所以forward_list要比list高效
+forward_list是唯一的标准容器中故意不给出size()成员函数的，这样是为了更高效而考虑，可以用distance(c.begin(),c.end())来得到forward_list的大小，这将消耗一个线性时间，而如果同list一样实现size()成员函数的话，那样要消耗一些额外的存储空间[用于链表中的内部计数得出size()]和使得插入和删除元素时有一个轻微的效率降低，实现size()要消耗一个常量的时间
+std::list ?  [方便添加与删除]
+http://stackoverflow.com/questions/5056973/when-do-you-prefer-using-stdlistt-instead-of-stdvectort
+vector内部使用线性内存分配，可以随机访问，支持operator[]
+list内部使用练是数据结构，不支持随机访问和operator[]
+list就是数据结构中的双向链表
+因此它的内存空间可以是不连续的，通过指针来进行数据的访问，这个特点使得它的随即存取变的非常没有效率，因此它没有提供[]操作符的重载。
+但由于链表的特点，它可以以很好的效率支持任意地方的删除和插入
+deque是一个double-ended queue
+支持[]操作符，也就是支持随即存取，并且和vector的效率相差无几，
+它支持在两端的操作：push_back,push_front,pop_back,pop_front等，
+并且在两端操作上与list的效率也差不多
+---------------------------------------------------------------------------
+std::exception 宽字符版本
+http://stackoverflow.com/questions/3760731/exceptions-with-unicode-what
+char* does not mean ASCII. You could use an 8 bit Unicode encoding like UTF-8.
+char could also be 16 bit or more, you could then use UTF-16.
+抛出 std 异常
+http://stackoverflow.com/questions/134569/c-exception-throwing-stdstring
+throw std::exception( "产品名称为空，请输入产品名称。" );
+http://forums.codeguru.com/showthread.php?465365-Using-std-exception()-to-throw-my-quot-own-exceptions
+ I find it easier to derive from std::logic_error or std::runtime_error and their derived classes instead of directly deriving from std::exception since it makes specifying the (default) error message somewhat easier. Besides, it also gives a better hint of what kind of exception you are defining.
+http://stackoverflow.com/questions/12261915/howto-throw-stdexceptions-with-variable-messages
+std::stringstream errMsg;
+errMsg << "Could not load config file '" << configfile << "'";
+throw std::exception(errMsg.str().c_str());
+可以用BOOST::FORMAT 进行格式化字符串
+
+
+//Good, because manual memory management isn't needed and this uses
+//less heap memory (or no heap memory) so this is safer if
+//used in a low memory situation
+void f() { throw string("foo"); }
+
+//Valid, but avoid manual memory management if there's no reason to use it
+void g() { throw new string("foo"); }
+
+//Best.  Just a pointer to a string literal, so no allocation is needed,
+//saving on cleanup, and removing a chance for an allocation to fail.
+void h() { throw "foo"; }
+
+http://www.cnblogs.com/Braveliu/p/3293285.html
+c++  函数后加 throw 关键字
+void fun() throw() 表示fun不允许抛出任何异常，即fun是异常安全的。
+void fun() throw(...) 表示fun可以抛出任何形式的异常。
+void fun() throw(exceptionType) 表示fun只能抛出exceptionType类型的异常
+throw()   大概会说：“噢，不管你抛什么，就是不准抛。”
+throw(...)   呵呵一笑，满脸慈祥：“抛吧抛吧，尽情地抛吧。”
+throw(type)   一听急了：“那可不行，要抛也只能抛我的香烟头，否则要是不小心把俺祖传的金戒指抛掉就太亏了。”
+http://hi.baidu.com/malloc_delete/item/c0af31124f15655e2a3e22b9
+warning C4290: 忽略 C++ 异常规范
+---------------------------------------------------------------------------
+string 2 wstring 转换 c++11
+std::wstring_convert
+http://en.cppreference.com/w/cpp/locale/wstring_convert
+http://stackoverflow.com/questions/14806550/whats-the-difference-between-stdwstring-convert-and-stdwbuffer-convert
+http://www.cppblog.com/mythma/archive/2012/09/11/wstring_convert_utf8.html
+扔掉MultiByteToWideChar 吧，使用std::wstring_convert和 std::codecvt_utf8 来处理UTF8与WChar之间的互转
+std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+std::string narrowStr = conv.to_bytes(str);
+std::wstring wideStr = conv.from_bytes(narrowStr);
+http://stackoverflow.com/questions/7599514/libc-vs-vc-can-non-utf-conversions-be-done-with-wstring-convert
+---------------------------------------------------------------------------
+string split 算法
+boost::split( str_vector, file_name_, boost::is_punct() );
+http://stackoverflow.com/questions/5734304/c-boost-split-string
+error C2059: 语法错误:“reinterpret_cast”    为什么？
+Boost String Algorithms Library
+http://www.boost.org/doc/libs/1_54_0/doc/html/string_algo.html
+string_algo - String algorithms library, from Pavol Droba
+<boost/algorithm/string/split.hpp>
+Split algorithms are an extension to the find iterator for one common usage scenario.
+These algorithms use a find iterator and store all matches into the provided container.
+This container must be able to hold ( the extracted substrings. )
+                        copies (e.g. std::string) or
+references (e.g. iterator_range)
+Two algorithms are provided.
+find_all() finds all copies of a string in the input. 
+split() splits the input into parts.
+   string str1("hello abc-*-ABC-*-aBc goodbye");
+
+   typedef vector< iterator_range<string::iterator> > find_vector_type;
+   
+   find_vector_type FindVec; // #1: Search for separators
+   ifind_all( FindVec, str1, "abc" ); // FindVec == { [abc],[ABC],[aBc] }
+
+   typedef vector< string > split_vector_type;
+   
+   split_vector_type SplitVec; // #2: Search for tokens
+    split( SplitVec, str1, is_any_of("-*"), token_compress_on ); // SplitVec == { "hello abc","ABC","aBc goodbye" }
+is_any_of   断言  In header: <boost/algorithm/string/classification.hpp>  
+
+alphanumeric characters  字母数字字符       is_alnum
+                                                                               is_alpha  (字母)
+is_graph  
+punctuation characters 标点符号字符             is_punct
+
+[hello] designates an iterator_range delimiting this substring.
+First example show how to construct a container to hold references to all extracted substrings. Algorithm ifind_all() puts into FindVec references to all substrings that are in case-insensitive manner equal to "abc".
+Second example uses split() to split string str1 into parts separated by characters '-' or '*'. These parts are then put into the SplitVec. It is possible to specify if adjacent separators are concatenated or not.
+More information can be found in the reference: boost/algorithm/string/split.hpp.
+
+【split-string.png】http://www.cplusplus.com/faq/sequences/strings/split/   split string 方法比较
+---------------------------------------------------------------------------
 std::map   size count的区别
 size
 Returns the number of elements in the map.
@@ -71,20 +591,6 @@ struct _stat64 {
 ---------------------------------------------------------------------------
 下面这样写，竟然没有出错。（怎么避免这种错误？）
 ::_stprintf(szInfo,L"%.1f%%", (double) ( node->upload_size * 1000 / node->file_size ) / 10 ) / 1000;
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
----------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 RECT 成员变量，初始化, 无法初始化。
 error C2661: “tagRECT::tagRECT”: 没有重载函数接受 4 个参数
@@ -298,6 +804,12 @@ int main()
 }
 
 
+已知"严"的unicode是4E25（100111000100101），
+根据上表，可以发现4E25处在第三行的范围内（0000 0800-0000 FFFF），
+因此"严"的UTF-8编码需要三个字节，即格式是"1110xxxx 10xxxxxx 10xxxxxx"。
+然后，从"严"的最后一个二进制位开始，依次从后向前填入格式中的x，多出的位补0。
+这样就得到了，"严"的UTF-8编码是"11100100 10111000 10100101"，转换成十六进制就是E4B8A5
+王 E78E8B
 
 
 
