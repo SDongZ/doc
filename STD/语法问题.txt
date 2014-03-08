@@ -32,7 +32,121 @@ if语句造成的编译错误【if-error.png】
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+【c++】
+非静态类成员变量的初始化。（initialization list）
+You cannot substitute one for the other. If the member variables are not static, you have to use the initialization list (or the constructor body, but the initialization list is better suited)*.
+
+It is mandatory 【['m?nd?t?r?] [美][?m?nd??t?ri, -?tori]强制的】 to initialize Reference Data Member in an Initialization List because it can not exist without being initialized.
+
+It is mandatory to initialize Constant Data Member in an Initialization List otherwise it would be constrcuted with some junk values and we cannot initialize it later anywhere else
+
+It is mandatory to construct and initialize, embedded class objects/base class objects in case of inheritance, in an Initialization List, if they do not themselves have a zero-argument/default constructor provided
+
+in C++11 you can also provide an initializer in the declaration for non-static member variables:
+class test {
+   int data = 5; 类声明时，初始化非静态成员变量。
+};
+注意下面的代码
+struct S {
+    int n = 42;
+    S() : n(7) {} // will set n to 7, not 42
+};
+Will have data(5) implicitly added to any initialization list where data is not explicitly mentioned (including an implicitly defined default constructor)
+
+类成员变量的初始化顺序
+class CPreviewDlg : public CDialogEx
+{
+	DECLARE_DYNAMIC(CPreviewDlg)
+
+	CDevice &m_device;
+	
+	CRect m_rect;
+	UINT &m_left;
+	UINT &m_top;
+	UINT &m_right;
+	UINT &m_bottom;
+
+下面m_rect可以正确的被初始化，虽然，它在四个引用变量之前声明。
+CPreviewDlg::CPreviewDlg(ID2D1Factory *factory, UINT &left, UINT &top, UINT &right, UINT &bottom, CDevice &device, CWnd* pParent /*=NULL*/)
+	: CDialogEx(CPreviewDlg::IDD, pParent),   注意这里CDialogEx，基类的初始化
+	  m_view(factory, m_rect), m_device(device),
+	  m_rect(left, top, right, bottom),
+	  m_left(left), m_top(top), m_right(right), m_bottom(bottom)
+{
+
+}
+
+下面的初始化，可以编译过，但是会造成，m_left，没有引用值，因为它先于m_top初始化
+同样的代码在GCC中，会引发错误或者警告：test.cpp:3:9: error: ‘Test::b’ will be initialized after [-Werror=reorder]
+CPreviewDlg::CPreviewDlg(ID2D1Factory *factory, UINT &left, UINT &top, UINT &right, UINT &bottom, CDevice &device, CWnd* pParent /*=NULL*/)
+	: CDialogEx(CPreviewDlg::IDD, pParent),
+	  m_view(factory, m_rect), m_device(device),
+	  m_rect(left, top, right, bottom),
+	  m_top(top), m_left(m_top), m_right(right), m_bottom(bottom)
+{
+
+}
+
+Make sure the members appear in the initializer list in the same order as they appear in the class
+Class C {
+   int a;
+   int b;
+   C():b(1),a(2){} //warning, should be C():a(2),b(1)
+}
+or you can turn -Wno-reorder
+VC 没有这个警告，下面这个链接有讨论这个问题
+https://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/2553854-c-compiler-should-warn-about-wrong-member-initia
+class Class {
+    Class( int var ) : var1( var ), var2(var1 ) {} // allright
+    //Class( int var ) : var2( var ), var1(var2 ) {} // var1 will be left uninitialized。 在VC不会有任何警告。
+
+    int var1;
+    int var2;
+};
+
+
+
+The reason is because they're initialized in the order they're declared in your class, not the order you initialize them in the constructor and it's warning you that your constructor's order won't be used.
+
+This is to help prevent errors where the initialization of b depends on a or vice-versa.
+
+The reason for this ordering is because there is only one destructor, and it has to pick a "reverse order" to destroy the class member. In this case, the simplest solution was to use the order of declaration within the class to make sure that attributes were always destroyed in the correct reverse order.
+
+
+
+Initialization order
+
+The order of member initializers in the list is irrelevant（irrelevant[英][??rel?v?nt] [美][??r?l?v?nt] 牛头不对马嘴）:
+the actual order of initialization is as follows:
+1) If the constructor is for the most-derived class, virtual base classes are initialized in the order in which they appear in depth-first left-to-right traversal of the base class declarations (left-to-right refers to the appearance in base-specifier lists)
+2) Then, direct base classes are initialized in left-to-right order as they appear in this class's base-specifier【[英]['sp?s?fa??] [美]['sp?s?fa??] 区分符】 list
+3) Then, non-static data members are initialized in order of declaration in the class definition.（如果有引用成员变量呢？）
+4) Finally, the body of the constructor is executed
+
+为什么以成员的声明顺序，来定义，初始化顺序：因为，可以有多个构造函数，但是只有一个析构函数。析构函数，会按照构造时的返序，处理所有的成员变量。
+(Note: if initialization order was controlled by the appearance【[英][??p??r?ns] [美][??p?r?ns]出现】 in the member initializer lists of different constructors, then the destructor wouldn't be able to ensure that the order of destruction is the reverse of the order of construction)
+
+
+
+So I was reading up on C++11 initializer lists today via Wikipedia and saw that C++11 supports the following syntax for the standard containers:
+
+std::vector<std::string> v = { "xyzzy", "plugh", "abracadabra" };
+std::vector<std::string> v({ "xyzzy", "plugh", "abracadabra" });
+std::vector<std::string> v{ "xyzzy", "plugh", "abracadabra" }; 
+When I try the following in Visual Studio 2012 I get the compilation error C2552: 'vecs' : non-aggregates cannot be initialized with initializer list
+
+Visual Studio 2012 does not support initializer lists.
+
+Well, it didn't until the November 2012 CTP. Now it does, at least in an alpha state. Granted, this code still won't work in it because they're still putting initializer lists into the standard library itself.
 ---------------------------------------------------------------------------
+
+[语法]
+for(int i = 0; i < right; i++)  怎么样，I 加二？
+
+for(int i = 0; i < (right - left); i += 2)  语法是可行的。
+
+纠结了半天下面的代码：
+for(int i = 0; i < right; i += 2)  想处理左右座标间的像素个数，这样写，变成了0到右座标的像素个数。
 ---------------------------------------------------------------------------
 char t = 0xaa;  ( 0xaa 作为整形常量存在 常量区中, 常量后缀 )
 warning C4309: “初始化”: 截断常量值  解决方法  char t = char( 0xaa );

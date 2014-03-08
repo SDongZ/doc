@@ -16,36 +16,7 @@ Major version number, as a constant value expression in the range [0,99].
 Minor version number, as a constant value expression in the range [0,99].
 Patch-level version number, as a constant value expression in the range [0,99999].
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+【等待整理代码列表】
+TestBurn - M
+D2D中的Circle例子（其中自定义窗口类的研究）
+防止程序重新打开的类

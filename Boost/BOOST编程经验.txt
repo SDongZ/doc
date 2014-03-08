@@ -9,6 +9,18 @@ b2.exe --with-<library>
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+【boost asio 缓存集】
+发送多个缓存
+                boost::array<boost::asio::const_buffer, 2> bufs;
+                bufs[0] = boost::asio::buffer(&id_, sizeof(id_));
+                bufs[1] = boost::asio::buffer(this, sizeof(this));
+                socket.send_to(bufs, remote);
+接收时，就需要有几个缓存
+                boost::array<boost::asio::mutable_buffer, 2> bufs = {
+                        boost::asio::buffer(&id, sizeof(id)),
+                        boost::asio::buffer(buffer)    这个BUFFER 是怎么定义的？
+                };
+                size_t rcv_size = socket_.receive_from(bufs, remote_endpoint);
 ---------------------------------------------------------------------------
 通过咨询某个做过IM的同事，参考答案应该是，自己实现的心跳机制通用，可以无视底层的UDP或TCP协议。如果只是用TCP协议的话，那么直接使用KeepAlive机制就足够
 ---------------------------------------------------------------------------
