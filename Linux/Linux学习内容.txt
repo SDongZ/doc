@@ -33,6 +33,46 @@ Part 5 of the Linux Newbie Administrator Guide
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+安装GRUB
+一、安装到mbr（mbr=Master Boot Records，主引导记录区）
+二、安装到其它分区
+把setup (hd0)改成setup (hdx,y)
+三、如果grub找不到stage1文件或认不出硬盘
+grub>setup (hd0)
+grub>quit
+find /boot/grub/stage1
+用来查找stage1文件的位置，
+它告诉我们grub的文件在哪儿。
+只有一小部分grub放在mbr上，其它部分位于你的boot文件夹。grub需要这些文件来安装。
+setup(hd0)把grub安装到hd0。
+当使用hd0参数而没有提供具体分区时，grub安装到mbr。
+grub认为hd0是第一个硬盘的mbr区标志
+grub 显示所有硬盘信息
+grub> root(   接着按tab
+如果系统中有多个硬盘，GRUB 将显示可能完成的列表，从 "hd0" 开始
+grub> root (hd0, 接着按tab
+GRUB 将显示特定硬盘上所有分区的列表，以及它们的文件系统类型
+grub要启动一个操作系统，首先指定引导哪个分区上的系统
+1. 指定分区
+grub>root (hd0,0)
+2. 启动不同的系统
+1）启动windows
+grub>chainloader (hd0,0)+1
+2) 启动linux
+grub>kernel （hd0,0）/boot/vmlinuz root=/dev/hda1
+3. 最后敲入boot就可以启动系统了
+default=linux
+timeout=10
+color=green/black light-gray/blue
+# section to load linux
+title linux
+root (hd0,1)
+kernel /vmlinuz root=/dev/hda5
+boot
+# section to load Windows 2000
+title windows
+rootnoverify (hd0,0)
+chainloader +1
 ---------------------------------------------------------------------------
 
 硬件开发，

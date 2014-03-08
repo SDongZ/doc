@@ -3,11 +3,101 @@
 
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+WM_KILLFOCUS
+WM_ACTIVATEAPP
+WM_ACTIVATEAPP说"when a window belonging to a different application"
+WM_ACTIVATE只会发给被激活或失去激活的那个窗口
+WM_ACTIVATEAPP会发给被激活或失去激活的应用程序所拥有的所有窗口，比如所有的按钮，所有的EDITBOX
+当改变窗口大小、移动窗口到屏幕边界时，都会产生一个 WM_NCPAINT 消息，要求NC区域重绘。
+但是当右键点击任务栏时，会弹出菜单，同时窗口的标题栏会变色，此时不会产生 WM_NCPAINT来重绘，而是产生一个 WM_NCACTIVE消息，系统会去重绘。
+所以，做界面皮肤时，处理WM_NCPAINT的同时，还要处理WM_NCACTIVE。否则，右键任务栏时，系统会画出默认的边框
+Sent to a window when its nonclient area needs to be changed to indicate an active or inactive state.
+改为获取任务栏窗口句柄，GetTaskmanWindow，对窗口句柄进行对比并判断是否要是小化
+Has anyone ever seen this...
+>An application has a tray icon.  When you right click the icon
+>a popup menu is created which is a sub from IDR_MAINFRAME.
+>If I click on another application say Outlook I expect the popup to
+>go away but it is not.  If I click on my app it does go away
+http://support.microsoft.com/kb/135788
+When you display a context menu for a notification icon (see Shell_NotifyIcon), clicking anywhere besides the menu or the window that created the menu (if it is visible) doesn't cause the menu to disappear.
+Hi,
+To correct this behavior, you need to make the current window the foreground window before calling TrackPopupMenu or TrackPopupMenuEx:
+SetForegroundWindow(hDlg);  即使，这个窗口是隐藏的，也可以这样解决这个问题
+// Display the menu
+TrackPopupMenu( hSubMenu,TPM_RIGHTBUTTON,pt.x,pt.y,0,hDlg,NULL);
+
 ---------------------------------------------------------------------------
+http://www.vckbase.com/index.php/wv/1292
+ModifyStyleEx(0, WS_EX_LAYERED|WS_EX_TRANSPARENT);
+为了创建分层窗口，你需要扩展式样 WS_EX_LAYERED，此外，为了能在透明窗口上进行鼠标点击，你还需要 WS_EX_TRANSPARENT 扩展式样
+UpdateLayeredWindow
+SetLayeredWindowAttributes(0, 255 * 0.50, LWA_ALPHA);
+SetLayeredWindowAttributes
+---------------------------------------------------------------------------
+WM_EXITSIZEMOVE message
+Sent one time to a window, after it has exited the moving or sizing modal loop
+---------------------------------------------------------------------------
+死活接收不到WM_LBUTTONUP消息，（双击时，可以获得）
+最后发现，
+        case WM_LBUTTONDOWN:
+                //DeskButtonClicked();
+                ::PostMessage(this->m_hWnd,WM_NCLBUTTONDOWN,HTCAPTION,0); 关键是发送这个消息造成的 )
+                bMouseDown=true;
+                break;
+被截获了。 （但双击未截获）
+结果并不是这么简单。注释也不行。WM_NCLBUTTONUP(这个是击中非客户区)也收不到
+在处理WM_NCLBUTTONDOWN消息的时候，Windows有时自动过滤了WM_NCLBUTTONUP消息
+收不到WM_NCLBUTTONUP消息
+
+ If a window has captured the mouse, this message is not posted.
+http://blog.csdn.net/immigrator/article/details/8365802
+WM_NCLBUTTONDOWN后确实能收到WM_EXITSIZEMOVE，可是必须按住鼠标左键2秒中以上，短时间的点击无效
+http://www.bozhiw.com/doc-view-6501.html
+http://blog.csdn.net/xuminggang/article/details/4240401
+使用WH_GETMESSAGE的HOOK, hook整个线程的消息队列,从而得到在非客户区释放鼠标时的WM_LBUTTONUP消息(因为spy++就是这种方式，因此我们也可以采用这种方式，当然google里的那哥们使用的是mouse hook,忒复杂了些)
+前辈试验出来的系统会发送WM_NCLBUTTONUP的时刻：
+1.       双击标题栏
+2.       在客户区按住鼠标左键，但是在非客户区释放鼠标左键
+查了一下MSDN，说是当在非客户区点击鼠标时，窗口可以截获WM_NCLBUTTONDOWN，然后可以截获WM_ENTERSIZE消息，然后该窗口就被SetCapture（不再产生非客户区的消息了；同时所有的鼠标消息，即便鼠标不在这个窗口上的操作，也被传到这个窗口的窗口函数来处理。我一直没有搞清楚后面一条的应用场景），然后进入moving or sizing modal loop了， 这个时候，当前窗口就收不到任何的鼠标操作消息了，一直到鼠标左键松开为止。左键松开的时候，发的也是WM_LBUTTONUP消息，而且该消息也不能被窗口截获。因为还没有退出moving or sizing modal loop。一直到WM_LBUTTONUP之后，再有一个WM_EXITSIZEMOVE消息，才标志着正式退出了moving or sizing modal loop，又回到了主窗口的消息循环。WM_EXITSIZEMOVE消息也是可以被主窗口截获的，所以可以在这个消息的时候适当做一些工作，扑捉到WM_NCLBUTTONUP消息
+---------------------------------------------------------------------------
+To extract the individual values for the red, green, and blue components of a COLORREF color value, use the GetRValue,GetGValue, and GetBValue macros, respectively.
+0xbbggrr   (这才是RGB)
+---------------------------------------------------------------------------
+RGN 区域设置
+                HRGN hRgn = ::CreateRectRgn(2, 4, 342, 10);
+                HRGN hRgn2 = ::CreateRectRgn(152, 13, 172, 33);
+                HRGN hRgn3 = ::CreateRectRgn(181, 13, 201, 33);
+                ::CombineRgn(hRgn,hRgn,hRgn2,RGN_OR);
+                ::CombineRgn(hRgn,hRgn,hRgn3,RGN_OR);
+                ::SetWindowRgn(m_PlayBar->GetHWND(),hRgn,false);
+---------------------------------------------------------------------------
+::BringWindowToTop( m_PlayBar->GetHWND() ); 改变z-order顺序
+查找子窗口，
+GetWindow(m_hWnd, GW_HWNDFIRST);
+枚举子窗口
+int WINAPI GetClassName(
+ _In_   HWND hWnd,
+ _Out_  LPTSTR lpClassName,
+ _In_   int nMaxCount
+);
+LONG WINAPI SetWindowLong(
+ _In_  HWND hWnd,
+ _In_  int nIndex,
+ _In_  LONG dwNewLong
+);
+---------------------------------------------------------------------------
+PostQuitMessage(0); 在主线程里调用 才有效果
+---------------------------------------------------------------------------
+Adding Console I/O to a Win32 GUI App
+http://dslweb.nwnexus.com/~ast/dload/guicon.htm
+---------------------------------------------------------------------------
+WIN7 界面边缘，半透明是怎么做到的
 ---------------------------------------------------------------------------
 WM_NCCREATE
 CreateWindow 会 以 WM_NCCREATE为参数 调用消息处理函数。
@@ -89,6 +179,11 @@ WS_CLIPSIBLINGS
 0x04000000L
 Clips child windows relative to each other; that is, when a particular child window receives a WM_PAINT message, the WS_CLIPSIBLINGS style clips all other overlapping child windows out of the region of the child window to be updated. If WS_CLIPSIBLINGS is not specified and child windows overlap, it is possible, when drawing within the client area of a child window, to draw within the client area of a neighboring child window.
 
+WS_CLIPCHILDREN 父窗口不管子窗口背景绘制
+WS_CLIPSIBLINGS
+http://www.cnblogs.com/helloj2ee/archive/2009/05/29/1491822.html
+
+---------------------------------------------------------------------------
 静态框 ，调用了，MoveWindow(10, 50, m_width, m_height); 但没有触发，
 CImageView::OnSizing(UINT fwSide, LPRECT pRect)事件。
 写错了，应该是void CImageView::OnSize(UINT nType, int cx, int cy)事件。可以触发这个事件。
@@ -109,6 +204,7 @@ Usually called from CDialog::OnInitDialog to center dialog boxes relative to the
 
 
 
+---------------------------------------------------------------------------
 
 CStaic 控件，与，鼠标事件。
 SS_NOTIFY
@@ -122,6 +218,7 @@ CStatic 控件，GetClientRect，返回值不对，为什么？ 对话框创建完成之前，，在控件的
 		GetWindowRect(&rt); rt {top=278 bottom=499 left=452 right=988}
 Windows does not know the size of the controls before the dialog window has been created.
 
+---------------------------------------------------------------------------
 
 WM_MOUSEMOVE message
 Posted to a window when the cursor moves. If the mouse is not captured, the message is posted to the window that contains the cursor. Otherwise, the message is posted to the window that has captured the mouse.
@@ -155,6 +252,7 @@ The low-order word specifies the x-coordinate of the cursor. The coordinate is r
 The high-order word specifies the y-coordinate of the cursor. The coordinate is relative to the upper-left corner of the client area.
 
 
+---------------------------------------------------------------------------
 
 Mouse Capture (捕获鼠标的意义是，所有鼠标事件都发送给，捕获鼠标的窗口)
 
@@ -180,6 +278,7 @@ If one of the thread's windows has captured the mouse, GetCapture retrieves a ha
 
 
 
+---------------------------------------------------------------------------
 
 WM_CREATE 返回值
 If an application processes this message, it should return zero to continue creation of the window. If the application returns –1, the window is destroyed and the CreateWindowEx or CreateWindow function returns a NULL handle.
@@ -233,6 +332,7 @@ An application can return FALSE only if it has set the keyboard focus to one of 
 
 
 
+---------------------------------------------------------------------------
 对话框的OnDraw函数并不是一直发送。 最后找到原因，用下面的代码解决这个问题。
 
 PAINTSTRUCT ps;
@@ -260,6 +360,7 @@ This function clears the update region, which signals to Windows that the window
 
 
 
+---------------------------------------------------------------------------
 
 
 

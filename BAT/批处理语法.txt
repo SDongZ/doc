@@ -1,2 +1,22 @@
-参数的传递？
-暂停命令？
+%0代指批处理文件自身
+  %~d0 是指批处理所在的盘符
+  %~dp0 是盘符加路径
+  cd %~dp0 就是进入批处理所在目录了
+%~d0
+cd %~dp0
+set service_exe=%1               指处理=号，两边不能加空格
+set service_name=%2
+sc stop %service_name%
+sc delete %service_name%
+%service_name% -install
+sc config %service_name% start= auto  特殊
+sc start %service_name%
+
+---------------------------------------------------------------------------
+批处理按任意键退出  
+pause
+pause命令就是按任意键继续，你按需要添加就行了
+echo off
+@ECHO OFF是下面的命令不显示出来，就是执行的时候不显示命令
+@:       本行命令不显示命令名
+echo off:下面的命令不显示命令名

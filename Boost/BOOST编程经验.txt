@@ -2,6 +2,294 @@
 b2 toolset=msvc-10.0 --with-iostreams
 b2.exe --show-libraries
 b2.exe --with-<library>
+
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+通过咨询某个做过IM的同事，参考答案应该是，自己实现的心跳机制通用，可以无视底层的UDP或TCP协议。如果只是用TCP协议的话，那么直接使用KeepAlive机制就足够
+---------------------------------------------------------------------------
+把整数，转换成带千分号的字符串。
+1. 整数格式化成字符串
+2. 插入千分号。
+std::string InsertSeparator (DWORD dwNumber) {
+        boost::format fmt("%d");
+        fmt % dwNumber;
+        std::string str = fmt.str();
+        for (int i = str.length() - 3; i > 0; i -= 3) {
+                str.insert(i, ",");
+        }
+        return (str);
+}
+
+boost::fomat
+format_fwd.hpp contains this typedef:
+typedef basic_format<wchar_t >  wformat;
+I think this will get you started. This works here:
+std::wcout << boost::wformat(L"...") % ...
+Also the boost::str works using wformat.
+wstring s = boost::str(boost::format(L"...") % ...)
+wcout << boost::format(L"...") % …
+
+boost::fomat
+format_fwd.hpp contains this typedef:
+typedef basic_format<wchar_t >  wformat;
+I think this will get you started. This works here:
+std::wcout << boost::wformat(L"...") % ...
+Also the boost::str works using wformat.
+wstring s = boost::str(boost::format(L"...") % ...)
+wcout << boost::format(L"...") % …
+char t = 0xaa;  ( 0xaa 作为整形常量存在 常量区中, 常量后缀 )
+warning C4309: “初始化”: 截断常量值  解决方法  char t = char( 0xaa );
+        char t = 0xaa;
+        printf( "%02X", t );
+输出结果是：        FFFFFFAA, 原因是 printf 做了类型转换，把 char t 转成了 int
+http://stackoverflow.com/questions/3959674/printf-too-smart-casting-from-char-to-int
+Anything you pass to printf (except the first parameter) undergoes "default promotions", which means (among other things) that char and short are both promoted to int before being passed. So, even if what you were passing really did have type char, by the time it got to printf it would have typeint. In your case, you're using a character literal, which already has type int anyway.
+The same is true with scanf, and other functions that take variadic parameters
+char buffer[4] = { char(0xaa), char(0x40), char(0x01), char(0x01) };
+const char *buf
+std::string tmp = boost::str( boost::format( "%d" ) % buf[i] );
+奇怪的事情发生了：
+这里tmp 得到的值 是 0xaa, 不是字符串，而是一个值，像直接赋值一样
+下面 是可以正常格式化的  (问题出在 buf[i] 上)
+std::string tmp = boost::str( boost::format( "%d" ) % 0xaa );
+std::string tmp = boost::str( boost::format( "%02X" ) % 0xa );
+%02X 期待得到一个整型
+而我们传给它一个 char， 但是boost未做类型转换
+奇怪的结果，真不知道，怎么理解了。  tmp 字符串有两个字节，
+0x30(是补的零) 0x0a(保持原值)
+                                char t = 0xa;    // 转成 unsigned int 就正常了
+                                std::string tmp = boost::str( boost::format( "%02X" ) % t );
+char 不可以正常转换，与  格式化器（ formatter string ）有关？  
+%02X 期待得到一个整型
+而我们传给它一个 char
+format formatter("%+5d");
+cout << formatter % x;
+unsigned int n = formatter.size();
+另一个奇怪的问题 ( 有符号字符，无符号字符，转成整型时，会得到不同的值)
+char buffer3[4] = { char(0xaa), char(0x40), char(0x01), char(0x01) };
+unsigned int t = buffer3[i];   // 这里的 t 得到的值 是 0xffffffaa
+char buffer3[4] = { char(0xaa), char(0x40), char(0x01), char(0x01) };
+unsigned int t = unsigned char(buffer3[1]);
+                        
+unsigned int t = buffer3[0];
+t = buffer3[1];                  // 0x40
+t = buffer3[2];                  // 0x01
+unsigned int t = *buffer3;  也是 0xffffffaa
+unsigned int t = char( 0xaa );   也是0xffffffaa
+unsigned int t = unsigned char(0xaa);  是 0x000000aa
+unsigned int t = 0xaa;   是 0x000000aa
+http://stackoverflow.com/questions/9923949/boostformat-form-c-string-or-stdstring
+---------------------------------------------------------------------------
+#include <boost/timer.hpp>
+timer类可以测量时间的流逝，是一个小型的计时器，提供毫秒级别的计时精度和操作函数
+timer();            // 构造函数，计时开始 
+void restart();            // 计时重新开始 
+double elapsed();        // 已经流逝的时间(秒) 
+double elapsed_min(); // 可度量的最小时间(秒)，Win32平台精确度最小能够达到毫秒，Linux精确到微秒。   double elapsed_max();        // 可度量的最大时间(秒)
+---------------------------------------------------------------------------
+BOOST::BIND  产生两种函数对象。？  
+但是回调时，（定义的回调函数），只传递占位符指定的参数。
+占位符，指定了，参数，在回调时的顺序。_1, _2
+
+传参数的，如：boost::thread 接受的函数对象
+传占位符的，如: boost::single2 接受的函数对象
+---------------------------------------------------------------------------
+#include <boost/program_options.hpp>
+boost::program_options （命名空间）
+options_description desc("Allowed options")
+desc.add_options()
+            ("help", "produce help message")
+            ("compression", value<double>(), "set compression level")
+        ;
+//示例：value
+//value< vector<string> >()
+//value<int>(&opt)->default_value(10)   变量地址(&opt)  /  缺省值 10
+//("include-path,I", po::value< vector<string> >(),   两个参数  "--include-path" 和 "-I" 两者都可以使用
+//调用 store, parse_command_line 和 notify 函数，使得 vm 保存了命令行中发现的所有选项
+variables_map vm;
+store(parse_command_line(ac, av, desc), vm);
+notify(vm);  
+//调用
+vm["compression"].as<int>()
+xx.exe --xml cccc -psw 888
+//示例代码
+                boost::program_options::options_description des("输入选项");
+                des.add_options()("xml", boost::program_options::value<std::string>(), "指定要修改的XML")
+                                                 ("psw", boost::program_options::value<std::string>(), "指定的密码");
+                boost::program_options::variables_map vm;
+                boost::program_options::store(boost::program_options::parse_command_line(argc, argv, des), vm);
+                boost::program_options::notify(vm);
+                std::cout << vm["xml"].as<std::string>() << "\n" << vm["psw"].as<std::string>();
+---------------------------------------------------------------------------
+extern std::vector<float> get_vector_float();
+BOOST_FOREACH( float f, get_vector_float() )
+{
+   // 注: get_vector_float() 只会被调用一次
+}
+
+反序循环迭代
+std::list<int> list_int( /*...*/ );
+BOOST_REVERSE_FOREACH( int i, list_int )
+{
+   // 用 i 来做一些操作
+}
+---------------------------------------------------------------------------
+boost库命名规则
+
+libboost_regex-vc71-mt-d-1_34.lib
+lib
+Prefix: except on Microsoft Windows, every Boost library name begins with this string. On Windows, only ordinary static libraries use the lib prefix; import libraries and DLLs do not.6
+boost_regex
+Library name: all boost library filenames begin with boost_.
+-vc71
+Toolset tag: identifies the toolset and version used to build the binary.
+-mt
+Threading tag: indicates that the library was built with multithreading support enabled. Libraries built without multithreading support can be identified by the absence of -mt.
+-d
+ABI tag: encodes details that affect the library's interoperability with other compiled code. For each such feature, a single letter is added to the tag:
+Key
+Use this library when:
+Boost.Build option
+s
+linking statically to the C++ standard library and compiler runtime support libraries.
+runtime-link=static
+g
+using debug versions of the standard and runtime support libraries.
+runtime-debugging=on
+y
+using a special debug build of Python.
+python-debugging=on
+d
+building a debug version of your code.7
+variant=debug
+p
+using the STLPort standard library rather than the default one supplied with your compiler.
+stdlib=stlport
+For example, if you build a debug version of your code for use with debug versions of the static runtime library and the STLPort standard library in “native iostreams” mode, the tag would be:-sgdpn. If none of the above apply, the ABI tag is ommitted.
+-1_34
+Version tag: the full Boost release number, with periods replaced by underscores. For example, version 1.31.1 would be tagged as "-1_31_1".
+.lib
+Extension: determined according to the operating system's usual convention. On most unix-style platforms the extensions are .a and .so for static libraries (archives) and shared libraries, respectively. On Windows, .dll indicates a shared library and .lib indicates a static or import library. Where supported by toolsets on unix variants, a full version extension is added (e.g. ".so.1.34") and a symbolic link to the library file, named without the trailing version number, will also be created.
+---------------------------------------------------------------------------
+LISTENING状态   FTP服务启动后首先处于侦听（LISTENING）状态。
+ESTABLISHED的意思是建立连接。表示两台机器正在通信
+CLOSE_WAIT
+        对方主动关闭连接或者网络异常导致连接中断，这时我方的状态会变成CLOSE_WAIT 此时我方要调用close()来使得连接正确关闭
+4、TIME_WAIT
+    我方主动调用close()断开连接，收到对方确认后状态变为TIME_WAIT。TCP协议规定TIME_WAIT状态会一直持续2MSL(即两倍的分 段最大生存期)，以此来确保旧的连接状态不会对新连接产生影响。处于TIME_WAIT状态的连接占用的资源不会被内核释放，所以作为服务器，在可能的情 况下，尽量不要主动断开连接，以减少TIME_WAIT状态造成的资源浪费。
+        目前有一种避免TIME_WAIT资源浪费的方法，就是关闭socket的LINGER选项。但这种做法是TCP协议不推荐使用的，在某些情况下这个操作可能会带来错误。
+5、SYN_SENT状态
+   SYN_SENT状态表示请求连接，当你要访问其它的计算机的服务时首先要发个同步信号给该端口，此时状态为SYN_SENT，如果连接成功了就变为 ESTABLISHED，此时SYN_SENT状态非常短暂。但如果发现SYN_SENT非常多且在向不同的机器发出，那你的机器可能中了冲击波或震荡波 之类的病毒了。这类病毒为了感染别的计算机，它就要扫描别的计算机，在扫描的过程中对每个要扫描的计算机都要发出了同步请求，这也是出现许多 SYN_SENT的原因
+---------------------------------------------------------------------------
+boost format
+boost::format("This is a string with some %s and %d numbers") %"strings" %42
+返回值是什么？
+---------------------------------------------------------------------------
+ Boost.Process
+http://lists.boost.org/Archives/boost/2010/10/171690.php
+http://www.crystalclearsoftware.com/cgi-bin/boost_wiki/wiki.pl?BoostProcess/ExistingLibraries
+http://svn.boost.org/svn/boost/sandbox/process/libs/process/
+http://pocoproject.org/docs/Poco.Process.html#9431
+http://www.boost.org/doc/libs/1_53_0/doc/html/interprocess.html
+
+---------------------------------------------------------------------------
+boost/lexical_cast.hpp
+
+#include <boost/lexical_cast.hpp>
+std::wstring tm = boost::lexical_cast<std::wstring>( m_mgr.duration() / 1000 );
+include <boost/numeric/conversion/cast.hpp>
+安装的数字类型转换（int转成short）
+由于缺乏对范围的保护，所以数字类型间的转换很容易出错。这对于隐式转换和显式转换(通过 static_cast) 都是一样的。 numeric_cast 可以在转换一个数字类型时检查范围的损失，如果范围不能被保持就抛出一个异常
+short s=numeric_cast<short>(i);
+---------------------------------------------------------------------------
+和函数及函数指针一起使用 bind
+
+// 线程   boost bind绑定其它类的成员函数
+boost::thread t(boost::bind(&boost::asio::io_service::run, &io_service_));
+int f(int a, int b)
+{
+   return a + b;
+}
+
+int g(int a, int b, int c)
+{
+   return a + b + c;
+}
+bind(f, 1, 2) 会产生一个“无元”函数对象，它（函数对象）不需要参数并返回 f(1, 2)。
+同样，bind(g, 1, 2, 3)() 等价于 g(1, 2, 3)。
+上面这两句话，理解的关键是：“函数对象”
+有选择性地只绑定一部分参数也是有可能的。bind(f, _1, 5)(x) 等价于 f(x, 5)，这里，_1 是一个占位符参数，它的含义是“用第一个输入参数取代”
+注意这个 ‘5’ 是怎么传进去的？（被称为bind 持有的参数）
+bind 持有的参数被返回的函数对象拷贝并内部持有
+int i = 5;
+bind(f, i, _1);
+//让函数对象存储一个引用而不是拷贝
+bind(f, ref(i), _1);            // 将传入引用  boost::ref   boost::cref
+bind(f, cref(42), _1);
+理解下面的函数对象意义：
+bind(f, _2, _1)(x, y);                 // f(y, x)
+bind(g, _1, 9, _1)(x);                 // g(x, 9, x)
+bind(g, _3, _3, _3)(x, y, z);          // g(z, z, z)
+bind(g, _1, _1, _1)(x, y, z);          // g(x, x, x)
+和函数及函数指针一起使用 bind
+
+和函数对象一起使用 bind
+
+和成员指针一起使用 bind
+
+为函数组合使用嵌套的 binds
+
+和标准算法一起使用 bind
+
+和 Boost.Function 一起使用 bind
+
+Boost.Function 库包含一组作为 function object wrappers（函数对象包装类）的类模板。在概念上类似一个泛化的 callback（回调）
+使用函数指针的任何地方都是用来推迟一个调用或做一个回调
+传给接口的参数被 Boost.Function 指定为可以转换为目标函数对象的参数
+void func1 (const int& i)
+{ }
+boost::function<void()> f1 = boost::bind (&func1, 1);
+Boost.Function 判断是否可用
+void my_func(int a, int b, boost::function<void()> err_callback = 0) {
+  if (error && err_callback)  // tests err_callback by converting to bool
+     err_callback();
+}
+ You can test if it's empty by calling its empty() method, comparing it to 0, or simply using it in a boolean context
+---------------------------------------------------------------------------
+boost::system::error_code 的用法
+赋值，描述
+ if (ec)  就可判断有无错误，不用  err.value()
+void connect_handler(const boost::system::error_code& error)
+{
+ if (!error)
+ {
+   // Connect succeeded.
+  }
+}
+error->assign( 1, boost::system::get_system_category() );
+Boost.System 是一个定义了四个类的小型库，用以识别错误。 boost::system::error_code 是一个最基本的类，用于代表某个特定操作 的 异常
+来自操作系统或其它底层API的错误通常会以一个表示错误代码的整数来报告。当这些底层API调用被包装在可移植的代码中时，例如在一 个可移植的库 中，有些用户会希望以可移植的方式处理这些错误代码。而其它用户则可能需要得到系统特定的错误代码，这样他们可以处理系统特定的需要。Boost System 库提供了简单、轻量级的 error_code 对象，封装系统特定的错误代码值，此外还通过 error_condition 对象提供了对更为抽象和可移植的错误条件的访问。因为 error_code 对象可以表示来自操作系统以外的错误，包括用户自定义的来源，所以每个 error_code 和 error_condition 都有一个相关联的 error_category
+本库还提供一个异常类 system_error. 它派生自 std::runtime_error, 用于捕获引起异常的问题的底层 error_code，以便不会丢失这些重要信息
+虽然异常是首选的C++缺省的错误代码报告机制，但是使用依赖于底层API的库的用户通常需要通过错误代码参数和/或返回值而不是抛出 异常来报告错误条件。否则，当错误不是意外事件且必须被处理时，程序会变得充满 try/catch 块，不可读并且非常低效。Boost System 库既支持通过异常也支持通过错误代码进行错误报告。
+int main() 
+{ 
+ boost::system::error_code ec; 
+ std::string hostname = boost::asio::ip::host_name(ec); 
+ std::cout << ec.value() << std::endl; 
+ 
+ 异常处理
+std::exception has a member function called what() that returns a const char* that mightexplain what happened. If you want to log it (guessing that LOG_FATAL wraps printf somehow) you can do:
+catch(std::exception const&  ex)
+{
+   LOG_FATAL("Can't init settings. %s", ex.what());
+}
+For boost::exception though you can use boost::get_error_info to find out more about it.
+}
 ---------------------------------------------------------------------------
 http://stackoverflow.com/questions/4586768/how-to-iterate-a-boost-property-tree
 boost property_tree 使用 迭代器，
@@ -11,6 +299,85 @@ http://www.boost.org/doc/libs/1_41_0/libs/spirit/doc/html/spirit/qi/reference/bi
 分析字符串，"\x01\x02"，并转成，对应的 高位序  与  底位序
 http://stackoverflow.com/questions/105252/how-do-i-convert-between-big-endian-and-little-endian-values-in-c
 ---------------------------------------------------------------------------
+【JSON】
+
+Creating JSON arrays in Boost using Property Trees
+
+boost::property_tree::ptree root, arr, elem1, elem2;
+elem1.put<int>("key0", 0);
+elem1.put<bool>("key1", true);
+elem2.put<float>("key2", 2.2f);
+elem2.put<double>("key3", 3.3);
+arr.push_back( std::make_pair("", elem1) );
+arr.push_back( std::make_pair("", elem2) );
+root.put_child("path1.path2", arr);
+boost tree , json , 数据中的类型信息全丢失了，全部保存成字符串类型
+Boost property_tree does not fully support all type information. From the documentation: JSON values are mapped to nodes containing the value. However, all type information is lost; numbers, as well as the literals "null", "true" and "false" are simply mapped to their string form
+JsonCpp / JSON Spirit 
+        json_spirit::Object root, obj;
+        obj.push_back( json_spirit::Pair( "title", "精品录播系统说明") );
+        obj.push_back( json_spirit::Pair( "teacher", "开发部") );
+        obj.push_back( json_spirit::Pair( "school", "高鸿") );
+        root.push_back( json_spirit::Pair( "courseware", obj ) );
+        
+        ofstream of( "d:\\test.json" );
+        json_spirit::write( root, of, json_spirit::pretty_print );
+utf-8 问题
+        json_spirit::wObject root, obj;
+        json_spirit::wArray items;
+        obj.push_back( json_spirit::wPair( L"title", L"精品录播系统说明") );
+        obj.push_back( json_spirit::wPair( L"teacher", L"开发部") );
+        obj.push_back( json_spirit::wPair( L"school", L"高鸿") );
+        obj.push_back( json_spirit::wPair( L"time", L"45分钟") );
+        root.push_back( json_spirit::wPair( L"courseware", obj ) );
+        obj.clear();
+        obj.push_back( json_spirit::wPair( L"title", L"氧气的物理性质" ) );
+        obj.push_back( json_spirit::wPair( L"timestamp", 12 ) );
+        obj.push_back( json_spirit::wPair( L"pic", L"幻灯片1.png" ) );
+        obj.push_back( json_spirit::wPair( L"note", L"大气中，氧气的含量21%。" ) );
+        items.push_back( obj );
+        root.push_back( json_spirit::wPair( L"items", items ) );
+        obj.clear();
+        obj.push_back( json_spirit::wPair( L"vga", L"vga-courseware.mp4" ) );
+        obj.push_back( json_spirit::wPair( L"student", L"student-courseware.mp4" ) );
+        obj.push_back( json_spirit::wPair( L"teacher", L"teacher-courseware.mp4" ) );
+        root.push_back( json_spirit::wPair( L"video", obj ) );
+        root.push_back( json_spirit::wPair( L"template", 3 ) );
+        root.push_back( json_spirit::wPair( L"path", L"" ) );
+        std::wstring rs = json_spirit::write( root );
+        
+        ofstream of( "d:\\test.json" );
+        of << Unicode2UTF8( rs );
+        of.close();
+宽字符问题
+        json_spirit::wObject root, obj;
+        obj.push_back( json_spirit::wPair( L"title", L"精品录播系统说明") );
+        obj.push_back( json_spirit::wPair( L"teacher", L"开发部") );
+        obj.push_back( json_spirit::wPair( L"school", L"高鸿") );
+        root.push_back( json_spirit::wPair( L"courseware", obj ) );
+ enum Output_options{
+pretty_print = 0x01,   // Add whitespace to format the output nicely.
+raw_utf8 = 0x02,      
+               // This prevents non-printable characters from being escapted using "\uNNNN" notation.
+              // Note, this is an extension to the JSON standard. It disables the escaping of
+               // non-printable characters allowing UTF-8 sequences held in 8 bit char strings
+                // to pass through unaltered.
+remove_trailing_zeros = 0x04,
+          // outputs e.g. "1.200000000000000" as "1.2"
+single_line_arrays = 0x08,
+           // pretty printing except that arrays printed on single lines unless they contain
+           // composite elements, i.e. objects or arrays
+always_escape_nonascii = 0x10,
+            // all unicode wide characters are escaped, i.e. outputed as "\uXXXX", even if they are
+           // printable under the current locale, ascii printable chars are not escaped
+                       };
+                       
+                       
+                       spirit - LL 分析器框架，以内联的C++方式直接从 EBNF 语法实现分析器，来自 Joel de Guzman 及其团队
+Boost 的高可扩展性 Spirit 解析器框架。该解析器生成程序遵循 Extended Backus Naur Form (EBNF) 规范并使用 C++ 编写，可以显著缩短开发时间
+Boost.Spirit能使我们轻松地编写出一个简单脚本的语法解析器，
+它巧妙利用了元编程并重载了大量的C++操作符
+使得我们能够在C++里直接使用类似EBNF的语法构造出一个完整的语法解析器
 ---------------------------------------------------------------------------
 json 文件里中的，字符串，转义符（escape character）问题？http://stackoverflow.com/questions/4113967/escaping-character-in-json-string
 std::pair主要的作用是将两个数据组合成一个数据，两个数据可以是同一类型或者不同类型。例如std::pair<int,float> 或者 std：：pair<double,double>等。pair实质上是一个结构体，其主要的两个成员变量是first和second，这两个变量可以直接使用。初始化一个pair可以使用构造函数，也可以使用std::make_pair函数
@@ -270,6 +637,19 @@ recordfileinfo.add( "Tags",  “”);
 有区别吗？  两者一样都是： <Tags/>  空节点问题
 
 
+xml读写
+http://blog.csdn.net/wf520pb/article/details/2644549
+查询属性（attribute）节点  
+ 
+  以上的各种方法都返回元素（element)节点（集），返回属性（attribute），只需要采用相应的方法，在属性名前加一个@符号即可，例如：  
+ 
+   objNodeList = objDoc.SelectNodes(“Company/Department/Employees/Employee/@id”)  
+ 
+   objNodeList = objDoc.SelectNodes(“Company//@id”)  
+最常见的XML数据类型有：Element, Attribute，Comment, Text.
+MSXML2库实现了DOM模型读取XML的模块
+
+
 关于ini文件的注释格式http://blog.163.com/wangzhenbo85@126/blog/static/101363282201011146306646/
 
 [xxx]
@@ -280,6 +660,52 @@ b=b
 c=c
 d=d
 注意： 这样写会把后面的分号及之后的内容都包含进去只能在行头加分号
+
+
+
+Property Tree? 属性树是什么？
+
+Property Tree库提供了一种数据结构，用于保存任意嵌套层数的由值组成的树，每一层以 某个键值来索引。树的每个节点保存了它本身的值，以及一个由该节点的子节点及其键值 组成的有序列表。这种树可以通过类似于路径的方式很方便地访问任一节点，这个路径由 多个键值串接而成.
+这个库还提供了一些分析器和生成器，对应于多种可用于表示一棵树的数据格式， 如 XML, INI 和 JSON
+属性树是多功能的数据结构，尤其适合用于保存配置数据。该树提供了它自己本身、树专用 的接口，而且每个节点都是其子节点的一个STL兼容序列
+struct ptree
+{
+  data_type data;                         // data associated with the node 与节点相关联的数据
+   list< pair<key_type, ptree> > children; // ordered list of named children 命名子节点的有序列表
+};
+key_type 和 data_type 都是可配置的，但通常都是 std::string
+XML Parser XML分析器
+
+本库包含了一个小而快的 RapidXML 分析器(当前版本为 1.13)以提供XML分析的支持。 RapidXML 并不完全支持XML标准；它不能分析DTDs，因此不能实现完全的实体替换
+使用Boost property tree来解析带attribute的xml
+boost property tree的5分钟教程虽然简单明了，可惜使用的xml不够典型。今天由于工作上要读取带属性并且有几层嵌套的xml配置文件，因此研究了一下如何使用
+#include <boost/property_tree/ptree.hpp> 
+#include <boost/property_tree/xml_parser.hpp>
+ptree pt;
+read_xml("debug_settings.xml", pt);
+BOOST_FOREACH(ptree::value_type &v1, pt.get_child("debug"))
+v1.first == "<xmlattr>"
+v1.second.get<string>("name")
+boost::property_tree::read_xml(vm["xml"].as<std::string>(), pt);
+boost tree 的概念：
+boost::property_tree::ptree m_tree;
+pt.get_child("beans.bean")  返回什么？
+属性树类似于(几乎就是)一个值类型为 pair<string, ptree> 的标准容器
+ptree::value_type("pi", ptree("3.14159"))
+pt.push_back(ptree::value_type("pi", ptree("3.14159")));
+float v = pt.get<float>("a.path.to.float.value");
+float v = pt.get("a.path.to.float.value", -1.f);
+boost::optional<float> v = pt.get_optional<float>("a.path.to.float.value");
+要从树中(不是某个子键)获取值，请用 get_value, get_value (缺省值版本)， 和 get_value_optional。它们具有与 get 函数相同的语义，除了一点， 它们不接受 path 参数
+pt.put("a.path.to.float.value", 3.14f);
+类似于 get_value，也有一个 put_value 函数
+自己写的代码：
+std::string tmp = pt.get<std::string>("beans.bean.<xmlattr>.id");
+return m_tree.get<int>("set.listenPort");
+m_tree.put("set.listenPort", port);
+ptree pt;
+pt.put("a.path.to.float.value", 3.14f);
+boost::property_tree::ini_parser::read_ini(file_name, m_tree);  不能是宽字
 ---------------------------------------------------------------------------
 boost optional
  optional库使用"容器"语义，包装了"可能产生无效值"的对象，实现了"未初始化"的概念.
@@ -836,6 +1262,121 @@ tp.contains(t3); // true
 time_period tp2(t1, t1);
 tp2.contains(t1); // false
 
+
+
+
+
+
+
+格里历日期系统
+boost::gregorian
+boost/date_time/gregorian/gregorian_types.hpp
+boost/date_time/gregorian/gregorian.hpp
+boost::gregorian::date 是日期编程的主要接口
+创建 date 的方法包括：从时钟读取当前日期，使用 日期迭代器，以及 日期算法或生成器
+boost::gregorian::date 是保存为一个32位整数类型的
+该类特别被设计为不含虚函数。这样的设计可以进行高效的运算，
+以及处理大量日期时具有高效的内存使用率。
+booost date_time   date 头文件
+#include "boost/date_time/gregorian/gregorian.hpp" //include all types plus i/o
+or
+#include "boost/date_time/gregorian/gregorian_types.hpp" //no i/o just types
+boost date_time time 头文件
+#include "boost/date_time/posix_time/posix_time.hpp" //include all types plus i/o
+or
+#include "boost/date_time/posix_time/posix_time_types.hpp" //no i/o just types
+Gregorian [gr??g??r??n]  现行公历即格里历
+boost 格式化时间字符串
+#include "boost/date_time/posix_time/posix_time.hpp"
+http://stackoverflow.com/questions/5018188/how-to-format-a-datetime-to-string-using-boost
+http://stackoverflow.com/questions/1904317/c-boost-date-with-format-dd-mm-yyyy
+time_facet *facet = new time_facet("%d-%b-%Y %H:%M:%S");
+locale(cout.getloc()
+宽字符版本？
+std::string to_iso_string(ptime)  boost::posix_time::to_iso_wstring
+from_iso_string(std::string)  没有宽字符版本
+std::string FormatTime( void ) {
+  static std::locale loc( std::cout.getloc(), new boost::posix_time::time_facet( "%Y%m%d_%H%M%S" ) );  // 可重重使用这个locale
+  std::basic_stringstream<char> ss;
+  ss.imbue( loc );
+  ss << boost::posix_time::second_clock::local_time();
+  return ss.str();
+}
+ptime d1(neg_infin);
+ptime d2(pos_infin);
+ptime d3(not_a_date_time);
+ptime d4(max_date_time);
+ptime d5(min_date_time);
+boost::system_time
+
+时间点(ptime)
+ptime(date,time_duration)    日期 + 时间偏差  构建
+ptime t1(date(2002,Jan,10),  time_duration(1,2,3));
+ptime t2(date(2002,Jan,10),   hours(1)+nanosec(5));
+ptime(ptime)  拷贝构建
+ptime(special_values sv)  特殊时间点  not-a-date-time, max_date_time, and min_date_time  一些常量
+ptime;  默认构建
+从时钟返回的时间点
+second_clock::local_time() / second_clock::universal_time()
+microsec_clock::local_time() / microsec_clock::universal_time()
+从字符串，time_t，FILETIME 构建 ptime
+时间长度（time duration）
+time_duration(hours, minutes, seconds,  fractional_seconds)
+特殊时间函数(返回long值)
+hours(), minutes(), seconds(), ticks(), fractional_seconds(),
+total_nanoseconds(),total_microseconds(), total_milliseconds(),total_seconds()
+time_duration td = hours(3);
+时间段（Time Period） (开始结束时间)
+date d(2002,Jan,01);
+ptime t1(d, seconds(10)); //10 sec after midnight
+ptime t2(d, hours(10)); //10 hours after midnight
+time_period tp(t1, t2);
+date d(2002,Jan,01);
+ptime t(d, seconds(10)); //10 sec after midnight
+time_period tp(t, hours(3));
+时间迭代器
+date d(2000,Jan,20);
+ptime start(d);
+ptime end = start + hours(1);
+time_iterator titr(start,minutes(15)); //increment by 15 minutes
+while (titr < end) {
+titr ++;
+}
+本地时间 与 UTC 时间                精确度 （秒 、 微秒 (1/1000)）
+A microsecond is equal to 1000 nanoseconds or 1/1,000 milliseconds.
+ptime second_clock::local_time()               ptime t(second_clock::local_time());
+ptime second_clock::universal_time()       ptime t(second_clock::universal_time())
+ptime microsec_clock::local_time()           ptime t(microsec_clock::local_time());
+ptime microsec_clock::universal_time()   ptime t(microsec_clock::universal_time());
+Posix 时间系统
+
+定义一个无调整的、分辨率为纳秒/微秒级的、具有稳定的计算特性的时间系统。如果是纳秒级精度的，则每个 ptime 使用96位的底层存储，而微秒级精度则每个 ptime 使用64位存储(详情请见 构建选项)。该时间系统使用格里历来实现时间表示中的日期部分
+boost/date_time/posix_time/posix_time.hpp
+boost/date_time/posix_time/posix_time_types.hpp
+类 boost::posix_time::ptime 是处理时间点的主要接口
+类 ptime 依赖于 gregorian::date，作为时间点的日期部分的接口
+ptime(date,time_duration)
+ptime(ptime)
+ptime(special_values sv)
+ptime time_from_string(std::string)
+ptime from_iso_string(std::string)
+ptime second_clock::local_time()
+ptime second_clock::universal_time()
+ptime microsec_clock::local_time()
+ptime microsec_clock::universal_time()
+std::string to_simple_string(ptime)   2002-Jan-01 10:00:01.123456789
+std::string to_iso_string(ptime)  20020131T100001,123456789
+std::string to_iso_extended_string(ptime)   2002-01-31T10:00:01,123456789
+获取的 月份总是三个字母的缩写，怎么样获取正确的数字月份呢？
+namespace pt = boost::posix_time;
+pt::ptime now = pt::second_clock::local_time();
+std::stringstream ss;
+ss << static_cast<int>(now.date().month()) << "/" << now.date().day()
+   << "/" << now.date().year();
+std::cout << ss.str() << std::endl;
+世界协调时间(Universal Time Coordinated,UTC),GPS 系统中有两种时间区分，一为UTC，另一为LT（地方时）两者的区别为时区不同，UTC就是0时区的时间，(LocalTime)地方时为本地时间，如北京为早上八点（东八区），UTC时间就为零点，时间比北京时晚八小时，以此计算即可
+boost::posix_time::time_duration 是负责表示时间长度的基本类型
+boost::posix_time::time_period 提供了对两个时间点间的范围的表示法
 
 ---------------------------------------------------------------------------
 

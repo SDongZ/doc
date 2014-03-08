@@ -15,13 +15,77 @@ http://blog.csdn.net/jidanit/article/details/2660098
 xcopy /e /c /y inc $(SolutionDir)..\..\include\CommonLib\   (后面那个反斜杠，必须要有，否则会出错)
 【xcopy-vc-error.png】
 ---------------------------------------------------------------------------
+fatal error C1083: 无法打开预编译头文件:“Release\SystemRestoreTray.pch”: No such file or directory
+今天 碰到的情况是：（不小心从工程中删除了stdafx.cpp, 再重新加入工程，就出这个问题了）
+stdafx.cpp    设置成了使用预编译头文件  改为 生成预编译头文件就可以了
 ---------------------------------------------------------------------------
+1>cl : 命令行 warning D9028: 最小重新生成失败，正在转换为标准生成
+1>  stdafx.cpp
+1>d:\project\trunk\src\commonlib\commonlib\stdafx.cpp : fatal error C1033: 无法打开程序数据库“d:\project\trunk\src\commonlib\commonlib\debug\vc100.idb”
+1>
+正在调试另外一个程序，造成这种情况。
 ---------------------------------------------------------------------------
+高版本VC++包括了SDK所有的头文件、帮助、示例和工具，不需要再安装SDK，低版本如VC++5.0则需要安装SDK
 ---------------------------------------------------------------------------
+#pragma warning (disable : 4996)
+#pragma comment(lib, "xxx")
 ---------------------------------------------------------------------------
+VC使用CRT调试功能来检测内存泄漏【vc-crt-memory-leak.png】
+
+抽象类 未加  虚析构函数  有可能产生内在泄漏。且很严重。
+http://www.pconline.com.cn/pcedu/empolder/gj/vc/0506/648575.html
+{2450} normal block at 0x0A040040, 3110400 bytes long.
+ Data: <                > 99 8D 8C 8B 8B 8B 8C 8B 8C 8C 8D 8C 8D 8E 8E 8E
+_CrtDumpMemoryLeaks(); 函数，在VC output窗口中输出内存泄漏信息。
+_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );这条语句无论程序在什么地方退出都会自动调用 _CrtDumpMemoryLeaks
+_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG )
+花括弧内的数字是内存分配序号，本文例子中是 {45}，{44}，{43}；
+内存块的类型，常用的有三种：normal（普通）、client（客户端）或 CRT（运行时）；本文例子中是：normal block；
+http://www.vckbase.com/index.php/wv/1071.html
+检测内存泄漏的基本工具是调试器和 CRT 调试堆函数。为了使用调试堆函数，必须在要检测内存泄漏和调试的程序中添加下面的语句
+http://mikedoszhang.blogspot.com/2011/10/msvcr100ddllcrtbreakalloc-cxx0017.html
+
+(int*){,,msvcr100d.dll}__crtBreakAlloc
+Two underlines between the "}" and crtBreakAlloc, rather than only one.
+Please use this!
+Then we can set the number in the child of it.
+用十六进制格式表示的内存位置，如：at 0x00441BA0 等
+以字节为单位表示的内存块的大小，如：32 bytes long
+前 16 字节的内容（也是用十六进制格式表示），如：Data: 41 42 等
+#define _CRTDBG_MAP_ALLOC
+如果定义了 _CRTDBG_MAP_ALLOC ，那么在内存分配序号前面还会显示在其中分配泄漏内存的文件名，以及文件名后括号中的数字表示发生泄漏的代码行号
+memory check error at 0x008B8B00 = 0x8F, should be 0xFD.
+看到网上有人说内存泄露，可以查看0x008B8B00这一地址所对应的变量，问达人怎么找到对应的变量？谢谢啦
+1.normal block（普通块）：这是由你的程序分配的内存。
+2.client block（客户块）：这是一种特殊类型的内存块，专门用于 MFC 程序中需要析构函数的对象。MFC new 操作符视具体情况既可以为所创建的对象建立普通块，也可以为之建立客户块。
+3.CRT block（CRT 块）：是由 C RunTime Library 供自己使用而分配的内存块。由 CRT 库自己来管理这些内存的分配与释放，我们一般不会在内存泄漏报告中发现 CRT 内存泄漏，除非程序发生了严重的错误（例如 CRT 库崩溃）
+ 1.free block（空闲块）：已经被释放(free)的内存块。
+ 2.Ignore block（忽略块）：这是程序员显式声明过不要在内存泄漏报告中出现的内存块
 ---------------------------------------------------------------------------
+怎么根据地址找到对应的变量
+Variable Name from Memory address in Visual Studio 2008
+
+How found by the memory address mapping variable name workaro
 ---------------------------------------------------------------------------
+
+正在创建“Debug\IconService.unsuccessfulbuild”，因为已指定“AlwaysCreate”
+ 正在对“Debug\IconService.lastbuildstate”执行 Touch 任务
+http://stackoverflow.com/questions/6054066/vs2010-project-is-not-up-to-date-because-alwayscreate-was-specified
+总结： ( 我碰到的情况是，莫明其妙的 多了个 文件 ：recv.ico)
+1、用vc打开工程
+2、逐个双击左列Solution Explorer中的文件列表，如果有文件不存在，就会有一个警告对话框弹出：
+
+3、工程中移除该文件或者硬盘中添加该文件即可！
 ---------------------------------------------------------------------------
+machineInfo.machine_ip = s2ws( inet_ntoa (*(struct in_addr *)(&pReqInfo->m_ip)) );
+error C3859: 超过了 PCH 的虚拟内存范围；请使用“-Zm112”或更大的命令行选项重新编译
+fatal error C1076: 编译器限制 : 达到内部堆限制；使用 /Zm 指定更高的限制
+1. 找到 工程->属性->c/c++->命令行->其他选项
+2. 输入/Zm100，其中后面的数字可以更大
+
+错误3 error C3859: 超过了 PCH 的虚拟内存范围；请使用“-Zm120”
+
+在工程上单击右键，属性，C/C++，最后一项，命令行，在里面/Zm200或者编译器提示的大小解决.
 ---------------------------------------------------------------------------
 VC调试时如何查看函数返回值
 

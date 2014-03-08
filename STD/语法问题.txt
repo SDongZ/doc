@@ -34,20 +34,170 @@ if语句造成的编译错误【if-error.png】
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
+char t = 0xaa;  ( 0xaa 作为整形常量存在 常量区中, 常量后缀 )
+warning C4309: “初始化”: 截断常量值  解决方法  char t = char( 0xaa );
+        char t = 0xaa;
+        printf( "%02X", t );
+输出结果是：        FFFFFFAA, 原因是 printf 做了类型转换，把 char t 转成了 int
 ---------------------------------------------------------------------------
+release版本为什么std::cout编译不过？
+
+1>ModifyXML.cpp(36): error C2039: “cout”: 不是“std”的成员
+1>ModifyXML.cpp(36): error C2065: “cout”: 未声明的标识符
+解决方法，添加
+#include <iostream>  为什么 DEBUG版本不需要？
 ---------------------------------------------------------------------------
+省略号参数，
+函数参数是以数据结构:栈的形式存取,从右至左入栈
+首先是参数的内存存放格式：参数存放在内存的堆栈段中，在执行函数的时候，从最后一个开始入栈。
+因此栈底高地址，栈顶低地址，举个例子如下：
+void func(int x, float y, char z)
+调用函数的时候，
+实参 char z 先进栈，
+然后是 float y，
+最后是 int x，
+因此在内存中变量的存放次序是 x->y->z，因此，
+从理论上说，
+我们只要探测到任意一个变量的地址，
+并且知道其他变量的类型，通过指针移位运算，
+则总可以顺藤摸瓜找到其他的输入变量
+
+真是乱啊，下面这些函数的关系，一团一团。
+vsnprintf
+wvsprintf(MS)  与  vswprintf(标准) 的区别
+wvsprintf
+vsnprintf和wvsprintf的唯一区别就是wvsprintf函数不能处理浮点格式化字符串
+If you want to emit floating-point values to a wchar_t array, then the "swprintf" function (notice the leading "s") might be a good option
+vfprintf, vfwprintf
+_vsnprintf, _vsnwprintf
+vprintf, vwprintf
+vsprintf, vswprintf
+StringCbVPrintf, StringCbVPrintfEx,
+StringCchVPrintf, or StringCchVPrintfEx
+http://stackoverflow.com/questions/5475046/any-metaprogramming-way-to-generate-overloads-for-various-numbers-of-template-pa/5475163#5475163
+void myClass::do_something(int num_args, ...)
+{
+va_list vl;
+va_start(vl, na);
+for(int i=0; i < na; i++)
+  do_anotherthing(va_arg(vl, type));
+va_end
+}
+va_start 宽字符版本 : 这种想法，是没有理解这个宏的意义是错误的
 ---------------------------------------------------------------------------
+删除 抽象基类指针时，怎么调用调用，调用。。。？
+虚析构函数 的调用方法
+用C++开发的时候，用来做基类的类的析构函数一般都是虚函数
+从“接口”派生的类 其析构函数，怎么调用？
+class CBVideoClip : public IVideoClip
+下面 再删除时，会调用 析构函数吗？
+        IVideoClip * tmp = CreateVideoClip("bmp");
+        
+        delete tmp;  (删除时，调用，那个析构？)
+抽象类是准备被用做基类的，基类必须要有一个虚析构函数   （怎么继承？）
+纯虚函数会产生抽象类
+纯虚析构函数作用
+抽象类，必须声明，析构函数？
+抽象类是准备被用做基类的，基类  （这里是什么意思，去掉更好理解，抽象类那来的基类？） 必须要有一个虚析构函数
+虚析构函数工作的方式是：最底层的派生类的析构函数最先被调用，然后各个基类的析构函数被调用
 ---------------------------------------------------------------------------
+inline可以放在声明处，也可以放在定义处，也可以两个地方都放。但是inline是属于实现部分的内容，不应该出现在接口处，即类的使用者从使用的角度不需要知道是不是inline的。所以，编程规范是inline关键字应该只出现在定义处，而不应该在声明处，所以class body里不应该出现“inline”
 ---------------------------------------------------------------------------
+格式化字符串论文
+http://www.gotw.ca/publications/mill19.htm
+The String Formatters of Manor Farm
 ---------------------------------------------------------------------------
+std::list::pop_front  只是删除第一个元素。不返回
 ---------------------------------------------------------------------------
+32 位无符号范围
+在32位系统中，int的范围是-2147483648~+2147483647
+unsigned int的范围是0~4294967295
 ---------------------------------------------------------------------------
+std::map erase 去掉一个元素
+ITER iter=mapTest.find(key);
+mapTest.erase(iter);
 ---------------------------------------------------------------------------
+字符串初始化
+a)    string s;  //生成一个空字符串s
+b)    string s(str) //拷贝构造函数 生成str的复制品
+c)    string s(str,stridx) //将字符串str内“始于位置stridx”的部分当作字符串的初值
+d)    string s(str,stridx,strlen) //将字符串str内“始于stridx且长度顶多strlen”的部分作为字符串的初值
+e)    string s(cstr) //将C字符串作为s的初值
+f)    string s(chars,chars_len) //将C字符串前chars_len个字符作为字符串s的初值。
+g)    string s(num,c) //生成一个字符串，包含num个c字符
+h)    string s(beg,end) //以区间beg;end(不包含end)内的字符作为字符串s的初值
+i)    s.~string() //销毁所有字符，释放内存
+std::string buffer;
+buffer[0] = char(0xaa); buffer[1] = char(0x44); buffer[2] = char(0x01); buffer[3] = char(addr);
+这样写是不行的，[]不会分配内存。
+std::string 删除字符
+iterator erase( iterator pos );
+iterator erase( iterator start, iterator end );
+basic_string &erase( size_type index = 0, size_type num = npos );
+http://stackoverflow.com/questions/1255366/how-can-i-append-data-to-a-stdstring-in-hex-format
+std::string 赋值二进值   str[0] = 0xaa;
+warning C4309: “=”: 截断常量值  -  意思是整数转为char后，字节数不等。
+改成：buffer[0] = char(0xaa); 就可以了
+std::string buffer = "\0xaa\0x44\0x01"; 这种写法是错误的， \0
+不能直接赋值，需要通过 stringstream 来转。
+std::stringstream ss;
+ss << "your id is " << std::hex << 0x0daffa0;
+const std::string s = ss.str();
+字节无符号  char(0xaa)
+常量后缀（类型指定符UL UL）
+后缀 ｌ 或者 Ｌ 如 １２３４Ｌ 代表一个 ｌｏｎｇ 类型的数，
+加后缀 ｕ 或者 Ｕ 代表是 ｕｎｓｉｇｎｅｄ ｉｎｔ 整型常量，
+加后缀 ｕｌ 或者 ＵＬ 代表 ｕｎｓｉｇｎｅｄ ｌｏｎｇ 类型的常量。
+ｌｏｎｇ ｌｏｎｇ 类型的整型常量书写的时候要加后缀 ｌｌ 或者 ＬＬ，
+如 １２３４ｌｌ 和 １２３４ＬＬ。
+后缀 ｕｌｌ 和 ＵＬＬ 则用于表示 ｕｎｓｉｇｎｅｄ ｌｏｎｇ ｌｏｎｇ 类型的整型常量。
 ---------------------------------------------------------------------------
+
+map 根据值查找
+std::map::equal_range
+第一种方法
+find_if
 ---------------------------------------------------------------------------
+返回引用的函数，未找到合适的值 ，怎么办？ 抛异常啊！！！！！！！
+OSDText & CEffectDlg::GetTextItem( int index ) {
+        int i = -1;
+        std::vector<OSDText> & text_tmp_vt = m_text_map[m_cur_window];
+        OSDText text_tmp;
+        BOOST_FOREACH( text_tmp, text_tmp_vt ) {
+                if( text_tmp.text.length() ) {
+                        if( ++i == index ) {
+                                return text_tmp_vt[i];
+                        }
+                }
+        }
+        static OSDText tmp;  或者一个类定义一个 非法值   OSDText ::Vil(); 返回引用
+        return tmp;
+}
 ---------------------------------------------------------------------------
+操作符优先级问题：
+bgr |= rgb & 0xff << 16; // r  
+http://en.cppreference.com/w/cpp/language/operator_precedence
 ---------------------------------------------------------------------------
+va_list 详解
+
+http://www.cppblog.com/xmoss/archive/2009/07/20/90680.html
+在C++里，我们应该利用C++多态性来实现可变参数的功能，尽量避免用C语言的方式来实现
+编译器对可变参数函数的原型检查不够严格，所以容易引起问题，难于查错，不利于写出高质量的代码。所以应当尽量避免使用C语言方式的可变参数设计，而用C++中更为安全的方式来完美代替之
+界面程序，printf stdout;
+va_list does not know how many arguments there are.
 ---------------------------------------------------------------------------
+warning C4996: '_vsnwprintf': This function or variable may be unsafe. Consider using _vsnwprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details
+_vsnwprintf_s调用内存越界堆栈损坏
+int __cdecl _vsnwprintf_s ( wchar_t *string, size_t sizeInWords, size_t count, const wchar_t *format, va_list ap)  
+{  
+    return _vsnwprintf_s_l(string, sizeInWords, count, format, NULL, ap);  
+}
+sizeOfBuffer
+The size of the buffer for output.  (不是字节数，是字符数)
+count 不包括结束符，一般比sizeOfBuffer少一
+Maximum number of characters to write (not including the terminating null),
+nBuf = _vsnwprintf_s( pszBuffer, 4096, 4095, fmt.c_str(), args );
+事情明了了，第二个参数应该是多少个TCHAR，不是buffer的size
 ---------------------------------------------------------------------------
 标准c数学函数#include <stdlib.h>
  #include <math.h>
@@ -188,6 +338,53 @@ ios::trunc 如文件存在，清除文件内容（默认）
 ios::nocreate 如文件不存在，返回错误
 ios::noreplace 如文件存在，返回错误
 ios::binary 以二进制方式打开文件
+
+本地化都是通过locale和facet这两个类来实现的
+一个流在初始化时将隐式地使用全局locale, 而初始时候的全局locale就是标准的"C"模式locale::classic()
+ locale newloc(""); //在简体中文xp系统上等价于".936"
+ locale& oldloc = locale::global(newloc);   // 设置全局locale
+ locale::global(oldloc);                                // 恢复全局locale
+对应C方法
+setlocale(LC_ALL,"C");
+setlocale(LC_ALL,".936");  也可以用 setlocale(LC_ALL,     "");
+std::locale
+std::basic_stringstream<char> ss
+static std::locale loc( std::cout.getloc(), new boost::posix_time::time_facet( "%Y%m%d_%H%M%S" ) )
+ss.imbue( loc );  //激活
+
+
+标准C++输入输出流与本地化.pdf
+
+BS在设计C++流的时候希望其具备智能化，并且是可扩展的智能化，也就是说，C++的流可以“读懂”一些内容
+每一个locale都有多个facet
+为locale指定具体的策略facet
+ locale 是多种facet 的容器，每种facet 管理与locale 相关的一种功能
+codecvt就是一个标准facet。在C++的设计框架里，这是一个通用的代码转换模板——也就是说，并不是仅仅为宽窄转换制定的
+locale 对象是不可变的，即在它们的生命周期中，它们的内容不可改变
+所包含的 facet 不能进行修改或替换
+locate对象的，可以由下面的7个构造函数之一创建
+locale("chs")
+locale loc("chs", locale::ctype)
+C++甚至希望流能“明白”时间，货币的表示法。而时间和货币的表示方法在世界范围内是不同的，所以，每一个流都有自己 的locale在影响其行为，C++中叫做激活（imbue，也有翻译成浸染）
+http://tadvent.wordpress.com/2009/03/22/locale%E7%9A%84%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/
+locale::ctype 类别，包括以下 facet 模板
+ctype // 字符分类和转换
+codecvt // 字符编码转换         多字节编码和宽字符编码之间进行转换
+locale::collate 类别，包括以下 facet 模板
+collate // 字符串校对
+locale::message 类别，包括以下 facet 模板
+messages // 从信息目录中获得本地化信息
+locale::numeric 类别，包括以下 facet 模板
+numpunct // 有关数字和布尔运算表达式中标点符号及格式信息
+num_get // 代表数字或布尔值的字符串的解析
+num_put   // 代表数字或布尔值的格式化字符串的生成
+locale::monetary 类别，包括以下 facet 模板
+moneypunct // 货币表达式中的标点符号及格式
+money_get   // 代表货币值的字符串的解析
+money_put   // 代表货币值的格式化字符串的生成
+locale::time 类别，包括以下 facet 模板
+time_get // 代表日期和时间的字符串的解析
+time_put // 代表日期和时间的格式化字符串的生成
 ---------------------------------------------------------------------------
 http://blog.csdn.net/winterttr/article/details/4446860
 std::ifstream 读取 ANSI 编码正常，std::wifstream 读取 ANSI 编码错误...默认 locale("C") 不能识别中文字符
@@ -591,6 +788,23 @@ struct _stat64 {
 ---------------------------------------------------------------------------
 下面这样写，竟然没有出错。（怎么避免这种错误？）
 ::_stprintf(szInfo,L"%.1f%%", (double) ( node->upload_size * 1000 / node->file_size ) / 10 ) / 1000;
+
+
+
+这样写是不对的:
+swprintf_s(buff, L"%02d:%02d:%02.1f", h, m, s);
+9.1   -》 9.1
+10.1 -》 10.1
+下面这个写法，才是预想的结果
+swprintf_s(buff, L"%02d:%02d:%04.1f", h, m, s);
+%04.1f
+4 - 表示最少要点 4个字符 （包括小数点）
+.1 - 表示要保留一位小数
+0 - 表示缺少的地方补零
+最少几位
+最多几位 前面要加 -号  %-3d
+#include <boost/format>
+return boost::str(boost::wformat(L"%02d:%02d:%04.1f")%h%m%s);
 ---------------------------------------------------------------------------
 RECT 成员变量，初始化, 无法初始化。
 error C2661: “tagRECT::tagRECT”: 没有重载函数接受 4 个参数

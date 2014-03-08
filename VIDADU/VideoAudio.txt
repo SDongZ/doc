@@ -1,7 +1,51 @@
 流媒体开发
 http://bbs.rosoo.net/forum.php
 
+
 ---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+
+---------------------------------------------------------------------------
+声音的 线路输入 麦克风 区别问题 。line in  与 mic 区别
+音频输入是输入双声道的输入，麦克风接口只能输入单声道
+线路输入和mic输入貌似是输入阻抗不同
+线路输入（LINE IN）：输入阻抗一般10K欧姆以上，输入电平-20db，适合接驳输出阻抗为600欧姆的各种CD、VCD、DVD和调谐器等设备
+话筒输入（MIC IN)：输入阻抗为4.7K欧姆以下，输入电平-35db以下，适合接驳各种话筒
+音频输入是输入已经调制好的音频信号，麦克风接口只能输入未经调制的电信号
+线路输入口可以用作麦克风的输入口，但反过来不行
+麦克风输入口的内部放大器的增益要高于线路输入的部分（麦克风得到的信号电平要比线路输入的电平低）
+Line in和Mic in两个接口，翻译成中文就是“线性输入”和“麦克风输入”
+Line in端口：该端口主要用于连接电吉他、电子琴、合成器等外界设备的音频信号输出的录音，由于这些设备本身输出功率就比较大，因此需要连接到Line in端口录音，当然使用它们录音从某种程度上也可以被称为外部设备的“内录”。一般您使用的声卡越好，Line in里的噪音就会越低，录制效果也会比较好
+Mic in端口：这要是连接麦克风录音使用的。但是这个端口和Line in的区别在于它有前置放大器，换言之麦克风本身输出功率小，因此必须要有一个外部的放大设备来放大音频信号。这个端口就是起到这个作用。有兴趣的朋友可以尝试一下把你的麦克风直接连接到Line in端口录音……没有声音或者声音很小对吧？！道理很简单，麦克风的信号没有被放大，自然效果就不好了
+特别要强调的一点是：外部的电吉他、合成器这类音频设备万不可直接连接到Mic in上录音，因为这种连接轻则录音时信号会严重削顶失真，重则损毁声卡这类硬件设备，切记切记
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+audio uncompressed data ( PCM )
+PCM Wave Format
+
+we store each sample using encoding with 16 bits per sample, in a short array buffer of two bytes
+http://stackoverflow.com/questions/8686355/how-to-change-the-volume-of-a-pcm-data-stream-failed-experiment
+http://www.ypass.net/blog/2010/01/pcm-audio-part-3-basic-audio-effects-volume-control/
+http://www.ypass.net/blog/2010/01/pcm-audio-part-1-what-is-pcm/
+http://stackoverflow.com/questions/2527290/visualizing-volume-of-pcm-samples
+http://stackoverflow.com/questions/535246/sound-pressure-display-for-wave-pcm-data
+you can simply compute the log-energy on some time franmes of the signal:
+ split the signal every N samples, compute 10*log(sum(xn**2)) where x are the N samples, and you get a value in the dB domain
+calculate dB from PCM WAV file
+
+You could do something like find the root mean square
+
+sqrt( (1/n) sum( (x_i)^2 ;i=0,n-1))
+
+of consecutive values (1000, say) and then log-transform it.
+db = 20 * log10(Pa/ref Pa)
+http://stackoverflow.com/questions/2917762/android-pcm-bytes
+ signed 16-bit little-endian mono @ 44.1kHz
 ---------------------------------------------------------------------------
 音视频编码知识
 interleaved  / interlaced  (隔行扫描)

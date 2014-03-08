@@ -1,12 +1,14 @@
 inno 设置程序随机启动
 Name: "{commonstartup}\应用系统桌面客户端"; Filename: "{app}\DgDesk.exe"
 
+---------------------------------------------------------------------------
 inno setup
 安装前运行某个命令
 http://stackoverflow.com/questions/3493416/how-to-run-a-file-before-setup-with-inno-setup
 Exec(ExpandConstant('{win}\notepad.exe'), '', '', SW_SHOW,
     ewWaitUntilTerminated, ResultCode)
-    
+  
+---------------------------------------------------------------------------  
     
     inno script 中的 escape character
 http://www.jrsoftware.org/ishelp/index.php?topic=consts
@@ -17,3 +19,120 @@ To embed a double-quote character inside a quoted value, use two consecutive dou
 [RUN] [ini]
 谁前谁后，
 [RUN] 中的命令，会按顺序执行吗？前后，会等待吗？
+
+
+---------------------------------------------------------------------------
+Filename: "http://localhost:8090"; Flags: shellexec
+
+---------------------------------------------------------------------------
+How To Install Something In System32 With Inno Setup
+
+C:\Windows\System32    GetSystemDirectory(sysDirPath, sizeof(sysDirPath));
+C:\Windows\SysWOW64
+Source: "..\release\diskflt.sys"; DestDir: "{sys}\drivers"  ; Flags: ignoreversion
+Environment.GetFolderPath(Environment.SpecialFolder.SystemX86)
+
+---------------------------------------------------------------------------
+随机启动：
+[Icons]
+Name: "{commonstartup}\My Program"
+安装脚本，参数里添加引号。
+Filename: "{app}\addtofirewall.bat";  Parameters: """{app}\clientservice.exe"" ClientServiceFirewall"
+
+---------------------------------------------------------------------------
+inno 脚本，
+代码段中使用常量   ExpandConstant('{sysuserinfoname}')
+inno setup win32 api
+http://www.innosetup.org/ishelp/topic_scriptdll.htm
+procedure MyDllFunc(hWnd: Integer; lpText, lpCaption: String; uType: Cardinal);
+external 'MyDllFunc@files:MyDll.dll stdcall';
+示例：http://stackoverflow.com/questions/17026867/inno-setup-how-can-i-check-system-specs-before-during-installation
+[Code]
+type
+ // the following mapping of the DWORDLONG data type is wrong; 
+ // the correct type is a 64-bit unsigned integer which is not
+ // available in InnoSetup Pascal Script at this time, so max.
+ // values of the following fields will be limited to quite a
+ // big reserve of 8589,934.592 GB of RAM; I hope enough for
+ // the next versions of Windows :-)
+ DWORDLONG = Int64;
+ TMemoryStatusEx = record
+   dwLength: DWORD;
+   dwMemoryLoad: DWORD;
+   ullTotalPhys: DWORDLONG;
+   ullAvailPhys: DWORDLONG;
+   ullTotalPageFile: DWORDLONG;
+   ullAvailPageFile: DWORDLONG;
+   ullTotalVirtual: DWORDLONG;
+   ullAvailVirtual: DWORDLONG;
+   ullAvailExtendedVirtual: DWORDLONG;
+ end;
+
+function GlobalMemoryStatusEx(var lpBuffer: TMemoryStatusEx): BOOL;
+ external 'GlobalMemoryStatusEx@kernel32.dll stdcall';
+
+function InitializeSetup: Boolean;
+var
+ MemoryStatus: TMemoryStatusEx;
+begin
+ // allow the installation (even if the GlobalMemoryStatusEx call fails)
+ Result := True;
+ // that's the requirement of the function call; you must set the size
+ // of the passed structure in bytes
+ MemoryStatus.dwLength := SizeOf(MemoryStatus);
+   // if the GlobalMemoryStatusEx function call succeed, then...
+ if GlobalMemoryStatusEx(MemoryStatus) then
+ begin
+   MsgBox(Int64ToStr(MemoryStatus.ullTotalPhys), mbInformation, MB_OK);
+
+   // if the amount of actual physical memory in bytes is less than
+   // 1073,741.824 B (1 GB), then show a warning message and according
+   // to user's decision abort the installation
+   if MemoryStatus.ullTotalPhys < 1073741824 then
+   begin
+     if MsgBox('You have less than 1GB of physical memory available. ' +
+       'Are you sure you want to continue with the installation ?', 
+       mbConfirmation, MB_YESNO) = IDNO
+     then
+       Result := False;
+   end;
+ end;
+end;
+
+
+---------------------------------------------------------------------------
+inno 脚本，怎么忽略 SVN库文件夹 ()
+[Files]
+DestDir: {app}; Source: Files\*; Excludes: "*.m,.svn,private"; Flags: recursesubdirs (包含其中所有文件夹)
+
+
+
+---------------------------------------------------------------------------
+安装包脚本修改INI
+[INI]
+Filename: "MyProg.ini"; Section: "InstallSettings"; Flags: uninsdeletesection
+Filename: "MyProg.ini"; Section: "InstallSettings"; Key: "InstallPath"; String: "{app}"
+批处理修改INI文件
+inno 脚本 可以根据文件版本号来，判断是否替换。
+SVN，怎么把版本号添加到生成 的文件里
+I am struggling to find an answer to this online.
+I am using Inno Setup to create an installer for several files. I know InnoSetup can check file versions and wont overwrite with old versions which is brilliant.
+However, I cant figure out how to make tortoise SVN add the "Version" property to its files.
+inno 脚本处理XML文件
+http://stackoverflow.com/questions/11250266/how-to-read-and-write-xml-document-node-values
+inno 复制文件前后的事件
+procedure CurStepChanged(CurStep: TSetupStep);
+You can use this event function to perform your own pre-install and post-install tasks.
+Called with
+CurStep=ssInstall just before the actual installation starts, with
+CurStep=ssPostInstall just after the actual installation finishes, and with
+CurStep=ssDone just before Setup terminates after a successful install.
+[code] 中使用常量 {app} 等等。
+boost ,库,简单使用实例
+要进入情景，才能体会其用法，及写法的简便。
+inno setup 脚本自定义 对话框
+Open the "CodeDlg.iss" script in the "Examples" subdirectory of your Inno Setup directory for an example of how to use pre-built custom wizard pages and event functions. Open the "CodeClasses.iss" script for an example of how to use completely custom wizard pages and controls.
+inno setup 指定所有所有文件 及子目录
+recursesubdirs
+Instructs the compiler or Setup to also search for the Source filename/wildcard in subdirectories under the Source directory
+Source: "*"; Excludes: "*.~*,\Temp\*"; Flags: recursesubdirs

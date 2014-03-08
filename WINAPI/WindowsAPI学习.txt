@@ -1,19 +1,19 @@
 
 
-WinaMain »ñÈ¡´«µİµÄ²ÎÊı
-MFCÒ²¿ÉÒÔÏñ¿ØÖÆÌ¨ÄÇÑù»ñÈ¡ÃüÁîĞĞ²ÎÊı£º
-ÀûÓÃGetCommandLineW()º¯Êı»ñµÃÃüÁîĞĞ²ÎÊı£¬
-ÀûÓÃCommandLineToArgvW()º¯Êı½âÎöÃüÁîĞĞ²ÎÊı
+WinaMain è·å–ä¼ é€’çš„å‚æ•°
+MFCä¹Ÿå¯ä»¥åƒæ§åˆ¶å°é‚£æ ·è·å–å‘½ä»¤è¡Œå‚æ•°ï¼š
+åˆ©ç”¨GetCommandLineW()å‡½æ•°è·å¾—å‘½ä»¤è¡Œå‚æ•°ï¼Œ
+åˆ©ç”¨CommandLineToArgvW()å‡½æ•°è§£æå‘½ä»¤è¡Œå‚æ•°
 LPWSTR *szArglist = NULL;   
 int nArgs = 0;   
 szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);   
 if( NULL != szArglist)   
 {   
-//szArglist¾ÍÊÇ±£´æ²ÎÊıµÄÊı×é   
-//nArgsÊÇÊı×éÖĞ²ÎÊıµÄ¸öÊı   
-//Êı×éµÄµÚÒ»¸öÔªËØ±íÊ¾½ø³ÌµÄpath£¬Ò²¾ÍÊÇszArglist[0]£¬ÆäËûµÄÔªËØÒÀ´ÎÊÇÊäÈë²ÎÊı¡£   
+//szArglistå°±æ˜¯ä¿å­˜å‚æ•°çš„æ•°ç»„   
+//nArgsæ˜¯æ•°ç»„ä¸­å‚æ•°çš„ä¸ªæ•°   
+//æ•°ç»„çš„ç¬¬ä¸€ä¸ªå…ƒç´ è¡¨ç¤ºè¿›ç¨‹çš„pathï¼Œä¹Ÿå°±æ˜¯szArglist[0]ï¼Œå…¶ä»–çš„å…ƒç´ ä¾æ¬¡æ˜¯è¾“å…¥å‚æ•°ã€‚   
 }   
-//È¡µÃ²ÎÊıºó£¬ÊÍ·ÅCommandLineToArgvWÉêÇëµÄ¿Õ¼ä   
+//å–å¾—å‚æ•°åï¼Œé‡Šæ”¾CommandLineToArgvWç”³è¯·çš„ç©ºé—´   
 LocalFree(szArglist); 
 
 
@@ -21,9 +21,28 @@ wchar_t exe_path[MAX_PATH] = {0};
 	::GetModuleFileName(GetModuleHandle(NULL), exe_path, MAX_PATH);
 	::PathRemoveFileSpecW(exe_path);
     
-
 ---------------------------------------------------------------------------
-Windows Event(ÊÂ¼ş)¡¾windows-event.png¡¿
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+bManualReset [in]
+If this parameter is TRUE, the function creates a manual-reset event object, which requires the use of theResetEvent function to set the event state to nonsignaled. If this parameter is FALSE, the function creates an auto-reset event object, and system automatically resets the event state to nonsignaled after a single waiting thread has been released.
+---------------------------------------------------------------------------
+windowsæœåŠ¡ï¼Œæ˜¾ç¤ºæ‰˜ç›˜å›¾æ ‡æ–¹æ³•ï¼Ÿ
+
+1.æœåŠ¡æœ‰å¤šç§ç±»å‹,å…¶ä¸­ä¸€ç§å°±æ˜¯å…è®¸ä¸ç”¨æˆ·äº¤äº’çš„.
+2.MSä¹Ÿæä¾›äº†è®©æœåŠ¡ç¨‹åºåˆ›å»ºæ‰˜ç›˜å›¾æ ‡çš„æ–¹æ³•,ä½†è¦å…ˆåšä¸€å°ç‚¹äº‹æƒ….
+è°ƒç”¨RegisterWindowMessage(_T("TaskbarCreated"));
+æ¥æ³¨å†Œä¸€ä¸ªç³»ç»Ÿå·²ç»å®šä¹‰å¥½çš„æ¶ˆæ¯,å½“ç³»ç»Ÿåˆ›å»ºä»»åŠ¡æ æ—¶ä¼šå‘ç¨‹åºå‘é€è¿™ä¸ªæ¶ˆæ¯,
+ç¨‹åºæ”¶åˆ°è¿™ä¸ªæ¶ˆæ¯çš„æ—¶å€™å†åˆ›å»ºæ‰˜ç›˜å›¾æ ‡å°±èƒ½æ˜¾ç¤ºå‡ºæ¥äº†.
+å¦‚æœæ˜¯åœ¨æœåŠ¡ç¨‹åºä¸€å¼€å§‹å°±åˆ›å»ºæ‰˜ç›˜å›¾æ ‡,è¿™é‡Œé¢ä»»åŠ¡æ è¿˜æ²¡æœ‰åˆ›å»ºå®Œæˆ,å½“ç„¶æ˜¯æ˜¾ç¤ºä¸äº†çš„.
+è¿™ä¸ªåŠæ³•è¿˜æ˜¯åº”ç”¨ç¨‹åºåˆ›å»ºæ‰˜ç›˜å›¾æ ‡ï¼Œè€Œä¸æ˜¯service
+éœ€è¦æ•è·exploreré‡å¯çš„æ¶ˆæ¯ï¼Œç„¶åå†åšä¸€äº›å¤„ç†
+http://www.flatws.cn/article/program/shell/2011-03-02/15201.html
+---------------------------------------------------------------------------
+Windows Event(äº‹ä»¶)ã€windows-event.pngã€‘
 
 http://msdn.microsoft.com/en-us/library/windows/desktop/aa385780(v=vs.85).aspx
 ReportEvent function
@@ -32,8 +51,8 @@ Windows event log backends (boost.log lib)
 ---------------------------------------------------------------------------
 Handler Tracking
 ---------------------------------------------------------------------------
-¡¾DirectSound.png¡¿
-window ÉùÒô×é¼ş
+ã€DirectSound.pngã€‘
+window å£°éŸ³ç»„ä»¶
 http://mark-dot-net.blogspot.com/2008/06/what-up-with-wasapi.html
 http://stackoverflow.com/questions/4019733/which-api-should-i-use-for-playing-audio-on-windows
 1991 WinMM.dll/mmsys.dll PlaySound
@@ -45,7 +64,7 @@ http://stackoverflow.com/questions/4019733/which-api-should-i-use-for-playing-au
 2005 WASAPI (which is used by XAudio2 - as suggested by @Han)
 2007 XAudio2
 ---------------------------------------------------------------------------
-¡¾desktop-icon-48x48.png¡¿³ÌĞò×ÀÃæÍ¼±ê£¬ĞéµÄÔ­ÒòÊÇ£¬Ã»ÓĞ 48x48µÄÍ¼¡£
+ã€desktop-icon-48x48.pngã€‘ç¨‹åºæ¡Œé¢å›¾æ ‡ï¼Œè™šçš„åŸå› æ˜¯ï¼Œæ²¡æœ‰ 48x48çš„å›¾ã€‚
 ---------------------------------------------------------------------------
 DragQueryFile
 ---------------------------------------------------------------------------
@@ -65,13 +84,107 @@ http://stackoverflow.com/questions/118547/creating-a-zip-file-on-windows-xp-2003
 http://www.microsoft-questions.com/microsoft/Platform-SDK-Shell/31056644/using-shfileoperation-to-copy-files-to-a-zip-file.aspx
 Windows 7 - Using SHFileOperation to copy files to a zip file
 ---------------------------------------------------------------------------
+WIN7ä¸‹copyfileè¿”å›æˆåŠŸä½†æ˜¯æ–‡ä»¶å´æ²¡æœ‰copyåˆ°ç›¸åº”çš„ç›®å½•
+
+CopyFile(drive_src_path, L"C:\\Windows\\System32\\drivers\\test.sys", FALSE);
+ç›´æ¥å¤åˆ¶åˆ°
+C:\Windows\SysWOW64 å»äº†
+å¦‚æœå¤åˆ¶åˆ° system32 è¿™æ ·çš„ç›®å½•ï¼Œç”±äº64ã€32ä½çš„åŸå› å¯èƒ½ä¼šè¢«å¤åˆ¶åˆ°syswow64ä¸­å»
+å› ä¸ºæˆ‘ä»¬çš„ç¨‹åºæ˜¯ 32-Bit çš„ï¼Œå½“å®ƒè°ƒç”¨ CopyFile(...) å’Œ access(...) å‡½æ•°æ—¶ï¼Œä¼ ç»™ä»–ä»¬çš„å‚æ•°é‡Œæœ‰ System32çš„è·¯å¾„ï¼Œå°±ä¼šè¢« è½¬å‘åˆ° SysWoW64 ç›®å½•ä¸‹
+I'm trying to copy a file to C:\windows\system32 by calling CopyFileA - debugging shows that indeed the string "C:\windows\system32\filename" is sent to CopyFileA, but my file is copied to "C:\windows\system32\sysWOW64\filename" instead. Does anyone know why does that happen?
+On 64bit Windows, Windows does filesystem redirection for 32bit processes. To disable, callWow64DisableWow64FsRedirection
+CopyFile(...)å¯ä»¥æ­£ç¡®åˆ¶æ–‡ä»¶åˆ°ç£ç›˜çš„å…¶ä»–ç›®å½•ï¼Œä½†æ˜¯å°±æ˜¯ä¸èƒ½å§æ–‡ä»¶å¤åˆ¶åˆ°System32ç›®å½•ä¸‹ï¼Œè€Œä¸”è°ƒç”¨ç»“æŸåå®ƒè¿˜å‘Šè¯‰æˆ‘TRUE! å®åœ¨æ˜¯æƒ³ä¸é€šäº†ï¼ŒGä¸€äº†ä¸€æŠŠï¼Œå‘ç°äº†ä¸€äº›è››ä¸é©¬è¿¹: File System Redirector
+File System Redirector
+
+indows Server 2003 and Windows XP:  The Sysnative alias was added starting with Windows Vista
+åœ¨64ä¸ºç³»ç»Ÿä¸‹ï¼Œ32ä½ç¨‹åºå¦‚æœè¦è®¿é—®system32ï¼Œä¼šè¢«wow64è‡ªåŠ¨é‡å®šå‘åˆ°syswow64æ–‡ä»¶å¤¹ä¸­ã€‚
+å¦‚æœä¸€å®šè¦ç”¨32ä½ç¨‹åºè®¿é—®system32æ–‡ä»¶å¤¹ï¼Œè¯·ç”¨c:\windows\sysnative
 ---------------------------------------------------------------------------
+string to wstring
+What is the difference between WideCharToMultiByte() and wcstombs() When to use which one?
 ---------------------------------------------------------------------------
+VCè°ƒè¯•æ—¶è¾“å‡º
+åšå®šçš„ Win32 å¼€å‘äººå‘˜å¯èƒ½å¯¹ OutputDebugString() API å‡½æ•°æ¯”è¾ƒç†Ÿæ‚‰ï¼Œå®ƒå¯ä»¥ä½¿ä½ çš„ç¨‹åºå’Œè°ƒè¯•å™¨è¿›è¡Œäº¤è°ˆã€‚å®ƒè¦æ¯”åˆ›å»ºæ—¥å¿—æ–‡ä»¶å®¹æ˜“ï¼Œè€Œä¸”æ‰€æœ‰â€œçœŸæ­£çš„â€è°ƒè¯•å™¨éƒ½èƒ½ä½¿ç”¨å®ƒã€‚åº”ç”¨ç¨‹åºå’Œè°ƒè¯•å™¨äº¤è°ˆçš„æœºåˆ¶ç›¸å½“ç®€å•ï¼Œè€Œæœ¬æ–‡å°†æ­ç¤ºæ•´ä»¶äº‹æƒ…æ˜¯å¦‚ä½•å·¥ä½œçš„
 ---------------------------------------------------------------------------
+
+PathCchRemoveFileSpec function
+å»æ‰æ–‡ä»¶åå’Œæœ€åçš„ â€˜\\â€™
+
+This function differs from PathRemoveFileSpec in that it accepts paths with "\\", "\\?\" and "\\?\UNC\" prefixes.
 ---------------------------------------------------------------------------
+how to get process handle from process id
+
+OpenProcess(PROCESS_ALL_ACCESS, TRUE, procId);
+_In_  DWORD dwProcessId
+
+#include <TlHelp32.h>
+#include <boost/algorithm/string.hpp>
+bool process_is_running_by_name(const std::wstring & pname) {
+        bool bRunning = false;
+    HANDLE hSnapShot = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS,0 );
+    PROCESSENTRY32* processInfo = new PROCESSENTRY32;
+    processInfo->dwSize = sizeof( PROCESSENTRY32 );
+    int index = 0;
+    while(Process32Next(hSnapShot,processInfo)!=FALSE) {
+                //å¿½ç•¥å¤§å°å†™æ¯”è¾ƒ
+                if( boost::iequals(pname, processInfo->szExeFile) ) {
+                //if ( !pname.compare(processInfo->szExeFile) ){
+                        bRunning = true;
+        }
+    }
+    CloseHandle(hSnapShot);
+    delete processInfo;
+        return bRunning;
+}
 ---------------------------------------------------------------------------
+æšä¸¾ç³»ç»Ÿå­—ä½“
+EnumFonts
+EnumFontFamilies
+EnumFontFamiliesEx
+To enumerate all the fonts in a device context (HDC ä¸­çš„æ‰€æœ‰å­—ä½“)
+enumerate each font in each typeface ()
+TrueType fonts are organized around a typeface name (for example, Courier New) and style names (for example, italic, bold, and extra-bold)
+The system can simulate([?s?mj??let] æ¨¡æ‹Ÿ) bold, italic, underline, and strikeout attributes for GDI-supplied raster fonts, but not for device-supplied fonts.
+
+http://www.ucancode.net/faq/Visual-C-Font-Combo-box-with-sample-text-CComboBox.htm
+RASTER_FONTTYPE ([ËˆrÃ¦stÉš] å…‰æ …æ‰«æå½±åƒ) and TRUETYPE_FONTTYPE
+
+BOOL CALLBACK EnumFamCallBack(LPLOGFONT lplf, LPNEWTEXTMETRIC lpntm, DWORD FontType, LPVOID aFontCount)
+HDC å¯¹åº” å­—ä½“åˆ—è¡¨
+typeface name
 ---------------------------------------------------------------------------
+#include <shlwapi.h>
+PathFileExists  
 ---------------------------------------------------------------------------
+Is there a fairly simple way to redirect stdout and stderr to a text control or other visible place. Ideally, this would not require any recompiles of the third party code.
+http://stackoverflow.com/questions/573724/how-can-i-redirect-stdout-to-some-visible-display-in-a-windows-application
+int main ()
+{
+ freopen ("myfile.txt","w",stdout);
+ printf ("This sentence is redirected to a file.");
+ fclose (stdout);
+ return 0;
+}
+æˆ–è€… åƒä¸‹é¢è¿™æ ·è°ƒç”¨ç¨‹åº
+a.exe > stdout.txt 2> stderr.txt
+SetStdHandle function
+http://blog.csdn.net/yangjiudan/article/details/697517
+GetStdHandle å‡½æ•°æä¾›ä¸€ä¸ªè·å¾—è¿›ç¨‹ç›¸å…³çš„æ ‡å‡†è¾“å…¥ï¼ˆ STDIN ï¼‰ã€æ ‡å‡†è¾“å‡ºï¼ˆ STDOUT ï¼‰å’Œæ ‡å‡†é”™è¯¯ï¼ˆSTDERR ï¼‰å¥æŸ„ã€‚åœ¨æ§åˆ¶å°åˆ›å»ºè¿‡ç¨‹ä¸­ï¼Œç³»ç»Ÿåˆ›å»ºè¿™äº›å¥æŸ„ã€‚æœ€åˆçš„ STDIN æ˜¯ä¸€ä¸ªæŒ‡å‘æ§åˆ¶å°è¾“å…¥ç¼“å†²åŒºçš„å¥æŸ„ï¼Œ STDOUT å’Œ STDERR æ˜¯æ§åˆ¶å°æ´»åŠ¨å±å¹•ç¼“å†²åŒºçš„å¥æŸ„
+ä¸€ä¸ªè¿›ç¨‹å¯ä»¥ä½¿ç”¨ AttachConsole å‡½æ•°æ¥é™„ç€åˆ°ä¸€ä¸ªæ§åˆ¶å°ä¸Šï¼Œä¸€ä¸ªè¿›ç¨‹åªèƒ½é™„ç€ä¸€ä¸ªæ§åˆ¶å°
+ä¸€èˆ¬æ¥è®²GUIç¨‹åºä¸èƒ½ä½¿ç”¨STDINå’ŒSTDOUTï¼Œä½†æ˜¯æœ‰æ—¶æœ‰äº›ç‰¹æ®Šéœ€è¦ï¼Œå¸Œæœ›GUIç¨‹åºä¹Ÿæœ‰æ§åˆ¶å°ï¼Œå¦‚ï¼šä¸€ä¸ªç¨‹åºï¼Œæ—¢å¯ä»¥ä»¥GUIæ–¹å¼è¿è¡Œï¼Œåˆå¯ä»¥å¦‚æœç”¨æˆ·åœ¨æ§åˆ¶å°é‡Œæ‰“ç¨‹åºåçš„è¯ï¼Œå°±ä»¥æ§åˆ¶å°ç¨‹åºçš„æ–¹å¼è¿è¡Œ
+é€šè¿‡AllocConsole() å’Œ AttachConsole() è¿™ä¸¤ä¸ªWIN APIå°±èƒ½å®ç°ä¸Šé¢çš„éœ€æ±‚ã€‚è¿™ä¸¤ä¸ªAPIåˆ†åˆ«æ˜¯åœ¨GUIï¼ˆMFCï¼‰ç¨‹åºä¸­åˆ†é…ä¸€ä¸ªæ§åˆ¶å°å’Œå°†ç¨‹åºé™„ç€åˆ°ä¸€ä¸ªæ§åˆ¶å°ä¸Š
+http://stackoverflow.com/questions/14990176/attachconsole-from-a-gui-app-when-the-console-is-closed
+http://stackoverflow.com/questions/11959643/why-does-closing-a-console-that-was-started-with-allocconsole-cause-my-whole-app
+http://bobobobo.wordpress.com/2009/03/01/how-to-attach-a-console-to-your-gui-app-in-c/
+        AllocConsole() ;
+        AttachConsole( GetCurrentProcessId() ) ;
+        freopen( "CON", "w", stdout ) ;
+        printf("HELLO!!! I AM THE CONSOLE!" ) ;
+void CRecMgr::AttachConsole( void ) {
+        ::AllocConsole();
+        ::AttachConsole( ::GetCurrentProcessId() );
+        freopen( "CON", "w", stdout );
+}
 ---------------------------------------------------------------------------
 What is a SAFEARRAY and how do you get information from it?
 
@@ -81,40 +194,40 @@ http://www.roblocher.com/whitepapers/oletypes.aspx
 you should instead either use the API functions, or much better yet use the helper class CComSafeArray
 CComSafeArray is a template class; you provide the type of an element as one of the template parameters.  (The example code in the MSDN documentation forCComSafeArray is lousy, if you ask me.  If you can't figure it out, check out the  ATLSafeArray sample.)
 http://blog.csdn.net/tangaowen/article/details/6554640
-SAFEARRAY ºÍ CComSafeArray  µÄÊ¹ÓÃ
-SafeArrayAccessData    ½«Ëø¼ÆÊıÆ÷¼Ó1£¬²¢·µ»ØÊı×éÊı¾İµÄÖ¸Õë¡£
-SafeArrayAllocData    ¸ù¾İÓÉSafeArrayallocDescriptor ´´½¨µÄÃèÊö·ûºÅÎªÒ»°²È«Êı×é·ÖÅäÄÚ´æ¡£
-SafeArrayAllocDiscriptor(Ex)    Îª°²È«Êı×éÃèÊö·û·ÖÅäÄÚ´æ¡£
-SafeArrayCopy    ¸´ÖÆÒÑÓĞµÄÊı×é¡£
-SafeArrayCopyData    ÔÚÊÍ·ÅÄ¿±ê×ÊÔ´ºó½«Ô´Êı×é¸´ÖÆµ½Ä¿±êÊı×éÖĞ¡£
-SafeArrayCreate(Ex)    ½¨Á¢ĞÂµÄÊı×éÃèÊö·û¡£
-SafeArrayCreateVector(Ex)    ½¨Á¢Ò»¸öÏÂ±êÎª0µÄÒ»Î¬Êı×é¡£
-SafeArrayDestroy    ³·ÏûÒ»¸öÊı×éÃèÊö·û¡£
-SafeArrayDestroyData    ÊÍ·Å°²È«Êı×éÖĞµÄÊı¾İÔªËØËùÊ¹ÓÃµÄÄÚ´æ¡£
-SafeArrayDestroyDescriptor    ÊÍ·Å°²È«Êı×éÃèÊö·ûËùÊ¹ÓÃµÄÄÚ´æ¡£
-SafeArrayGetDim    ·µ»ØÊı×éµÄÎ¬Êı¡£
-SafeArrayGetElement    »ñµÃÊı×éµÄÄ³Ò»ÔªËØ¡£
-SafeArrayGetElemsize    ·µ»ØÊı×éÄ³Ò»ÔªËØµÄ´óĞ¡¡£
-SafeArrayGetLBound    »ñµÃÊı×é¸ø¶¨Î¬µÄÏÂÏŞ¡£
-SafeArrayGetUBound    »ñµÃÊı×é¸ø¶¨Î¬µÄÉÏÏŞ¡£
-SafeArrayLock    ½«Êı×éËø¼ÆÊıÆ÷¼Ó1¡£
-SafeArrayPtrOfIndex    ·µ»ØÒ»Ö¸ÏòÊı×éÔªËØµÄÖ¸Õë¡£
-SafeArrayPutElement    ½«Ò»ÔªËØ¸³¸øÊı×é¡£
-SafeArrayRedim    ¸ü¸ÄÊı×é´óĞ¡¡£
-SafeArrayUnaccessData    ÊÍ·ÅÒ»¸öÊı×éÊı¾İÖ¸Õë²¢½«Ëø¼ÆÊıÆ÷¼õ1¡£
-SafeArrayUnlock    ½«Ëø¼ÆÊıÆ÷¼õ1¡£
-SafeArraySetRecordInfo    ÉèÖÃ´æ´¢ÔÚ¸ø¶¨°²È«Êı×éÖĞµÄRecordInfo¡£
-SafeArrayGetRecordInfo    È¡³ö´æ´¢ÔÚ¸ø¶¨°²È«Êı×éÖĞµÄRecordInfo¡£
-SafeArraySetIID    ÉèÖÃ¸ø¶¨°²È«Êı×é½Ó¿ÚµÄGUIDÖµ¡£
-SafeArrayGetIID    È¡³ö¸ø¶¨°²È«Êı×é½Ó¿ÚµÄGUIDÖµ¡£
-SafeArrayGetVartype    ·µ»Ø´æ´¢ÓÚ¸ø¶¨°²È«Êı×éÖĞµÄÀàĞÍ¡£
+SAFEARRAY å’Œ CComSafeArray  çš„ä½¿ç”¨
+SafeArrayAccessData    å°†é”è®¡æ•°å™¨åŠ 1ï¼Œå¹¶è¿”å›æ•°ç»„æ•°æ®çš„æŒ‡é’ˆã€‚
+SafeArrayAllocData    æ ¹æ®ç”±SafeArrayallocDescriptor åˆ›å»ºçš„æè¿°ç¬¦å·ä¸ºä¸€å®‰å…¨æ•°ç»„åˆ†é…å†…å­˜ã€‚
+SafeArrayAllocDiscriptor(Ex)    ä¸ºå®‰å…¨æ•°ç»„æè¿°ç¬¦åˆ†é…å†…å­˜ã€‚
+SafeArrayCopy    å¤åˆ¶å·²æœ‰çš„æ•°ç»„ã€‚
+SafeArrayCopyData    åœ¨é‡Šæ”¾ç›®æ ‡èµ„æºåå°†æºæ•°ç»„å¤åˆ¶åˆ°ç›®æ ‡æ•°ç»„ä¸­ã€‚
+SafeArrayCreate(Ex)    å»ºç«‹æ–°çš„æ•°ç»„æè¿°ç¬¦ã€‚
+SafeArrayCreateVector(Ex)    å»ºç«‹ä¸€ä¸ªä¸‹æ ‡ä¸º0çš„ä¸€ç»´æ•°ç»„ã€‚
+SafeArrayDestroy    æ’¤æ¶ˆä¸€ä¸ªæ•°ç»„æè¿°ç¬¦ã€‚
+SafeArrayDestroyData    é‡Šæ”¾å®‰å…¨æ•°ç»„ä¸­çš„æ•°æ®å…ƒç´ æ‰€ä½¿ç”¨çš„å†…å­˜ã€‚
+SafeArrayDestroyDescriptor    é‡Šæ”¾å®‰å…¨æ•°ç»„æè¿°ç¬¦æ‰€ä½¿ç”¨çš„å†…å­˜ã€‚
+SafeArrayGetDim    è¿”å›æ•°ç»„çš„ç»´æ•°ã€‚
+SafeArrayGetElement    è·å¾—æ•°ç»„çš„æŸä¸€å…ƒç´ ã€‚
+SafeArrayGetElemsize    è¿”å›æ•°ç»„æŸä¸€å…ƒç´ çš„å¤§å°ã€‚
+SafeArrayGetLBound    è·å¾—æ•°ç»„ç»™å®šç»´çš„ä¸‹é™ã€‚
+SafeArrayGetUBound    è·å¾—æ•°ç»„ç»™å®šç»´çš„ä¸Šé™ã€‚
+SafeArrayLock    å°†æ•°ç»„é”è®¡æ•°å™¨åŠ 1ã€‚
+SafeArrayPtrOfIndex    è¿”å›ä¸€æŒ‡å‘æ•°ç»„å…ƒç´ çš„æŒ‡é’ˆã€‚
+SafeArrayPutElement    å°†ä¸€å…ƒç´ èµ‹ç»™æ•°ç»„ã€‚
+SafeArrayRedim    æ›´æ”¹æ•°ç»„å¤§å°ã€‚
+SafeArrayUnaccessData    é‡Šæ”¾ä¸€ä¸ªæ•°ç»„æ•°æ®æŒ‡é’ˆå¹¶å°†é”è®¡æ•°å™¨å‡1ã€‚
+SafeArrayUnlock    å°†é”è®¡æ•°å™¨å‡1ã€‚
+SafeArraySetRecordInfo    è®¾ç½®å­˜å‚¨åœ¨ç»™å®šå®‰å…¨æ•°ç»„ä¸­çš„RecordInfoã€‚
+SafeArrayGetRecordInfo    å–å‡ºå­˜å‚¨åœ¨ç»™å®šå®‰å…¨æ•°ç»„ä¸­çš„RecordInfoã€‚
+SafeArraySetIID    è®¾ç½®ç»™å®šå®‰å…¨æ•°ç»„æ¥å£çš„GUIDå€¼ã€‚
+SafeArrayGetIID    å–å‡ºç»™å®šå®‰å…¨æ•°ç»„æ¥å£çš„GUIDå€¼ã€‚
+SafeArrayGetVartype    è¿”å›å­˜å‚¨äºç»™å®šå®‰å…¨æ•°ç»„ä¸­çš„ç±»å‹ã€‚
 http://msdn.microsoft.com/en-us/library/ms221482.aspx
 typedef struct FARSTRUCT tagSAFEARRAY {
-  unsigned short cDims;       // Count of dimensions in this array. // Êı×éµÄÎ¬Êı
+  unsigned short cDims;       // Count of dimensions in this array. // æ•°ç»„çš„ç»´æ•°
   unsigned short fFeatures;   // Flags used by the SafeArray
                        // routines documented below.
 #if defined(WIN32)
-  unsigned long cbElements;   // Size of an element of the array. Ã¿¸öÔªËØµÄ´óĞ¡
+  unsigned long cbElements;   // Size of an element of the array. æ¯ä¸ªå…ƒç´ çš„å¤§å°
                        // Does not include size of
                        // pointed-to data.
   unsigned long cLocks;      // Number of times the array has been 
@@ -125,16 +238,16 @@ typedef struct FARSTRUCT tagSAFEARRAY {
   unsigned long handle;      // Used on Macintosh only.
 #endif
   void HUGEP* pvData;             // Pointer to the data.
-  SAFEARRAYBOUND rgsabound[1];      // One bound for each dimension. ÉÏÏÂ½çÖ¸ÕëÊı×é
+  SAFEARRAYBOUND rgsabound[1];      // One bound for each dimension. ä¸Šä¸‹ç•ŒæŒ‡é’ˆæ•°ç»„
 } SAFEARRAY;
  typedef  struct   tagsSAFEARRAYBOUND
 {
-           ULONG        cElements;  //µ±Ç°Î¬¶ÈµÄ ÔªËØ¸öÊı
-       LONG           lLbounds;//  ÏÂ½ç£¬¿ªÊ¼µÄÏÂ±í£¬±ÈÈç0
+           ULONG        cElements;  //å½“å‰ç»´åº¦çš„ å…ƒç´ ä¸ªæ•°
+       LONG           lLbounds;//  ä¸‹ç•Œï¼Œå¼€å§‹çš„ä¸‹è¡¨ï¼Œæ¯”å¦‚0
 } SAFEARRAYBOUND;
 #include "atlsafe.h"
-CComSafeArrayÊÇATL¶ÔSAFEARRAY½á¹¹ÌåµÄ°ü×°£¬ÊÇÒ»¸öÄ£°åÀà¡£ SAFEARRAYÖ»ÄÜ¹»±£´æVARIANTÄÚµÄÄÇĞ©Êı¾İÒ»¸ö×Ó¼¯
-Detach½«ËùÓĞÈ¨´ÓCComSafeArray×ªÒÆµ½SAFEARRAY,¶øAttachÕıºÃÏà·´£¬AttachÊÇ½«ËùÒÔÈ¨´ÓSAFEARRAY×ªÒÆµ½CComSafeArray,Õâ¸ö¸úCComVariantÏàËÆ
+CComSafeArrayæ˜¯ATLå¯¹SAFEARRAYç»“æ„ä½“çš„åŒ…è£…ï¼Œæ˜¯ä¸€ä¸ªæ¨¡æ¿ç±»ã€‚ SAFEARRAYåªèƒ½å¤Ÿä¿å­˜VARIANTå†…çš„é‚£äº›æ•°æ®ä¸€ä¸ªå­é›†
+Detachå°†æ‰€æœ‰æƒä»CComSafeArrayè½¬ç§»åˆ°SAFEARRAY,è€ŒAttachæ­£å¥½ç›¸åï¼ŒAttachæ˜¯å°†æ‰€ä»¥æƒä»SAFEARRAYè½¬ç§»åˆ°CComSafeArray,è¿™ä¸ªè·ŸCComVariantç›¸ä¼¼
 atlcomcli.h  CComVariant
 bool GetMsftDiscDrive( std::vector<std::wstring> & drives ) {
         HRESULT        hr = S_OK;
@@ -171,7 +284,7 @@ DWORD WINAPI QueryDosDevice(
 The device name cannot have a trailing backslash; for example
   _In_opt_  LPCTSTR lpDeviceName,   for example, use "C:", not "C:\"
   _Out_     LPTSTR lpTargetPath,
-szName[MAX_PATH];            // ´æ´¢ MS-DOS Éè±¸ĞÅÏ¢
+szName[MAX_PATH];            // å­˜å‚¨ MS-DOS è®¾å¤‡ä¿¡æ¯
   _In_      DWORD ucchMax
 The maximum number of TCHARs that can be stored into the buffer pointed to by lpTargetPath
 );
@@ -193,8 +306,8 @@ the return value is the number of TCHARs stored into the buffer pointed to by lp
         }
         if( !cd_letters.size() ) return BURN_ERROR_NORECORDER;
 ::QueryDosDevice(drive_le, dos_device_name, MAX_PATH);
-ÔÚWindows NTÖĞ£¬DOSÉè±¸Ãû»áÓ³Éä³ÉNTÏµÍ³Éè±¸Ãû
-»ñÈ¡µÄ MS-DOS Éè±¸ÃûÎª£º
+åœ¨Windows NTä¸­ï¼ŒDOSè®¾å¤‡åä¼šæ˜ å°„æˆNTç³»ç»Ÿè®¾å¤‡å
+è·å–çš„ MS-DOS è®¾å¤‡åä¸ºï¼š
 B:  \Device\RAMDriv
 C:  \Device\HarddiskVolume2
 D:  \Device\HarddiskVolume1
@@ -202,8 +315,8 @@ E:  \Device\HarddiskVolume3
 F:  \Device\CdRom0
 X:  \Device\EncryptedDiskVolumeX
 BUFSIZE  This size does not include the terminating null character
-GetLogicalDriveStrings(BUFSIZE (×Ö·ûÊı£¬²»°üº¬), szDevice);
-×¢ÒâÕâÀï£¬-1 £¬ ÊÇÕıÈ·µÄĞ´·¨£¬£¨Àí½âThis size does not include the terminating null character£©
+GetLogicalDriveStrings(BUFSIZE (å­—ç¬¦æ•°ï¼Œä¸åŒ…å«), szDevice);
+æ³¨æ„è¿™é‡Œï¼Œ-1 ï¼Œ æ˜¯æ­£ç¡®çš„å†™æ³•ï¼Œï¼ˆç†è§£This size does not include the terminating null characterï¼‰
 GetLogicalDriveStrings(BUFSIZE-1, szTemp)
 szDevice
 A pointer to a buffer that receives a series of null-terminated strings, one for each valid drive in the system, plus with an additional null character. Each string is a device name
@@ -215,7 +328,7 @@ http://msdn.microsoft.com/en-us/library/dd375731(v=vs.85).aspx
 LowLevelKeyboardProc
 SetWindowsHookEx
 KBDLLHOOKSTRUCT
-scan code -> character value -> virtual-key code(Çø·Ö×óÓÒÊÖµÄÖµ  Óë  ²»Çø·Ö×óÓÒÊÖµÄÖµ)
+scan code -> character value -> virtual-key code(åŒºåˆ†å·¦å³æ‰‹çš„å€¼  ä¸  ä¸åŒºåˆ†å·¦å³æ‰‹çš„å€¼)
 UINT WINAPI MapVirtualKey(
  _In_  UINT uCode,
  _In_  UINT uMapType
@@ -223,7 +336,7 @@ UINT WINAPI MapVirtualKey(
 uCode is a virtual-key code and is translated into a scan code   MAPVK_VK_TO_VSC 0
 uCode is a virtual-key code and is translated into an unshifted character value in the low-order word of the return value   MAPVK_VK_TO_CHAR 1
 VK_LSHIFT
-VK_RSHIFT                  Óë VK_SHIFT
+VK_RSHIFT                  ä¸ VK_SHIFT
 VK_LCONTROL
 VK_RCONTROL
 VK_LMENU
@@ -233,7 +346,7 @@ VK_RMENU
 #define VK_MENU           0x12
 #define VK_PAUSE          0x13
 #define VK_CAPITAL        0x14
-Êó±ê£¬Ò²¿É×öÎªĞéÄâ¼ü
+é¼ æ ‡ï¼Œä¹Ÿå¯åšä¸ºè™šæ‹Ÿé”®
 VK_LBUTTON
 Copies the status of the 256 virtual keys to the specified buffer
 BOOL WINAPI GetKeyboardState(
@@ -245,7 +358,7 @@ SHORT WINAPI GetAsyncKeyState(
 );
 Determines whether a key is up or down at the time the function is called, and whether the key was pressed after a previous call to GetAsyncKeyState
 GetAsyncKeyState(VK_LBUTTON)
-Retrieves the status of the specified virtual key. The status specifies whether the key is up, down, or toggled (on, off¡ªalternating each time the key is pressed)
+Retrieves the status of the specified virtual key. The status specifies whether the key is up, down, or toggled (on, offâ€”alternating each time the key is pressed)
 SHORT WINAPI GetKeyState(
  _In_  int nVirtKey
 );
@@ -274,16 +387,19 @@ BOOL WINAPI RegisterHotKey(
  _In_      UINT fsModifiers,
  _In_      UINT vk
 );
-MOD_ALT MOD_CONTROL MOD_SHIFT MOD_NOREPEAT(²»ÖØ¸´¸ÄËÍÈÈ¼üÏûÏ¢) MOD_WIN
+MOD_ALT MOD_CONTROL MOD_SHIFT MOD_NOREPEAT(ä¸é‡å¤æ”¹é€çƒ­é”®æ¶ˆæ¯) MOD_WIN
 When a key is pressed, the system looks for a match against all hot keys. Upon finding a match, the system posts theWM_HOTKEY message to the message queue of the window with which the hot key is associated. If the hot key is not associated with a window, then the WM_HOTKEY message is posted to the thread associated with the hot key.
 BOOL WINAPI UnregisterHotKey(
  _In_opt_  HWND hWnd,
  _In_      int id
 );
-WM_SETHOTKEY ºÍ RegisterHotKey ÓĞÉ¶Çø±ğ£¿
-Ç°Õß,°´¼ü»á·¢ËÍWM_SYSCOMMANDÏûÏ¢,ºóÕß·¢ËÍWM_HOTKEYÏûÏ¢
+WM_SETHOTKEY å’Œ RegisterHotKey æœ‰å•¥åŒºåˆ«ï¼Ÿ
+å‰è€…,æŒ‰é”®ä¼šå‘é€WM_SYSCOMMANDæ¶ˆæ¯,åè€…å‘é€WM_HOTKEYæ¶ˆæ¯
+
+WM_SYSKEYUP alt key
+#define VK_MENU           0x12
 ---------------------------------------------------------------------------
-WAV£¨Waveform Audio Format£©£¬ÊÇÎ¢ÈíÓëIBM¹«Ë¾Ëù¿ª·¢µÄÒ»ÖÖÉùÒô±àÂë¸ñÊ½£¬ÔÚWindowsÆ½Ì¨µÄÓ¦ÓÃÈí¼şÊÜµ½¹ã·ºµÄÖ§Ô®¡£[2]ÓÉÓÚ´ËÒôÆµ¸ñÊ½Î´¾­¹ıÑ¹Ëõ£¬ËùÒÔÔÚÒôÖÊ·½Ãæ²»»á³öÏÖÊ§ÕæµÄÇé¿ö£¬µ«ÎÄ¼şµÄÌå»ıÒò¶øÔÚÖÚ¶àÒôÆµ¸ñÊ½ÖĞ½ÏÎª´ó
+WAVï¼ˆWaveform Audio Formatï¼‰ï¼Œæ˜¯å¾®è½¯ä¸IBMå…¬å¸æ‰€å¼€å‘çš„ä¸€ç§å£°éŸ³ç¼–ç æ ¼å¼ï¼Œåœ¨Windowså¹³å°çš„åº”ç”¨è½¯ä»¶å—åˆ°å¹¿æ³›çš„æ”¯æ´ã€‚[2]ç”±äºæ­¤éŸ³é¢‘æ ¼å¼æœªç»è¿‡å‹ç¼©ï¼Œæ‰€ä»¥åœ¨éŸ³è´¨æ–¹é¢ä¸ä¼šå‡ºç°å¤±çœŸçš„æƒ…å†µï¼Œä½†æ–‡ä»¶çš„ä½“ç§¯å› è€Œåœ¨ä¼—å¤šéŸ³é¢‘æ ¼å¼ä¸­è¾ƒä¸ºå¤§
 http://en.wikipedia.org/wiki/WAV
 #pragma pack (push,1)
 typedef struct
@@ -318,10 +434,10 @@ sWaveHeader.lDataSize = 0;
 https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
 WAVE PCM soundfile format
 ---------------------------------------------------------------------------
-º¯Êı¹¦ÄÜ£º·­Òë¼ÓËÙ¼ü±í¡£¸Ãº¯Êı´¦Àí²Ëµ¥ÃüÁîÖĞµÄ¼ÓËÙ¼ü¡£
-¸Ãº¯Êı½«Ò»¸öWM_KEYDOWN»òWM_SYSKEYDOWNÏûÏ¢·­Òë³ÉÒ»¸öWM_COMMAND»òWM_SYSCOMMANDÏûÏ¢£¨Èç¹ûÔÚ¸ø¶¨µÄ¼ÓËÙ¼ü±íÖĞÓĞ¸Ã¼üµÄÈë¿Ú£©£¬È»ºó½«WM_COMMAND»òWM_SYSCOMMANDÏûÏ¢Ö±½ÓËÍµ½ÏàÓ¦µÄ´°¿Ú´¦Àí¹ı³Ì¡£
-TranslateAcceleratorÖ±µ½´°¿Ú¹ı³Ì´¦ÀíÍêÏûÏ¢ºó²Å·µ»Ø¡£
-º¯ÊıÔ­ĞÍ£ºint TranslateAccelerator£¨HWND hWnd,HACCEL hAccTable£¬LPMSG IpMsg£©
+å‡½æ•°åŠŸèƒ½ï¼šç¿»è¯‘åŠ é€Ÿé”®è¡¨ã€‚è¯¥å‡½æ•°å¤„ç†èœå•å‘½ä»¤ä¸­çš„åŠ é€Ÿé”®ã€‚
+è¯¥å‡½æ•°å°†ä¸€ä¸ªWM_KEYDOWNæˆ–WM_SYSKEYDOWNæ¶ˆæ¯ç¿»è¯‘æˆä¸€ä¸ªWM_COMMANDæˆ–WM_SYSCOMMANDæ¶ˆæ¯ï¼ˆå¦‚æœåœ¨ç»™å®šçš„åŠ é€Ÿé”®è¡¨ä¸­æœ‰è¯¥é”®çš„å…¥å£ï¼‰ï¼Œç„¶åå°†WM_COMMANDæˆ–WM_SYSCOMMANDæ¶ˆæ¯ç›´æ¥é€åˆ°ç›¸åº”çš„çª—å£å¤„ç†è¿‡ç¨‹ã€‚
+TranslateAcceleratorç›´åˆ°çª—å£è¿‡ç¨‹å¤„ç†å®Œæ¶ˆæ¯åæ‰è¿”å›ã€‚
+å‡½æ•°åŸå‹ï¼šint TranslateAcceleratorï¼ˆHWND hWnd,HACCEL hAccTableï¼ŒLPMSG IpMsgï¼‰
 window message
 http://www.autohotkey.com/docs/misc/SendMessageList.htm
 ---------------------------------------------------------------------------
@@ -329,14 +445,14 @@ http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4029/URL-Encoding.htm
 http://www.codeguru.com/cpp/cpp/algorithms/strings/article.php/c12759/URI-Encoding-and-Decoding.htm
 uri - encode  
 uri - decode
-ÎÊÌâ£º Â·¾¶ÖĞµÄ/ĞèÒª±àÂëÂğ£¿  ²ÎÊıÖĞµÄ & ĞèÒª±àÂëÂğ£¿  URLºóµÄ ?ºÅ ÔõÃ´±àÂë£¿
+é—®é¢˜ï¼š è·¯å¾„ä¸­çš„/éœ€è¦ç¼–ç å—ï¼Ÿ  å‚æ•°ä¸­çš„ & éœ€è¦ç¼–ç å—ï¼Ÿ  URLåçš„ ?å· æ€ä¹ˆç¼–ç ï¼Ÿ
 ---------------------------------------------------------------------------
-ÔõÃ´ÅĞ¶ÏÒ»¸ö½ø³ÌÊÇ·ñÔËĞĞ?
-ÓëÒ»¸ö½ø³ÌÍ¨ĞÅ£¬Èç¹û²»»ØÓ¦£¬¾ÍÈÏÎªÍ£Ö¹ ÁË¡£
-±£´æ PID È»ºó´ò¿ª HANDLE
-»ñÈ¡½ø³ÌÃû×Ö PID
+æ€ä¹ˆåˆ¤æ–­ä¸€ä¸ªè¿›ç¨‹æ˜¯å¦è¿è¡Œ?
+ä¸ä¸€ä¸ªè¿›ç¨‹é€šä¿¡ï¼Œå¦‚æœä¸å›åº”ï¼Œå°±è®¤ä¸ºåœæ­¢ äº†ã€‚
+ä¿å­˜ PID ç„¶åæ‰“å¼€ HANDLE
+è·å–è¿›ç¨‹åå­— PID
 http://stackoverflow.com/questions/4102569/get-process-name-from-process-id-win32
-process id »á±»ÖØÓÃÂğ£¿
+process id ä¼šè¢«é‡ç”¨å—ï¼Ÿ
 http://blogs.msdn.com/b/oldnewthing/archive/2011/01/07/10112755.aspx
 #include <TlHelp32.h>
 #include <boost/algorithm/string.hpp>
@@ -347,7 +463,7 @@ HANDLE process_handle_by_name(const std::wstring & pname) {
     processInfo->dwSize = sizeof( PROCESSENTRY32 );
     int index = 0;
     while(Process32Next(hSnapShot,processInfo)!=FALSE) {
-                //ºöÂÔ´óĞ¡Ğ´±È½Ï
+                //å¿½ç•¥å¤§å°å†™æ¯”è¾ƒ
                 if( boost::iequals(pname, processInfo->szExeFile) ) {
                 //if ( !pname.compare(processInfo->szExeFile) ){
                         handle = ::OpenProcess( PROCESS_ALL_ACCESS, TRUE, processInfo->th32ProcessID );
@@ -358,27 +474,27 @@ HANDLE process_handle_by_name(const std::wstring & pname) {
         return handle;
 }
 ---------------------------------------------------------------------------
-¡¾ShellExecuteExA.png¡¿
-´Ó ShellExecuteExA ÔËĞĞÃüÁîĞĞ³öÏÖ£¬ÌáÊ¾¡£½â¾ö·½·¨£ºÊôĞÔ-¡·½â³ıËø¶¨¡£
+ã€ShellExecuteExA.pngã€‘
+ä» ShellExecuteExA è¿è¡Œå‘½ä»¤è¡Œå‡ºç°ï¼Œæç¤ºã€‚è§£å†³æ–¹æ³•ï¼šå±æ€§-ã€‹è§£é™¤é”å®šã€‚
 ---------------------------------------------------------------------------
-¡¾CreateProcess-exception.png¡¿
+ã€CreateProcess-exception.pngã€‘
 STARTUPINFO si;
 PROCESS_INFORMATION pi;
 ZeroMemory( &pi, sizeof(pi) );
 ZeroMemory( &si, sizeof(si) );
 si.cb = sizeof(si);
 ::CreateProcess( NULL, L"Notepad.exe", NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
-³öÏÖÏÂÃæµÄ´íÎó:
+å‡ºç°ä¸‹é¢çš„é”™è¯¯:
 
-½â¾öÉÏÃæµÄÎÊÌâµÄ·½·¨£¬ÊÇÊ¹ÓÃ»º´æ
+è§£å†³ä¸Šé¢çš„é—®é¢˜çš„æ–¹æ³•ï¼Œæ˜¯ä½¿ç”¨ç¼“å­˜
         wchar_t exe_name[255] = { 0 };
         wcscpy( exe_name, L"Notepad.exe" );
         ::CreateProcess( NULL, exe_name, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
 ::CreateProcess( L"Notepad.exe", NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
-³ö´í£ºÕÒ²»µ½Ö¸¶¨µÄÎÄ¼ş¡£
+å‡ºé”™ï¼šæ‰¾ä¸åˆ°æŒ‡å®šçš„æ–‡ä»¶ã€‚
 ::CreateProcess( L"D:\\boost-test\\process\\Debug\\notepad.exe", NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
-Ö¸¶¨È«Â·¾¶¾Í¿ÉÒÔÁË
-CreateProcess  µÄµÚÒ»¸ö²ÎÊı lpApplicationName [in, optional]£¬×¢Òâ
+æŒ‡å®šå…¨è·¯å¾„å°±å¯ä»¥äº†
+CreateProcess  çš„ç¬¬ä¸€ä¸ªå‚æ•° lpApplicationName [in, optional]ï¼Œæ³¨æ„
 The string can specify the full path and file name of the module to execute or it can specify a partial name. In the case of a partial name, the function uses the current drive and current directory to complete the specification. The function will not use the search path. This parameter must include the file name extension; no default extension is assumed.
 ---------------------------------------------------------------------------
 
@@ -393,11 +509,11 @@ As a result of these changes, it is recommended that applications call the SetTh
 ---------------------------------------------------------------------------
 
 
-Ïß³ÌµÄcycles deltaÊôĞÔÊÇÊ²Ã´£¿¡¾cpu-cycles-delta.png¡¿  CPUÖÜÆÚÓÖ³Æ»úÆ÷ÖÜÆÚ¡¾cpu-time.png¡¿
-[Ñ­­h²î® (Cycles Delta)] ï@Ê¾Ã¿Ò»‚€ÌÀíĞòµÄˆÌĞĞ¾wÔÚƒÉ´Î Process Explorer ¸üĞÂÖ®égˆÌĞĞµÄÑ­­h´Î”µ¡£Òòé CPU •régÓ‹Á¿ÈÔÈ»ÊÇÒÔég¸ôÓ‹•rÆ÷é»ùµA£¬Èç¹ûÄúÍ¬•rĞÂÔö [CPU •rég] ™ÚÎ»£¬„t•ş¿´µ½ÔS¶àÌÀíĞòµÄˆÌĞĞ¾wºÄÓÃ”µ°ÙÈf´Î CPU Ñ­­h£¬…sÈÔÈ»Î´¸üĞÂÆä CPU •rég£¬ÇÒÎ´ÔÚ CPU Ê¹ÓÃÁ¿™ÚÎ»ÖĞï@Ê¾³öí¡£
-ÓÖ³Æ»úÆ÷ÖÜÆÚ£¬»úÆ÷ÄÚ²¿¸÷ÖÖ²Ù×÷´óÖÂ¿É¹éÊôÎª¶ÔCPUÄÚ²¿µÄ²Ù×÷ºÍ¶ÔÖ÷´æµÄ²Ù×÷Á½´óÀà£¬ÓÉÓÚCPUÄÚ²¿²Ù×÷ËÙ¶È½Ï¿ì£¬CPU·ÃÎÊÒ»´ÎÄÚ´æËù»¨µÄÊ±¼ä½Ï³¤£¬Òò´ËÓÃ´ÓÄÚ´æ¶ÁÈ¡Ò»ÌõÖ¸Áî×ÖµÄ×î¶ÌÊ±¼äÀ´¶¨Òå£¬Õâ¸ö»ù×¼Ê±¼ä¾ÍÊÇCPUÖÜÆÚ£¨»úÆ÷ÖÜÆÚ£©¡£Ò»¸öÖ¸ÁîÖÜÆÚ³£ÓÉÈô¸ÉCPUÖÜÆÚ¹¹³É
+çº¿ç¨‹çš„cycles deltaå±æ€§æ˜¯ä»€ä¹ˆï¼Ÿã€cpu-cycles-delta.pngã€‘  CPUå‘¨æœŸåˆç§°æœºå™¨å‘¨æœŸã€cpu-time.pngã€‘
+[å¾ªç’°å·®ç•° (Cycles Delta)] é¡¯ç¤ºæ¯ä¸€å€‹è™•ç†åºçš„åŸ·è¡Œç·’åœ¨å…©æ¬¡ Process Explorer æ›´æ–°ä¹‹é–“åŸ·è¡Œçš„å¾ªç’°æ¬¡æ•¸ã€‚å› ç‚º CPU æ™‚é–“è¨ˆé‡ä»ç„¶æ˜¯ä»¥é–“éš”è¨ˆæ™‚å™¨ç‚ºåŸºç¤ï¼Œå¦‚æœæ‚¨åŒæ™‚æ–°å¢ [CPU æ™‚é–“] æ¬„ä½ï¼Œå‰‡æœƒçœ‹åˆ°è¨±å¤šè™•ç†åºçš„åŸ·è¡Œç·’è€—ç”¨æ•¸ç™¾è¬æ¬¡ CPU å¾ªç’°ï¼Œå»ä»ç„¶æœªæ›´æ–°å…¶ CPU æ™‚é–“ï¼Œä¸”æœªåœ¨ CPU ä½¿ç”¨é‡æ¬„ä½ä¸­é¡¯ç¤ºå‡ºä¾†ã€‚
+åˆç§°æœºå™¨å‘¨æœŸï¼Œæœºå™¨å†…éƒ¨å„ç§æ“ä½œå¤§è‡´å¯å½’å±ä¸ºå¯¹CPUå†…éƒ¨çš„æ“ä½œå’Œå¯¹ä¸»å­˜çš„æ“ä½œä¸¤å¤§ç±»ï¼Œç”±äºCPUå†…éƒ¨æ“ä½œé€Ÿåº¦è¾ƒå¿«ï¼ŒCPUè®¿é—®ä¸€æ¬¡å†…å­˜æ‰€èŠ±çš„æ—¶é—´è¾ƒé•¿ï¼Œå› æ­¤ç”¨ä»å†…å­˜è¯»å–ä¸€æ¡æŒ‡ä»¤å­—çš„æœ€çŸ­æ—¶é—´æ¥å®šä¹‰ï¼Œè¿™ä¸ªåŸºå‡†æ—¶é—´å°±æ˜¯CPUå‘¨æœŸï¼ˆæœºå™¨å‘¨æœŸï¼‰ã€‚ä¸€ä¸ªæŒ‡ä»¤å‘¨æœŸå¸¸ç”±è‹¥å¹²CPUå‘¨æœŸæ„æˆ
 ---------------------------------------------------------------------------
 
-¡¾windows-sysinternals.png¡¿windowsÊµÓÃ¹¤¾ß
-http://technet.microsoft.com/en-US/sysinternals/bb896653£¨Ó¢ÎÄÍøÒ³¿ÉÒÔÏÂÔØ£©
-http://technet.microsoft.com/zh-cn/sysinternals/bb795533(ÖĞÎÄÍøÒ³ÏÂÔØ²»ÁË)
+ã€windows-sysinternals.pngã€‘windowså®ç”¨å·¥å…·
+http://technet.microsoft.com/en-US/sysinternals/bb896653ï¼ˆè‹±æ–‡ç½‘é¡µå¯ä»¥ä¸‹è½½ï¼‰
+http://technet.microsoft.com/zh-cn/sysinternals/bb795533(ä¸­æ–‡ç½‘é¡µä¸‹è½½ä¸äº†)
