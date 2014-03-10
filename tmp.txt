@@ -1,4 +1,477 @@
 【把其它几个地方的内容全整理过来】
 QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
+【MFC程序接收命令行参数？】
+How to get the command line arguments in mfc applications?
+Use GetCommandLine(), which returns the name of the file being executed, followed by the arguments.
+
+The application member m_lpCmdLine ie. yourApp.m_lpCmdLine contains only the arguments.
+
+There is also CWinApp::ParseCommandLine() that you may find useful . refer the link as follows http://msdn.microsoft.com/en-us/library/64c73803.aspx
+
+Also try ATL COM wizard to create non MFC dialog app. (chose the .exe option, not .dll)
+
+
+GetCommandLine function
+Retrieves the command-line string for the current process.
+Syntax
+
+C++
+
+LPTSTR WINAPI GetCommandLine(void);
+
+Parameters
+
+This function has no parameters.
+Return value
+
+The return value is a pointer to the command-line string for the current process.
+Remarks
+
+ANSI console processes written in C can use the argc and argv arguments of the main function to access the command-line arguments. ANSI GUI applications can use the lpCmdLine parameter of the WinMain function to access the command-line string, excluding the program name. The main and WinMain functions cannot return Unicode strings.
+Unicode console process written in C can use the wmain or _tmain function to access the command-line arguments. Unicode GUI applications must use the GetCommandLineW function to access Unicode strings.
+To convert the command line to an argv style array of strings, call the CommandLineToArgvW function.
+Note  The name of the executable in the command line that the operating system provides to a process is not necessarily identical to that in the command line that the calling process gives to the CreateProcess function. The operating system may prepend a fully qualified path to an executable name that is provided without a fully qualified path.
+
+【BOOST THREAD CONDITION】
+Notice that the lock is passed to wait: wait will atomically add the thread to the set of threads waiting on the condition variable, and unlock the mutex. When the thread is woken, the mutex will be locked again before the call to wait returns. This allows other threads to acquire the mutex in order to update the shared data, and ensures that the data associated with the condition is correctly synchronized
+
+////////////////////////////////////线程A
+boost::condition_variable cond;
+boost::mutex mut;
+bool data_ready;
+
+void process_data();
+
+void wait_for_data_to_process()
+{
+    boost::unique_lock<boost::mutex> lock(mut);
+    while(!data_ready)
+    {
+        cond.wait(lock);
+    }
+    process_data();
+}
+
+////////////////////////////////////线程B
+void retrieve_data();
+void prepare_data();
+
+void prepare_data_for_processing()
+{
+    retrieve_data();
+    prepare_data();
+    {
+        boost::lock_guard<boost::mutex> lock(mut);
+        data_ready=true;
+    }
+    cond.notify_one();
+}
+
+【BOOST 是怎么设置静态库链接的？】
+【BOOST】
+	BOOST_FOREACH(auto &item, data_) {
+		obj.clear();
+		
+		//这里怎么，获得下一个，值？
+		obj.push_back(json_spirit::wPair(L"time", boost::posix_time::to_iso_wstring(item.time())));
+		obj.push_back(json_spirit::wPair(L"duration", item.duration().total_milliseconds()));
+		obj.push_back(json_spirit::wPair(L"x", item.x()));
+		obj.push_back(json_spirit::wPair(L"y", item.y()));
+		items.push_back(obj);
+	}
+	
+	item 是什么的引用？data_中元素的引用？
+	怎么改为，迭代器呢？
+	
+	不用BOOST_FOREACH，自己写个，
+	//BOOST_FOREACH(auto &item, data_) {
+	for(auto item = data_.begin(); item != data_.end();) {
+		obj.clear();
+		obj.push_back(json_spirit::wPair(L"time", boost::posix_time::to_iso_wstring(item->time())));
+		//obj.push_back(json_spirit::wPair(L"duration", item.duration().total_milliseconds()));
+		obj.push_back(json_spirit::wPair(L"x", item->x()));
+		obj.push_back(json_spirit::wPair(L"y", item->y()));
+		auto cur_time = item->time();
+		if((++item) != data_.end()) {
+			obj.push_back(json_spirit::wPair(L"duration", (item->time() - cur_time).total_milliseconds()));
+		    items.push_back(obj);
+
+		} else {
+			break;
+		}
+	}
+	root.push_back(json_spirit::wPair(L"locations", items));
+	
+【STD】
+std::list 下标问题？没有下标重载符，可以使用迭代器，一个一个向下走或者向上走。
+std::list 的，迭代器，的重载运算符有以下：（没有下标符，加减运算符）
+【STD】
+WPARAM pa = x << 16 + y;
+1>d:\project\trunk\src\client\imagetracking\imagetracking\imagetrackingdlg.cpp(184): 
+warning C4554: “<<”: 检查运算符优先级可能存在的错误；使用圆括号阐明优先级
+
+正确的修改：WPARAM pa = (x << 16) + y;
+仍报警告的修改：WPARAM pa = （x << 16 + y）;
+【STD】
+
+Input iterator(输入迭代器)           读,不能写 只支持自增运算
+Output iterator(输出迭代器) ;        写，不能读 只支持自增运算
+
+Forward iterator(前向迭代器)            读和写;只支持自增运算
+Bidirectional iterator(双向迭代器) ;    读和写 支持自增和自减运算
+Random access iterator(随机访问迭代器)  读和写;支持完整的迭代器算术运算
+
+【STD】
+fopen 参数， r/r+ 的区别？
+r
+Open text file for reading. The stream is positioned at the beginning of the file.
+
+r+
+
+Open for reading and writing. The stream is positioned at the beginning of the file.
+
+w
+
+Truncate[trʌŋ'keɪt] [美][ˈtrʌŋˌket]（截断） file to zero length or create text file for writing. The stream is positioned at the beginning of the file.
+
+w+
+
+Open for reading and writing. The file is created if it does not exist, otherwise it is truncated. The stream is positioned at the beginning of the file.
+
+a
+
+Open for appending (writing at end of file). The file is created if it does not exist. The stream is positioned at the end of the file.
+
+a+
+
+Open for reading and appending (writing at end of file). The file is created if it does not exist. The initial file position for reading is at the beginning of the file, but output is always appended to the end of the file
+
+【STD】
+
+ios::app 添加输出                        如果文件不存在，是否会创建？
+ios::ate 当已打开时寻找到EOF 
+ios::binary 以二进制模式打开文件         如果文件不存在，是否会创建？ 
+ios::in 为读取打开文件 
+ios::out 为写入打开文件                  如果文件不存在，是否会创建？
+ios::trunc 覆盖存在的文件                如果文件不存在，是否会创建？
+
+//下面是测试结果
+std::ofstream of(L"d:\t.yuy2", std::iostream::binary); 
+//后面的说法是错误的，这一句就可以创建新文件，先前失败的原因是路径反斜杠的问题//文件不存在，打开失败。of.good()返回false
+
+std::ofstream of(L"d:\\t.yuy2", std::iostream::binary); //这句可以创建新文件。
+
+
+The filebuf constructor to which these flags are passed† has behaviours based on those flags defined in Table 132 in C++11:
+
++-----------------------------------+-------------------+
+|     ios_base flag combination     |  stdio equivalent |
+| binary  in    out    trunc    app |                   |
++-----------------------------------+-------------------+
+|               +                   |  "w"              |
+|               +               +   |  "a"              |
+|                               +   |  "a"              |
+|               +       +           |  "w"              |
+|        +                          |  "r"              |
+|        +      +                   |  "r+"             |
+|        +      +       +           |  "w+"             |
+|        +      +               +   |  "a+"             |
+|        +                      +   |  "a+"             |
++-----------------------------------+-------------------+
+|   +           +                   |  "wb"             |
+|   +           +               +   |  "ab"             |
+|   +                           +   |  "ab"             |
+|   +           +       +           |  "wb"             |
+|   +    +                          |  "rb"             |
+|   +    +      +                   |  "r+b"            |
+|   +    +      +       +           |  "w+b"            |
+|   +    +      +               +   |  "a+b"            |
+|   +    +                      +   |  "a+b"            |
++-----------------------------------+-------------------+
+As you can see, your flag combination is not found in that table.
+
+【COM】
+COINIT enumeration
+Determines the concurrency model used for incoming calls to objects created by this thread. This concurrency model can be either apartment-threaded or multithreaded.
+Syntax
+
+C++
+
+typedef enum tagCOINIT { 
+  COINIT_APARTMENTTHREADED  = 0x2,
+  COINIT_MULTITHREADED      = 0x0,
+  COINIT_DISABLE_OLE1DDE    = 0x4,
+  COINIT_SPEED_OVER_MEMORY  = 0x8
+} COINIT;
+
+Constants
+
+COINIT_APARTMENTTHREADED
+Initializes the thread for apartment-threaded object concurrency (see Remarks).
+COINIT_MULTITHREADED
+Initializes the thread for multithreaded object concurrency (see Remarks).
+COINIT_DISABLE_OLE1DDE
+Disables DDE for OLE1 support.
+COINIT_SPEED_OVER_MEMORY
+Increase memory usage in an attempt to increase performance.
+Remarks
+
+When a thread is initialized through a call to CoInitializeEx, you choose whether to initialize it as apartment-threaded or multithreaded by designating one of the members of COINIT as its second parameter. This designates how incoming calls to any object created by that thread are handled, that is, the object's concurrency.
+Apartment-threading, while allowing for multiple threads of execution, serializes all incoming calls by requiring that calls to methods of objects created by this thread always run on the same thread – the apartment/thread that created them. In addition, calls can arrive only at message-queue boundaries. Because of this serialization, it is not typically necessary to write concurrency control into the code for the object, other than to avoid calls to PeekMessage and SendMessage during processing that must not be interrupted by other method invocations or calls to other objects in the same apartment/thread.
+Multi-threading (also called free-threading) allows calls to methods of objects created by this thread to be run on any thread. There is no serialization of calls – many calls may occur to the same method or to the same object or simultaneously. Multi-threaded object concurrency offers the highest performance and takes the best advantage of multiprocessor hardware for cross-thread, cross-process, and cross-machine calling, since calls to objects are not serialized in any way. This means, however, that the code for objects must enforce its own concurrency model, typically through the use of synchronization primitives, such as critical sections, semaphores, or mutexes. In addition, because the object doesn't control the lifetime of the threads that are accessing it, no thread-specific state may be stored in the object (in Thread Local Storage).
+Note  The multi-threaded apartment is intended for use by non-GUI threads. Threads in multi-threaded apartments should not perform UI actions. This is because UI threads require a message pump, and COM does not pump messages for threads in a multi-threaded apartment.
+
+【API】
+MapWindowPoints function
+The MapWindowPoints function converts (maps) a set of points from a coordinate space relative to one window to a coordinate space relative to another window.
+
+This macro calls the function MapWindowPoints.
+MapWindowRect( 
+  HWND hwndFrom, 
+  HWND hwndTo, 
+  LPRECT lprc 
+); 
+
+【MFC】
+以BMP图片为蓝本创建不规则窗口
+// Add the pixels (x0, y) to (x, y+1) as a new rectangle in the region  一行一个矩形区， 把所有的矩形区加到一个RGNDATA结构体里。
+// Scan each bitmap row from bottom to top (the bitmap is inverted vertically) 扫描每个像素，判断是否透明。
+The RGNDATA structure contains a header and an array of rectangles that compose a region. The rectangles are sorted top to bottom, left to right. They do not overlap.
+Syntax
+C++
+
+typedef struct _RGNDATA {
+  RGNDATAHEADER rdh;
+  char          Buffer[1];
+} RGNDATA, *PRGNDATA;
+
+Members
+rdh
+A RGNDATAHEADER structure. The members of this structure specify the type of region (whether it is rectangular or trapezoidal), the number of rectangles that make up the region, the size of the buffer that contains the rectangle structures, and so on.
+Buffer
+Specifies an arbitrary-size buffer that contains the RECT structures that make up the region.
+
+The RGNDATAHEADER structure describes the data returned by the GetRegionData function.
+Syntax
+C++
+
+typedef struct _RGNDATAHEADER {
+  DWORD dwSize;
+  DWORD iType;
+  DWORD nCount;
+  DWORD nRgnSize;
+  RECT  rcBound;
+} RGNDATAHEADER, *PRGNDATAHEADER;
+
+Members
+dwSize
+The size, in bytes, of the header.
+iType
+The type of region. This value must be RDH_RECTANGLES.
+nCount
+The number of rectangles that make up the region.
+nRgnSize
+The size of the RGNDATA buffer required to receive the RECT structures that make up the region. If the size is not known, this member can be zero.
+rcBound
+A bounding rectangle for the region in logical units.
+
+【WINDOW-HRGN】
+ExtCreateRegion function
+The ExtCreateRegion function creates a region from the specified region and transformation data.
+HRGN ExtCreateRegion(
+  _In_  const XFORM *lpXform,
+  _In_  DWORD nCount,
+  _In_  const RGNDATA *lpRgnData
+);
+lpXform [in]
+A pointer to an XFORM structure that defines the transformation to be performed on the region. If this pointer is NULL, the identity transformation is used.
+nCount [in]
+The number of bytes pointed to by lpRgnData.
+lpRgnData [in]
+A pointer to a RGNDATA structure that contains the region data in logical units.
+
+Region coordinates are represented as 27-bit signed integers
+
+
+PtInRegion function
+The PtInRegion function determines whether the specified point is inside the specified region.
+Syntax
+C++
+
+BOOL PtInRegion(      与 PtInRect 比较
+  _In_  HRGN hrgn,
+  _In_  int X,
+  _In_  int Y
+);
+
+
+CreateEllipticRgn
+CreateEllipticRgnIndirect
+CreatePolygonRgn
+CreatePolyPolygonRgn
+CreateRectRgn
+CreateRectRgnIndirect
+CreateRoundRectRgn
+【MFC】
+PtInRect function
+The PtInRect function determines whether the specified point lies within the specified rectangle. A point is within a rectangle if it lies on the left or top side or is within all four sides. A point on the right or bottom side is considered outside the rectangle.
+Syntax
+C++
+
+BOOL PtInRect(
+  _In_  const RECT *lprc,
+  _In_  POINT pt
+);
+
+Parameters
+lprc [in]
+A pointer to a RECT structure that contains the specified rectangle.
+pt [in]
+A POINT structure that contains the specified point.
+Return value
+If the specified point lies within the rectangle, the return value is nonzero.
+If the specified point does not lie within the rectangle, the return value is zero.
+Remarks
+The rectangle must be normalized before PtInRect is called. That is, lprc.right must be greater than lprc.left and lprc.bottom must be greater than lprc.top. If the rectangle is not normalized, a point is never considered inside of the rectangle.
+Because applications can use rectangles for different purposes, the rectangle functions do not use an explicit unit of measure. Instead, all rectangle coordinates and dimensions are given in signed, logical values. The mapping mode and the function in which the rectangle is used determine the units of measure.
+【MFC】
+SetWindowRgn function
+The SetWindowRgn function sets the window regionregion[英]['ri:dʒən] [美][ˈridʒən] of a window. The window region determines the area within the window where the system permits drawing. The system does not display any portion[英]['pɔ:ʃn] [美][ˈpɔrʃən, ˈpor-] of a window that lies outside of the window region
+
+int SetWindowRgn(
+  _In_  HWND hWnd,
+  _In_  HRGN hRgn,
+  _In_  BOOL bRedraw
+);
+
+Parameters
+hWnd [in]
+A handle to the window whose window region is to be set.
+hRgn [in]
+A handle to a region. The function sets the window region of the window to this region.
+If hRgn is NULL, the function sets the window region to NULL.
+bRedraw [in]
+Specifies whether the system redraws the window after setting the window region. If bRedraw is TRUE, the system does so; otherwise, it does not.
+Typically, you set bRedraw to TRUE if the window is visible.
+
+Return value
+If the function succeeds, the return value is nonzero.
+If the function fails, the return value is zero.
+Remarks
+When this function is called, the system sends the WM_WINDOWPOSCHANGING and WM_WINDOWPOSCHANGING messages to the window.
+The coordinates of a window's window region are relative to the upper-left corner of the window, not the client area of the window.
+Note  If the window layout is right-to-left (RTL), the coordinates are relative to the upper-right corner of the window. See Window Layout and Mirroring.
+After a successful call to SetWindowRgn, the system owns the region specified by the region handle hRgn. The system does not make a copy of the region. Thus, you should not make any further function calls with this region handle. In particular, do not delete this region handle. The system deletes the region handle when it no longer needed.
+To obtain the window region of a window, call the GetWindowRgn function.
+
+
+Window Regions
+In addition to the update region, every window has a visible region that defines the window portion visible to the user. The system changes the visible region for the window whenever the window changes size or whenever another window is moved such that it obscures or exposes a portion of the window. Applications cannot change the visible region directly, but the system automatically uses the visible region to create the clipping region for any display device context retrieved for the window.
+The clipping region determines where the system permits drawing. When the application retrieves a display device context using the BeginPaint, GetDC, or GetDCEx function, the system sets the clipping region for the device context to the intersection of the visible region and the update region. Applications can change the clipping region by using functions such as SetWindowRgn, SelectClipPath and SelectClipRgn, to further limit drawing to a particular portion of the update area.
+The WS_CLIPCHILDREN and WS_CLIPSIBLINGS styles further specify how the system calculates the visible region for a window. If a window has one or both of these styles, the visible region excludes any child window or sibling windows (windows having the same parent window). Therefore, drawing that would otherwise intrude in these windows will always be clipped.
+
+
+Raster[英]['ræstə] [美]['ræstə]（光栅） Operation Codes
+Raster-operation codes define how the graphics device interface (GDI) combines the bits from the selected pen with the bits in the destination bitmap.
+This overview lists and describes the binary and ternary raster operations used by GDI. A binary raster operation involves two operands: a pen and a destination bitmap. A ternary raster operation involves three operands: a source bitmap, a brush, and a destination bitmap. Both binary and ternary raster operations use Boolean operators.
+
+衍射光栅（diffraction grating）是光栅的一种。它通过有规律的结构，使入射光的振幅或相位（或两者同时）受到周期性空间调制。衍射光栅在光学上的最重要应用是作为分光器件，常被用于单色仪和光谱仪上。
+实际应用的衍射光栅通常是在表面上有沟槽或刻痕的平板。这样的光栅可以是透射光栅或反射光栅。可以调制入射光的相位而不是振幅的衍射光栅现在也能生产。
+衍射光栅的原理是苏格兰数学家詹姆斯·格雷戈里发现的，发现时间大约在牛顿的棱镜实验的一年后。詹姆斯·格雷戈里大概是受到了光线透过鸟类羽毛的启发。公认的最早的人造光栅是德国物理学家夫琅禾费在1821年制成的，那是一个极简单的金属丝栅网。但也有人争辩说费城发明家戴维·里滕豪斯于1785年在两根螺钉之间固定的几根头发才是世界上第一个人造光栅。
 
 【VIM 命令列表】
+
+【不用输入密码，直接打开电脑】rundll32 netplwiz.dll,UsersRunDll
+
+
+
+#include <mmsystem.h>
+#pragma comment(lib, "WINMM.LIB")
+return PlaySound(_PlayPath,NULL,SND_ASYNC|SND_NODEFAULT);
+
+回车退出窗口的问题
+
+SQL 查询时间语句
+SELECT *
+  FROM [audio].[dbo].[audio] where ( '2013-08-29 18:00:00' < Time )
+
+SELECT *
+  FROM [audio].[dbo].[audio] where ( '2013-08-29 17:00:00' < Time AND Time < '2013-08-29 18:00:00' )
+
+SELECT *  这样写也正确
+  FROM [audio].[dbo].[audio] where ( '20130829 17:00:00' < Time AND Time < '2013-08-29 18:00:00' )
+
+SELECT *  省略时间也可以
+  FROM [audio].[dbo].[audio] where ( '20130829' < Time AND Time < '20130830' )
+时间字符串的引号必须加  所有条件的值都要加单引号
+
+CRecordset 的成员 函数
+BOOL IsOpen() const;        // Recordset successfully opened?
+	BOOL IsBOF() const;     // Beginning Of File
+	BOOL IsEOF() const;     // End Of File
+	BOOL IsDeleted() const;     // On a deleted record
+
+long GetRecordCount() const;        // Records seen so far or -1 if unknown
+这个函数不是返回，表中的记录数。是什么意思？
+
+数据库查询
+		m_audio_database.m_strFilter = L"CounterNo=2";
+		m_audio_database.Requery();
+
+
+CDateTimeCtrl
+CMonthCalCtrl m_calCtrl;
+控件的区别
+
+posix_time 与 MFC CTime的转换			
+static boost::posix_time::ptime utc_ptime( boost::gregorian::date( 1970, 1, 1 ) ); 
+boost::posix_time::time_duration utc = iter->time() - utc_ptime;
+m_audio_database.m_Time = CTime( utc.seconds() );
+这里计算出的UTC时间不对。都是
+
+从 ptime里 计算出时分秒
+
+			boost::posix_time::time_duration time = iter->time() - boost::posix_time::ptime( iter->time().date() );
+			m_audio_database.m_Time = CTime( 
+				iter->time().date().year(),
+				iter->time().date().month(),
+				iter->time().date().day(),
+				time.hours(), time.minutes(), time.seconds() );
+
+CTime 时区问题？
+
+
+或使用 TRUNCATE TABLE 删除所有行
+若要删除表中的所有行，则 TRUNCATE TABLE 语句是一种快速、无日志记录的方法。该语句总是比不带条件的 DELETE 语句要快，因为 DELETE 语句要记录对每行的删除操作，而 TRUNCATE TABLE 语句只记录整个数据页的释放。TRUNCATE TABLE 语句立即释放由该表的数据和索引占用的所有空间。所有索引的分发页也将释放。
+
+与 DELETE 语句相同，使用 TRUNCATE TABLE 清空的表的定义，同其索引和其它相关的对象一起仍保留在数据库中。必须使用 DROP TABLE 语句才能除去表的定义。
+
+
+			static boost::posix_time::ptime utc_ptime( boost::gregorian::date( 1970, 1, 1 ) ); 
+			boost::posix_time::time_duration utc = iter->time() - utc_ptime;
+			m_audio_database.m_Time = CTime( utc.seconds() );
+
+
+
+http://stackoverflow.com/questions/354902/open-in-explorer
+http://forums.codeguru.com/showthread.php?441316-Open-Windows-Explorer-to-Specific-Folder
+si.wShowWindow = SW_MINIMIZE;
+si.dwFlags |= STARTF_USESHOWWINDOW;
+
+CreateProcess( NULL, _T("explorer.exe C:\\windows"), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi );
+
+You probably are looking for the ShellExecute() function in shell32.h. 
+It is called with an "action verb", a path, and optional parameters. 
+In your case this will want either "open" or "explore" as follows
+ShellExecute(NULL, "open", "C:\", NULL, NULL, SW_SHOWDEFAULT);
+ShellExecute(NULL, "open", "http://www.google.com", NULL, NULL, SW_SHOWDEFAULT);
+
+
+m_list.deleteallitems
+
+
+SQL Server Express 是由Microsoft所开发的SQL Server的其中一个版本，这个版本是免费且可自由转散布（需经注册），并且可和商用程序一起使用的小型数据库管理系统，它继承了多数的SQL Server功能与特性，像是Transact-SQL、SQL CLR等，相当适合使用在小型的网站，或者是小型的桌面型应用程序，它也可以和 SQL Server 集成，作为数据库复制（Replication）的订阅端
+
+数据库的大小限制：SQL Server 2005 Express 和SQL Server 2008 Express 数据库的大小限制最大为 4GB，最新版本的SQL Server 2008 R2 Express 数据库的大小限制最大为 10G。这个大小的限制只有在数据文件上，事务日志大小则不受此限。 2.只能使用一个 CPU 来运算，这在多个 CPU 的电脑上会造成浪费。
+3.可使用的存储器量最高只有 1GB。
+4.没有 SQL Agent，若要做调度服务必须自己写程序
