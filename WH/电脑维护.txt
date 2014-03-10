@@ -2,6 +2,28 @@
 http://www.amazon.cn/gp/product/B0040EIGCQ/ref=oh_details_o06_s01_i02?ie=UTF8&psc=1
 GIGABYTE 技嘉 NVIDIA GeForce 7025 Socket AM3 GA-M68MT-S2P 主板
 
+
+关闭不需要的服务
+Application Host Helper Service
+Background Intelligent Transfer Service
+使用空闲网络带宽在后台传送文件。如果该服务被禁用，则依赖于 BITS 的任何应用程序(如 Windows 更新或 MSN Explorer)将无法自动下载程序和其他信息。
+
+World Wide Web Publishing Service（禁用才行）
+通过 Internet 信息服务管理器提供 Web 连接和管理
+
+Windows Store Service (WSService)
+Windows Update   （禁用才行）
+WinHTTP Web Proxy Auto-Discovery Service（禁用才行）
+WinHTTP 实现了客户端 HTTP 堆栈并向开发人员提供 Win32 API 和 COM 自动化组件以供发送 HTTP 请求和接收响应。此外，通过执行 Web 代理自动发现(WPAD)协议，WinHTTP 还提供对自动发现代理服务器配置的支持。
+
+Windows Defender Service（禁用才行）
+Windows Search （禁用才行）
+为文件、电子邮件和其他内容提供内容索引、属性缓存和搜索结果。
+
+Remote Desktop Configuration
+Remote Desktop Services
+Remote Desktop Services UserMode Port Redirector
+
 ---------------------------------------------------------------------------
 Windows 7 需要安裝驅動才可支援USB3.0，但是Windows 8已經內建驅動且支援 USB 3.0
 USB 3.0 蓝色接口
@@ -26,6 +48,16 @@ http://technet.microsoft.com/zh-cn/sysinternals/bb795533(中文网页下载不了)
 从资源监视器看（WIN8）a72-246-190-56.deploy.akamaitechnologies.com这个地址，网络读写数据最多
 很多人疑惑于deploy.akamaitechnologies.com这个地址，以为是有了什么病毒或者后门。Akamaitechnologies 是国际上最大的CDN服务商
 以前遇到过这类情况，好像是和Adobe Reader的自动更新有关，只要用过一次Adobe Reader，就跟中病毒一样，svchost.exe(netsvcs)进程就会一直下载。各种办法无效，只好恢复系统，并且永远不用这个讨厌的Adobe Reader
+
+Windows Modules Installer Worker
+“Windows Modules Installer”服务：
+用于Windows Update，或安装某些微软发布的安装包时，进行系统文件的修改或替换；
+其进程文件为：TrustedInstaller.exe；
+如果TrustedInstaller.exe进程占用率很高如90%或100%，
+是因为系统在安装一些系统模块，如Windows Update正在自动下载安装安全更新；
+如果禁用这个服务，会影响系统更新，或无法进行某些更改系统设置的操作；
+建议更改这个服务的启动方式为：手动；
+修改后重启，出不来桌面了。
 
 CDN的全称是Content Delivery Network，即内容分发网络。其基本思路是尽可能避开互联网上有可能影响数据传输速度和稳定性的瓶颈和环节，使内容传输的更快、更稳定。通过在网络各处放置节点服务器所构成的在现有的互联网基础之上的一层智能虚拟网络，CDN系统能够实时地根据网络流量和各节点的连接、负载状况以及到用户的距离和响应时间等综合信息将用户的请求重新导向离用户最近的服务节点上。其目的是使用户可就近取得所需内容，解决 Internet网络拥挤的状况，提高用户访问网站的响应速度。
 
