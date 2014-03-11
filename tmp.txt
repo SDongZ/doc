@@ -1,5 +1,62 @@
 【把其它几个地方的内容全整理过来】
 QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
+
+这个求职者叫Andrew Collier，他在Elance简历上称自己是数据科学家，期望自己的工资最低为25美元一小时。他称自己可以完成机器学习、建模、数据分析和可视化等相关的工作
+
+
+【VC】
+>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Platforms\Win32\Microsoft.Cpp.Win32.Targets(518,5): error MSB8008: 指定的平台工具集(v110)未安装或无效。请确保选择受支持的 PlatformToolset 值
+
+如果是VS2010环境，指定的平台工具集(v110) -->该参数修改为V100.
+修改方法：
+Project > Properties > Configuration Properties > General (General) > Platform Toolset >> v100
+
+[VIDAUD]
+Chroma subsampling  色度抽样
+
+H264支持的色度抽样有
+Support of monochrome (4:0:0), 4:2:0, 4:2:2, and 4:4:4 chroma subsampling (depending on the selected profile)
+
+【D2D】
+视频硬解api介绍
+　　在一个gpu如此强大的时代，视频解码怎么能少了gpu厂商的参加。为了用硬件加速视频解码，厂商定义了一些api。
+
+　　好吧，一旦和硬件打交道，就会有os的参加，有了硬件与os参加，api肯定会变成很凌乱，看了一点代码，一些wiki，一些文档，写个总结，希望真正的专家斧正一下。
+
+ 
+
+windows平台：
+
+　　微软一家说了算，硬件都是小弟。所以api没那么凌乱。就一种
+
+　　DXVA（directx video acceleration)，两个版本，1.0和2.0
+【D2D】
+Direct3D 9.0 added a new version of the High Level Shader Language,[6] support for floating-point texture formats, Multiple Render Targets, and texture lookups in the vertex shader.
+Windows Vista includes a major update to the Direct3D API. Originally called WGF 2.0 (Windows Graphics Foundation 2.0), then DirectX 10 and DirectX Next, Direct3D 10 features an updated shader model 4.0 and optional interruptibility for shader programs.
+Direct3D 10.1 was announced by Microsoft shortly after the release of Direct3D 10 as a minor update
+Direct3D 11 was released as part of Windows 7
+Direct3D 11.1 is an update to the API that ships with Windows 8.
+Direct3D 11.2 was shipped with Windows 8.1
+
+
+StretchRect...果然和文档上说的一样
+分类： WaterDrops 2010-09-28 22:54 712人阅读 评论(0) 收藏 举报
+文档
+存侥幸心理看看能不能从depthbuffer上copy到一个create出来的texture里。
+结果失败，还得按照这里来用INTZ格式来为g80显卡来做texturize的surface。
+
+There is no DX10 version of that function（StretchRect）. Copying resources requires that the source and destination size matches. What you can do is render a texture using a quad to a smaller render target
+
+【D2D】
+Microsoft DirectX Graphics Infrastructure
+微软DirectX图形基础设施
+
+DirectX Graphics Infrastructure (DXGI) is a user-mode component of Windows Vista and above which provides a mapping between particular graphics APIs such as Direct3D 10.0 and above (known in DXGI parlance as producers) and the graphics kernel, which in turn interfaces with the user-mode Windows Display Driver Model driver. DXGI provides objects to handle tasks such as enumerating graphics adapters and monitors, enumerating display modes, choosing buffer formats, sharing resources between processes (such as between applications and the Desktop Window Manager), and presenting rendered frames to a window or monitor for display.
+Both Direct3D 10 and OpenGL applications in Windows Vista work through DXGI.
+
+纹理，通俗的说就是贴图（比如说使命召唤都是贴图堆起来的，那说的即是纹理），再通俗一点，就是一张张图片。但是这么说又太片面了，事实上，纹理可以分成一维纹理，二维纹理，三维纹理
+
+
 【MFC程序接收命令行参数？】
 How to get the command line arguments in mfc applications?
 Use GetCommandLine(), which returns the name of the file being executed, followed by the arguments.
