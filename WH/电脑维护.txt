@@ -17,7 +17,7 @@ WinHTTP Web Proxy Auto-Discovery Service（禁用才行）
 WinHTTP 实现了客户端 HTTP 堆栈并向开发人员提供 Win32 API 和 COM 自动化组件以供发送 HTTP 请求和接收响应。此外，通过执行 Web 代理自动发现(WPAD)协议，WinHTTP 还提供对自动发现代理服务器配置的支持。
 
 Windows Defender Service（禁用才行）
-Windows Search （禁用才行）
+Windows Search （禁用才行）（为什么，在PC上，停止这个服务，要求停止Windows Media Player Network Sharing Service）
 为文件、电子邮件和其他内容提供内容索引、属性缓存和搜索结果。
 
 Remote Desktop Configuration
