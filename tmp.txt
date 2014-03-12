@@ -3,6 +3,8 @@ QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
 
 这个求职者叫Andrew Collier，他在Elance简历上称自己是数据科学家，期望自己的工资最低为25美元一小时。他称自己可以完成机器学习、建模、数据分析和可视化等相关的工作
 
+【想法】安装包，文档资源等等怎么整理？
+【想法】整理下，累积的文件。
 
 【VC】
 >C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Platforms\Win32\Microsoft.Cpp.Win32.Targets(518,5): error MSB8008: 指定的平台工具集(v110)未安装或无效。请确保选择受支持的 PlatformToolset 值
@@ -16,6 +18,9 @@ Chroma subsampling  色度抽样
 
 H264支持的色度抽样有
 Support of monochrome (4:0:0), 4:2:0, 4:2:2, and 4:4:4 chroma subsampling (depending on the selected profile)
+
+【BOOST】
+exception - A library for transporting of arbitrary data in exception objects, and transporting of exceptions between threads (N2179), from Emil Dotchevski.
 
 【D2D】
 视频硬解api介绍
@@ -42,10 +47,24 @@ Direct3D 11.2 was shipped with Windows 8.1
 StretchRect...果然和文档上说的一样
 分类： WaterDrops 2010-09-28 22:54 712人阅读 评论(0) 收藏 举报
 文档
-存侥幸心理看看能不能从depthbuffer上copy到一个create出来的texture里。
+存侥幸心理看看能不能从depthbuffer上copy到一个create出来的texture[英]['tekstʃə(r)] [美][ˈtɛkstʃɚ]里。
 结果失败，还得按照这里来用INTZ格式来为g80显卡来做texturize的surface。
 
 There is no DX10 version of that function（StretchRect）. Copying resources requires that the source and destination size matches. What you can do is render a texture using a quad to a smaller render target
+
+【STD】
+C C++ 定义函数类型的问题？  http://blog.jobbole.com/44639/
+typedef QRETURN (QCAP_EXPORT *PF_NO_SIGNAL_DETECTED_CALLBACK)( PVOID pDevice /*IN*/, ULONG nVideoInput /*IN*/, ULONG nAudioInput /*IN*/, PVOID pUserData /*IN*/ );
+AFX_EXT_API QRESULT QCAP_EXPORT QCAP_REGISTER_VIDEO_PREVIEW_CALLBACK( PVOID pDevice /*IN*/, PF_VIDEO_PREVIEW_CALLBACK pCB /*IN*/, PVOID pUserData /*IN*/ );
+
+传函数指针的时候，函数名称前面，需要加地址符吗？
+其一，函数名会被隐式的转换为函数指针，就像作为参数传递的时候，数组名被隐式的转换为指针一样。在函数指针被要求当作输入的任何地方，都能够使用函数名。其二，解引用符*和取地址符&用在函数名之前基本上都是多余的
+
+类的成员函数指针，需要加地址符
+
+static ,静态成员函数，定义的时候还要写吗？不需要写
+
+【WH】批处理清楚浏览器所有信息（书签，历史，COOCKIE）
 
 【D2D】
 Microsoft DirectX Graphics Infrastructure
@@ -56,14 +75,108 @@ Both Direct3D 10 and OpenGL applications in Windows Vista work through DXGI.
 
 纹理，通俗的说就是贴图（比如说使命召唤都是贴图堆起来的，那说的即是纹理），再通俗一点，就是一张张图片。但是这么说又太片面了，事实上，纹理可以分成一维纹理，二维纹理，三维纹理
 
+shader 
+已添加
+简明释义
+n.著色器；着色程序
+
+【WINAPI】事件，通知状态问题（自动与手动的理解）
+
+
+【MFC】
+如果最小化状态，就把窗口，显示到前面来。
+实现，类似，鼠标点击，任务栏中，程序，的效果。SC_RESTORE
+if( ::IsIconic( wnd ) ) {
+							SendMessage( wnd, WM_SYSCOMMAND, SC_RESTORE, 0 );
+						}
+
+【MFC】共享内存，内存映射，
+创建一块共享内存，存入，当前进程的ID
+
+MFC没有封装这个功能。自定义一个共享内存类
+CMemMapFile v1.58 A C++/ATL class to encapsulate Memory Mapped Files
+http://www.naughter.com/memmap.html
+
+【MFC】理解CWinApp
 
 【MFC程序接收命令行参数？】
+
+1、GetCommandLine() 获取输入的所有信息，包括程序所在路径及参数
+
+2、AfxGetApp()->m_lpCmdLine 只包含参数  CWinApp::m_lpCmdLine
+
+一般情况下，获取到命令行后就可以针对命令行中的内容进行相应的处理了
+
+
+BOOL CImageTrackingApp::InitInstance()
+{
+	LPWSTR cmd = GetCommandLine();
+返回值是下面这个样子：
+"D:\project\trunk\src\client\ImageTracking\..\..\..\bin\Debug\ImageTracking.exe" start
+
 How to get the command line arguments in mfc applications?
 Use GetCommandLine(), which returns the name of the file being executed, followed by the arguments.
 
 The application member m_lpCmdLine ie. yourApp.m_lpCmdLine contains only the arguments.
 
 There is also CWinApp::ParseCommandLine() that you may find useful . refer the link as follows http://msdn.microsoft.com/en-us/library/64c73803.aspx
+
+void ParseCommandLine(
+   CCommandLineInfo& rCmdInfo 
+);
+Parameters
+rCmdInfo
+A reference to a CCommandLineInfo object.
+
+When you start a new MFC project using the Application Wizard, the Application Wizard will create a local instance of CCommandLineInfo, and then call ProcessShellCommand and ParseCommandLine in the InitInstance member function. A command line follows the route described below:
+After being created in InitInstance, the CCommandLineInfo object is passed to ParseCommandLine.
+ParseCommandLine then calls CCommandLineInfo::ParseParam repeatedly, once for each parameter.
+ParseParam fills the CCommandLineInfo object, which is then passed to ProcessShellCommand.
+ProcessShellCommand handles the command-line arguments and flags.
+
+Note that you can call ParseCommandLine directly as needed.（也可以直接处理）
+
+CWinApp::ProcessShellCommand
+
+CWinApp::ParseCommandLine calls ParseParam once for each parameter or flag on the command line, passing the argument to pszParam. If the first character of the parameter is a '-' or a '/', then it is removed and bFlag is set to TRUE. When parsing the final parameter, bLast is set to TRUE.
+
+CCommandLineInfo::ParseParam
+virtual void ParseParam( 
+   const char* pszParam, 
+   BOOL bFlag, 
+   BOOL bLast 
+);
+virtual void ParseParam( 
+   const TCHAR* pszParam,  
+   BOOL bFlag, 
+   BOOL bLast
+);
+
+Parameters
+pszParam
+The parameter or flag.
+bFlag
+Indicates whether pszParam is a parameter or a flag.
+bLast
+Indicates if this is the last parameter or flag on the command line.
+
+CCommandLineInfo的成员变量
+Data Members
+m_bRunAutomated Indicates the command-line /Automation option was found.
+efm_bRunEmbedded Indicates the command-line /Embedding option was found.
+m_bShowSplash Indicates if a splash screen should be shown.
+m_nShellCommand Indicates the shell command to be processed.
+m_strDriverName Indicates the driver name if the shell command is Print To; otherwise empty.
+m_strFileName Indicates the filename to be opened or printed; empty if the shell command is New or DDE.
+m_strPortName Indicates the port name if the shell command is Print To; otherwise empty.
+m_strPrinterName Indicates the printer name if the shell command is Print To; otherwise empty.
+
+d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\atlmfc\include\afxwin.h
+// Helper classes
+class CCmdUI;           // Menu/button enabling
+class CDataExchange;    // Data exchange and validation context
+class CCommandLineInfo; // CommandLine parsing helper
+class CDocManager;      // CDocTemplate manager object
 
 Also try ATL COM wizard to create non MFC dialog app. (chose the .exe option, not .dll)
 
