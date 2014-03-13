@@ -5,6 +5,93 @@ QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
 
 【想法】安装包，文档资源等等怎么整理？
 【想法】整理下，累积的文件。
+【想法】代码中的注释全用英语，避免使用汉字
+        INI -> 类 ->保存
+【D2D】 把YUY2，格式的图片，显示在窗口上。
+【DSHOW】 简单播放器
+http://forum.videohelp.com/threads/292835-GraphStudio-open-source-update-of-GraphEdit
+
+http://blog.monogram.sk/janos/tools/monogram-graphstudio/
+svn co svn://dev.monogram.sk/public/graphstudio/trunk
+
+http://blog.monogram.sk/janos/directshow-programming/ 
+
+【MFC】
+怎么防止，自定义消息，重复？
+通过一个函数来获取，指定的消息。
+
+【MFC】
+EnumWindows(enumerator, reinterpret_cast<LPARAM>(&hWnd));
+
+回调函数
+To continue enumeration, the callback function must return TRUE; to stop enumeration, it must return FALSE.
+
+BOOL CALLBACK CMCBackMgrApp::enumerator(HWND hWnd, LPARAM lParam)
+{
+DWORD result;
+if (!SendMessageTimeout(hWnd, g_are_you_me_message_id, 0, 0, SMTO_BLOCK, 200, &result)  || result != g_are_you_me_message_id)
+return true;
+*reinterpret_cast<HWND*>(lParam) = hWnd;
+return false;
+}
+
+EnumWindows function
+Enumerates all top-level windows on the screen by passing the handle to each window, in turn, to an application-defined callback function. EnumWindows continues until the last top-level window is enumerated or the callback function returns FALSE.
+Syntax
+
+C++
+
+BOOL WINAPI EnumWindows(
+  _In_  WNDENUMPROC lpEnumFunc,
+  _In_  LPARAM lParam
+);
+
+An application-defined callback function used with the EnumWindows or EnumDesktopWindows function. It receives top-level window handles. The WNDENUMPROC type defines a pointer to this callback function. EnumWindowsProc is a placeholder for the application-defined function name
+
+【WH】
+安装驱动时，出现下面的错误。（未找到解决方法）（基本确定应该是删除软件时，未删除干净，有些注册项未删除掉）
+error 1406 could not write value
+
+单击开始，单击运行，键入口令控制，，然后单击确定。
+创建新的计算机管理员帐户。
+单击开始，单击运行，键入regedit，然后单击确定
+在注册表编辑器中，用鼠标右键单击HKEY_CURRENT_USER\Software，然后单击权限。
+单击添加，键入所有人，然后单击确定。
+在组或用户名称中，单击任何人。
+在权限中，单击以选中允许列中的完全控制，然后单击确定。
+找到下面的子项：读
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Current Version\Setup
+为每个子项，请执行以下步骤：
+单击该子项。
+删除InstanceComponentSet。#在右侧面板中的字符串值。请注意， # 是一个数字，然后此关键字的值是 {66563AD8-637B-407F-BCA7-0233A16891AB}。
+注销，然后重新注册 Microsoft Windows Installer 服务。若要执行此操作，请执行以下步骤：
+单击开始，然后单击运行，类型msiexec 注销 /，然后单击确定。
+单击开始，单击运行，键入msiexec /regserver，，然后单击确定。
+插入 Business Contact Manager 安装 CD，然后按照提示安装 Business Contact Manager。
+
+安装采集卡驱动时的错误是，下面这项
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\Folders
+数值名称是：C:\Windows\Installer\{C4549CC5-F7A9-4C71-8170-7C8F237E4E11}\
+
+Could not write value AuthorizedCDFPrefix to key ... 
+verify that you have sufficient([英][səˈfɪʃnt] [美][səˈfɪʃənt] 足够的) access to that key, or contact your support personnel([英][ˌpɜ:səˈnel] [美][ˌpɚsəˈnɛl]人员).
+
+http://support.microsoft.com/kb/300451
+安装软件时，会出现 Windows 安装错误 1406
+
+错误 1406年。无法写入密钥 Software\Microsoft\Windows\CurrentVersion\Installer\InProgress 值文件夹。请验证您具有足够的权限访问该密钥或技术支持人员的联系人
+
+http://www.justanswer.com/computer/4vh32-running-windows-7-recently-tried-upgrade-program.html
+Yesterday, when trying to reason through what was going on, it seemed to me that there might be an issue with the uninstall, given the nature of the message. I started an uninstall program that I have and, sure enough, even though the old program no longer showed on my list of available programs on my computer, it did show on the list of installed programs in my uninstall program. When I ran a deep level uninstall, it removed the program and showed that there were over two thousand related registry keys still installed. I had the program remove those. After that, the new program installed very easily and is now functioning fine. So, that seems to have been the program.
+是因为旧程序没有删除干净
+
+【MFC】
+ON_REGISTERED_MESSAGE和ON_MESSAGE区别
+on_message用于处理一切消息，但是on_registered_message只用处理在系统已经注册过的消息。    
+The RegisterWindowMessage function is used to define a new window message that is guaranteed to be unique throughout the system.
+The macro ON_REGISTERED_MESSAGE is used to handle these messages. This macro accepts a name of a UINT NEAR variable that contains the registered windows message ID.
+
+ON_REGISTERED_MESSAGE也可以从类向导里添加
 
 【VC】
 >C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Platforms\Win32\Microsoft.Cpp.Win32.Targets(518,5): error MSB8008: 指定的平台工具集(v110)未安装或无效。请确保选择受支持的 PlatformToolset 值
