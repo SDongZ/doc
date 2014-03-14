@@ -2,7 +2,34 @@
 QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
 
 这个求职者叫Andrew Collier，他在Elance简历上称自己是数据科学家，期望自己的工资最低为25美元一小时。他称自己可以完成机器学习、建模、数据分析和可视化等相关的工作
+【】baidu account sdwx83 / wangxiangc@gmail.com /y
+【】teamviewer wangxiang/wangxiangc@gmail.com/godhd123
+【】How to delete bunch of unwanted bookmarks in Google Chrome
 
+C:\Users\Administrator\AppData\Local\Google\Chrome\User Data\Profile 1\Bookmarks
+C:\Users\Administrator\AppData\Roaming\Google\Local Search History\google%2Eweb.w
+
+C:\Users\Administrator\AppData\Local\Google\Chrome\User Data
+
+Hi 
+
+Inside of this folder c:\Documents and Settings\ 
+
+LOOK FOR THIS ANOTHER FOLDER: 
+
+Google\Chrome\User Data\Default\ 
+
+DELETE THE "HISTORY" FILE THAT IS INSIDE OF "DEFAULT" FOLDER, AND THAT'S ALL.
+【】托动图标的实现
+
+【VDUAUD】
+vs_image_scale_nearest_Y
+
+【BOOST】
+boost::bind is a generalization of the standard functions std::bind1st and std::bind2nd. It supports arbitrary function objects, functions, function pointers, and member function pointers, and is able to bind any argument to a specific value or route（[英][ru:t] [美][rut, raʊt]） input arguments into arbitrary（[英][ˈɑ:bitrəri] [美][ˈɑrbɪˌtrɛri]随意的） positions. bind does not place any requirements on the function object; in particular, it does not need the result_type, first_argument_type and second_argument_type standard typedefs.
+
+
+【想法】知道网址，知道图片名称，是不是可以获得其浏览器缓存中的图片？（HTTP，加载不用重新下载了？）(同一个浏览器可以，换个浏览器其缓存数据又变了)
 【想法】安装包，文档资源等等怎么整理？
 【想法】整理下，累积的文件。
 【想法】代码中的注释全用英语，避免使用汉字
