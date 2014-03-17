@@ -22,6 +22,195 @@ Google\Chrome\User Data\Default\
 DELETE THE "HISTORY" FILE THAT IS INSIDE OF "DEFAULT" FOLDER, AND THAT'S ALL.
 【】托动图标的实现
 
+【BOOST】
+namespace boost
+{
+  namespace system
+  {
+    //  class system_error  ------------------------------------------------------------//
+
+    class BOOST_SYMBOL_VISIBLE system_error : public std::runtime_error
+    // BOOST_SYMBOL_VISIBLE is needed by GCC to ensure system_error thrown from a shared
+    // library can be caught. See svn.boost.org/trac/boost/ticket/3697
+    {
+    public:
+      system_error( error_code ec )
+          : std::runtime_error(""), m_error_code(ec) {}
+
+      system_error( error_code ec, const std::string & what_arg )
+          : std::runtime_error(what_arg), m_error_code(ec) {}
+
+      system_error( error_code ec, const char* what_arg )
+          : std::runtime_error(what_arg), m_error_code(ec) {}
+
+      system_error( int ev, const error_category & ecat )
+          : std::runtime_error(""), m_error_code(ev,ecat) {}
+
+      system_error( int ev, const error_category & ecat,
+        const std::string & what_arg )
+          : std::runtime_error(what_arg), m_error_code(ev,ecat) {}
+
+      system_error( int ev, const error_category & ecat,
+        const char * what_arg )
+          : std::runtime_error(what_arg), m_error_code(ev,ecat) {}
+
+      virtual ~system_error() throw() {}
+
+      const error_code &  code() const throw() { return m_error_code; }
+      const char *        what() const throw();
+
+    private:
+      error_code           m_error_code;
+      mutable std::string  m_what;
+    };
+
+    //  implementation  ------------------------------------------------------//
+
+    inline const char * system_error::what() const throw()
+    // see http://www.boost.org/more/error_handling.html for lazy build rationale
+    {
+      if ( m_what.empty() )
+      {
+#ifndef BOOST_NO_EXCEPTIONS
+        try
+#endif
+        {
+          m_what = this->std::runtime_error::what();
+          if ( !m_what.empty() ) m_what += ": ";
+          m_what += m_error_code.message();
+        }
+#ifndef BOOST_NO_EXCEPTIONS
+        catch (...) { return std::runtime_error::what(); }
+#endif
+      }
+      return m_what.c_str();
+    }
+
+  } // namespace system
+} // namespace boost
+
+
+
+std::string system_error_category::message( int ev ) const
+  {
+# ifndef BOOST_NO_ANSI_APIS  
+    LPVOID lpMsgBuf = 0;
+    DWORD retval = ::FormatMessageA( 
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_FROM_SYSTEM | 
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        ev,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+        (LPSTR) &lpMsgBuf,
+        0,
+        NULL 
+    );
+    detail::local_free_on_destruction lfod(lpMsgBuf);
+    if (retval == 0)
+        return std::string("Unknown error");
+        
+    std::string str( static_cast<LPCSTR>(lpMsgBuf) );
+# else  // WinCE workaround
+    LPVOID lpMsgBuf = 0;
+    DWORD retval = ::FormatMessageW( 
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_FROM_SYSTEM | 
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        ev,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+        (LPWSTR) &lpMsgBuf,
+        0,
+        NULL 
+    );
+    detail::local_free_on_destruction lfod(lpMsgBuf);
+    if (retval == 0)
+        return std::string("Unknown error");
+    
+    int num_chars = (wcslen( static_cast<LPCWSTR>(lpMsgBuf) ) + 1) * 2;
+    LPSTR narrow_buffer = (LPSTR)_alloca( num_chars );
+    if (::WideCharToMultiByte(CP_ACP, 0, static_cast<LPCWSTR>(lpMsgBuf), -1, narrow_buffer, num_chars, NULL, NULL) == 0)
+        return std::string("Unknown error");
+
+    std::string str( narrow_buffer );
+# endif
+    while ( str.size()
+      && (str[str.size()-1] == '\n' || str[str.size()-1] == '\r') )
+        str.erase( str.size()-1 );
+    if ( str.size() && str[str.size()-1] == '.' ) 
+      { str.erase( str.size()-1 ); }
+    return str;
+  }
+# endif
+
+} // unnamed namespace
+
+【BOOST】
+m_pAcceptor = new tcp::acceptor(m_ioSrv, m_peer, false);
+两个进程，监听同一个，TCP端口，会出现什么情况？抛出异常
+
+【BOOST】
+创建监听端口时，抛出异常：9090端口。 (现在遇到的问题是这个端口，不知道被那个进程打开了，找不到打开这个端口的进程。)
+
+m_pAcceptor = new tcp::acceptor(m_ioSrv, m_peer, false); 创建这个时，抛出异常
+bind: 通常每个套接字地址(协议/网络地址/端口)只允许使用一次
+
+  basic_socket_acceptor(boost::asio::io_service& io_service,
+      const endpoint_type& endpoint, bool reuse_addr = true)
+    : basic_io_object<SocketAcceptorService>(io_service)
+  {
+    boost::system::error_code ec;
+    const protocol_type protocol = endpoint.protocol();
+    this->get_service().open(this->get_implementation(), protocol, ec);
+    boost::asio::detail::throw_error(ec, "open");
+    if (reuse_addr)
+    {
+      this->get_service().set_option(this->get_implementation(),
+          socket_base::reuse_address(true), ec);
+      boost::asio::detail::throw_error(ec, "set_option");
+    }
+    this->get_service().bind(this->get_implementation(), endpoint, ec);
+    boost::asio::detail::throw_error(ec, "bind"); -------------------------这句抛出异常。
+    this->get_service().listen(this->get_implementation(),
+        socket_base::max_connections, ec);
+    boost::asio::detail::throw_error(ec, "listen");
+  }
+  
+  “断续”后，这个异常能够，过去。
+  
+ 
+我们在做socket的开发的时候，经常会遇到这个错误：通常每个套接字地址 (协议/网络地址/端口)只允许使用一次
+错误指示很明确：通信端口被占用了，导致通信无法进行。
+但为什么端口被占用了呢？什么端口被占用了？
+这里其实有一个大前提：你的程序中有没有指定socket通信端口？
+如果指定了，解决办法很简单，每次通信完成手动释放就行了。下次通信重新建立连接。
+如果没有指定，说明以下几点（可能你命中的是其中一点）：
+1、你的服务器开启的端口数太少；
+2、连接释放等待时间太长；
+3、你的socket通信并发量太大。
+以上几点导致你服务器端口被占满，下次通信无空闲端口可用，程序就抛出了“通常每个套接字地址 (协议/网络地址/端口)只允许使用一次”的异常。
+
+原因找到了，解决起来也就简单了，针对1、2两点，我们修改服务器配置就行了。
+如果你的服务器是windows2003或xp，默认端口只开到5000，而且超时等待默认是240秒（这里有官方说明：http://msdn.microsoft.com/zh-cn/library/aa560610(v=bts.10).aspx），我们只需把服务器端口全打开，并且根据自己的情况调整超时时间。
+具体操作：
+1、打开注册表（运行命令：regedit）
+2、找到注册表节点：HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters
+3、新增2项（如果已存在就修改项值），值对应的都是10进制数字
+MaxUserPort=65534 （端口数设到最大）
+TcpTimedWaitDelay=5 （超时等待是5秒，根据个人需要）
+4、重启服务器
+
+搞定！
+
+
+你绑定的端口没有释放,需要等待一段时间,或者在程序退出时调用close关闭udp套接字
+端口是非托管资源，你必须自行释放
+所有非托管资源程序员必须能控制资源释放，诸如数据库连接，SOCKET连接等在使用后都应当显示关闭，如果是长连接，在程序退出时应当确保所有占用的连接都被关闭
+
+【】
+2011年12月8日 - 对于H.264（MPEG-4 AVC）而言，级别（Level）是与档次（Profile）同等重要的参数。
+
 【VDUAUD】
 vs_image_scale_nearest_Y
 
@@ -112,6 +301,34 @@ http://www.justanswer.com/computer/4vh32-running-windows-7-recently-tried-upgrad
 Yesterday, when trying to reason through what was going on, it seemed to me that there might be an issue with the uninstall, given the nature of the message. I started an uninstall program that I have and, sure enough, even though the old program no longer showed on my list of available programs on my computer, it did show on the list of installed programs in my uninstall program. When I ran a deep level uninstall, it removed the program and showed that there were over two thousand related registry keys still installed. I had the program remove those. After that, the new program installed very easily and is now functioning fine. So, that seems to have been the program.
 是因为旧程序没有删除干净
 
+【VC】
+Microsoft Visual Studio Ultimate 2013有效序列号：
+BWG7X-J98B3-W34RT-33B3R-JVYW9
+Ultimate:
+BWG7X-J98B3-W34RT-33B3R-JVYW9
+Premium:
+FBJVC-3CMTX-D8DVP-RTQCT-92494
+
+【API】
+void CShowAnotherDlg::FindMultiMonitors()
+{
+	int i = 0;
+	DISPLAY_DEVICE displayDevice;
+	ZeroMemory(&displayDevice,sizeof(displayDevice));
+	displayDevice.cb = sizeof(displayDevice);
+	map<int,PDISPLAY_DEVICE> mapDevice;
+	while(EnumDisplayDevices(NULL,i,&displayDevice,0)){		
+		i++;
+	}
+	HMONITOR hWndMonitor = MonitorFromWindow(GetSafeHwnd(), MONITOR_DEFAULTTOPRIMARY);
+	MONITORINFOEX monitorInfo;
+	if (hWndMonitor == NULL) return;
+	monitorInfo.cbSize = sizeof(MONITORINFOEX);
+	GetMonitorInfo(hWndMonitor, &monitorInfo);
+	MoveWindow(monitorInfo.rcMonitor.right,0,1000,200);
+	return;
+}
+
 【MFC】
 ON_REGISTERED_MESSAGE和ON_MESSAGE区别
 on_message用于处理一切消息，但是on_registered_message只用处理在系统已经注册过的消息。    
@@ -119,6 +336,39 @@ The RegisterWindowMessage function is used to define a new window message that i
 The macro ON_REGISTERED_MESSAGE is used to handle these messages. This macro accepts a name of a UINT NEAR variable that contains the registered windows message ID.
 
 ON_REGISTERED_MESSAGE也可以从类向导里添加
+
+LPCTSTR temp = theApp.m_lpCmdLine;
+	hMutex=CreateMutex(NULL,FALSE,_T("MCBACKMGR-XL231-OKuA23-LIUQIANG-31PL2S-ASSS#225"));
+	if (GetLastError() == ERROR_ALREADY_EXISTS){
+		HWND hWnd = NULL;
+		EnumWindows(enumerator, reinterpret_cast<LPARAM>(&hWnd));
+		if (_wcsnicmp(temp,_T("Close"),5) == 0){
+			::SendMessage(hWnd,MGR_SIGN_OUT,0,0);
+		}else if (_wcsnicmp(temp,_T("Mgr_login"),9) == 0){
+			::SendMessage(hWnd,MGR_LOGIN,0,0);		
+		}else if(_wcsnicmp(temp,_T("Mgr_quit"),8) == 0){
+			::SendMessage(hWnd,CHILD_IN,0,0);
+		}
+		return FALSE;
+	}
+BOOL CALLBACK CMCBackMgrApp::enumerator(HWND hWnd, LPARAM lParam)
+{
+	DWORD result;
+	if (!SendMessageTimeout(hWnd, g_are_you_me_message_id, 0, 0, SMTO_BLOCK, 200, &result)
+		|| result != g_are_you_me_message_id)
+		return true;
+	*reinterpret_cast<HWND*>(lParam) = hWnd;
+	return false;
+}
+const extern UINT g_are_you_me_message_id = RegisterWindowMessage(_T("MCBACKMGR Are You Me Message"));
+ON_REGISTERED_MESSAGE(g_are_you_me_message_id, OnAreYouMe)
+long CMCBackMgrDlg::OnAreYouMe(WPARAM, LPARAM)
+{
+	return g_are_you_me_message_id;
+}
+刘强 2014-3-12 18:09:43
+const extern UINT g_are_you_me_message_id;
+
 
 【VC】
 >C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Platforms\Win32\Microsoft.Cpp.Win32.Targets(518,5): error MSB8008: 指定的平台工具集(v110)未安装或无效。请确保选择受支持的 PlatformToolset 值
