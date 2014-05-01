@@ -1,4 +1,4 @@
-
+﻿
 
 WinaMain 获取传递的参数
 MFC也可以像控制台那样获取命令行参数：
@@ -22,6 +22,19 @@ wchar_t exe_path[MAX_PATH] = {0};
 	::PathRemoveFileSpecW(exe_path);
     
 ---------------------------------------------------------------------------
+http://www.blueidea.com/computer/system/2004/1999.asp
+单个EXE根据不同的参数启动多个进程，多个服务。
+多个服务运行再间个进程里。
+
+C:\windows\system32\svchost.exe -k NetworkService
+
+svchost.exe进程是干什么的？
+　　svchost.exe文件存在于“%systemroot%\system32”（例如C:\Windows\system32）目录下，
+    它是WindowsNT核心的重要进程（Windows9X没有该进程），专门为系统启动各种服务的。
+    例如Svchost.exe调用rpcss.dll文件，就会启动rpcss服务（remoteprocedurecall）。
+
+　　svchost.exe实际上是一个服务宿主，它本身并不能给用户提供任何服务，但是可以用来运行动态链接库DLL文件，
+    从而启动对应的服务。Svchost.exe进程可以同时启动多个服务
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------

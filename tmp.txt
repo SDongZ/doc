@@ -1,5 +1,28 @@
-【把其它几个地方的内容全整理过来】
+﻿【把其它几个地方的内容全整理过来】
 QQ备忘录，baidu云盘，GOOGLE-DOC（其它文档）
+
+有七年C\C++语言开发经验，主要使用VisualStudio开发工具，在Windows平台开发视频类软件。熟悉STD与BOOST库。了解Windows的COM组件技术（刻录，OFFICE开发，WindowsMediaSDK，WebBrowser）。熟悉WINDOWS消息机制，及界面控件绘制过程。
+
+其它平台开发经验：
+MAC下编译修改FFMPEG程序。
+UBUNTU下修改SPICE客户端程序。
+
+逻辑层（水层），低层模块。
+
+参与过的项目
+全自动高清课堂录播系统
+数据化校园客户端软件
+Windows系统还原管理软件
+银行理财产品录音系统
+
+云游戏服务器端管理程序
+
+蓝光DVD复制软件。
+DVD制作刻录软件。
+音视格式转换软件。
+
+有项目管理经验。
+
 
 这个求职者叫Andrew Collier，他在Elance简历上称自己是数据科学家，期望自己的工资最低为25美元一小时。他称自己可以完成机器学习、建模、数据分析和可视化等相关的工作
 【】baidu account sdwx83 / wangxiangc@gmail.com /y
@@ -21,6 +44,25 @@ Google\Chrome\User Data\Default\
 
 DELETE THE "HISTORY" FILE THAT IS INSIDE OF "DEFAULT" FOLDER, AND THAT'S ALL.
 【】托动图标的实现
+
+【】代码片段是否要保留这个分类？
+
+【google】
+goagent 使用的账号
+regcoupans@gmail.com	车G1	wangxiang83@gmail.com
+goagent20120501|goagent20120502|goagent20120503|goagent20120504|goagent20120505
+
+https://appengine.google.com  regcoupans@gmail.com(车G1)
+APPID列表
+goagent20120429|goagent20120430|goagent20120431|goagent20120432|goagent20120433
+goagent20120501|goagent20120502|goagent20120503|goagent20120504|goagent20120505
+
+http://www.samabox.com/projects/chrome/switchy/ - 安装
+https://goagent.googlecode.com/files/SwitchyOptions.bak - 在线导入
+
+上传服务器文件时，需要启动goagent
+
+服务器上的版本 v2.1.11-60-g41459c4 - 20111231
 
 【BOOST】
 namespace boost

@@ -25,9 +25,12 @@
   <section>
 	<title>BOOST编译</title>
 		<orderedlist>
-			<listitem>bootstrap.bat 生成BOOST构建引擎 b2.exe</listitem>
+			<listitem>bootstrap.bat 生成BOOST构建引擎 b2.exe (与bjam一样)</listitem>
+			<listitem>调用以下命令：需要在VC开发人员命令行中调用，并且要切换到BOOST所在目录</listitem>
 			<listitem>b2 --show-libraries 显示所有需要编译的库</listitem>
-			<listitem>b2 toolset==msvc-10.0 --with-log 编译指定的库，并且指定toolset</listitem>
+			<listitem>b2 toolset=msvc-10.0 --with-log 编译指定的库，并且指定toolset  msvc-11.0(vc2012) msvc-12.0(vs2013)</listitem>
+			<listitem>b2 --build-dir=build-directory 指定输出目录 --build-dir=g:\boost-build 指定临时文件存放路径。</listitem>
+			<listitem>运行bjam --build-dir=tmp --toolset=msvc-9.0 threading=multi link=static runtime-link=shared stage cxxflags=-Zc:wchar_t-</listitem>
 		</orderedlist>
   </section>
   <section>

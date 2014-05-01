@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding="utf-8"?>
+﻿<?xml version='1.0' encoding="utf-8"?>
 <article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="zh-CN"
   xmlns:xlink='http://www.w3.org/1999/xlink'>
   <articleinfo>
@@ -30,6 +30,7 @@
   <section>   
     <title>Git 中文问题</title>
     <orderedlist>
+      <listitem>github账号，创建工程，新建工程的提交密码？（chengming/y）1)创建新的库（a,git init b, git remote add origin  xxx, c, git push -u origin master）。 2)把旧库添加到github上。</listitem>
       <listitem>Gitbash中显示中文：C:\Program Files\Git\etc\git-completion.bash  文件头添加 ：alias ls='ls --show-control-chars --color=auto'</listitem>
 	  <listitem>git log中显示中文：最新版本的GIT已经没有这个问题。只要LOG记录是UTF8格式的就没有问题。</listitem>
 	  <listitem>GIT LOG 编辑器设置: git config --global core.editor notepad  或者 完整路径：路径中的括号问题Program Files (x86)</listitem>
@@ -38,7 +39,7 @@
 	  <listitem> 设置"C:\Program Files\Notepad++\notepad++.exe" -multiInst -nosession后打开的临时文件不对</listitem>
 	  <listitem> 设置notepad默认保存为UTF8，换行符为lf: <emphasis role="strong">好像没有办法</emphasis></listitem>
 	  <listitem>在Git Gui中查看UTF-8编码的文本文件时？git config --global gui.encoding utf-8</listitem>
-	  <listitem>怎么添加中文目录名称？By default, git will print non-ASCII file names in quoted octal notation, i.e. "\nnn\nnn...". This can be disabled with.  git config [--global] core.quotepath off</listitem>
+	  <listitem>（正确显示中文路径名称）怎么添加中文目录名称？By default, git will print non-ASCII file names in quoted octal notation, i.e. "\nnn\nnn...". This can be disabled with.  git config [--global] core.quotepath off</listitem>
     </orderedlist>
   </section>
   <section>
